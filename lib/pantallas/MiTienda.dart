@@ -10,13 +10,16 @@ class MiTienda extends StatelessWidget {
       'nombre': 'Peluche patricio',
       'descripcion': 'Un peluche de patricio cute.',
       'precio': 2990,
-      'stock ': 12,
+      'stock': 12,
+      'categoria': 'Lana',
       'imagen': 'lib/imagenes/pati.png',
     },
     {
       'nombre': 'Elefante de Lana',
       'descripcion': 'Elefante tejida a mano.',
       'precio': 1500,
+      'stock': 5,
+      'categoria': 'Lana',
       'imagen': 'lib/imagenes/elefante.png',
     },
   ];
@@ -87,6 +90,8 @@ class MiTienda extends StatelessWidget {
                             descripcion: producto['descripcion'],
                             precio: producto['precio'],
                             imagen: producto['imagen'],
+                            stock: producto['stock'],
+                            categoria: producto['categoria'],
                           ),
                         ),
                       );

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:prueba1/pantallas/home.dart';
 import 'Registro.dart';
 
 class LoginPage extends StatefulWidget {
@@ -25,7 +26,7 @@ class _LoginPageState extends State<LoginPage> {
     }
 
     if (nameController.text == 'admin' && passwordController.text == '1234') {
-      Navigator.pop(context, true); // <-- Retorna al main con login exitoso
+      Navigator.pushReplacement(context, MaterialPageRoute(builder: (_) => const HomePage()),);
     } else {
       showSnackbar("Credenciales incorrectas");
     }
@@ -119,10 +120,7 @@ class _LoginPageState extends State<LoginPage> {
                     ),
                   ),
                   onPressed: () {
-                    Navigator.push(
-                      context, 
-                      MaterialPageRoute(builder: (_) => const SigninPage()),
-                    );
+                    Navigator.pushReplacement(context, MaterialPageRoute(builder: (_) => const SigninPage()),);
                   },
                 ),
               ],

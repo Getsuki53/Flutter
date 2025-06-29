@@ -26,9 +26,15 @@ class _SigninPageState extends State<SigninPage> {
       return;
     }
 
-    if (passwordController != rPasswordController) {
+    if (passwordController.text != rPasswordController.text) {
       showSnackbar(
         "Las contraseñas no coinciden"
+      );
+      return;
+    }
+    else {
+      showSnackbar(
+        "Sign in Proceso"
       );
       return;
     }
@@ -140,10 +146,7 @@ class _SigninPageState extends State<SigninPage> {
                     ),
                   ),
                   onPressed: () {
-                    Navigator.push(
-                      context, 
-                      MaterialPageRoute(builder: (_) => const LoginPage()),
-                    );
+                    Navigator.pushReplacement(context, MaterialPageRoute(builder: (_) => const LoginPage()),);
                   },
                 ),
               ],

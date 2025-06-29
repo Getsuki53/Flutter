@@ -20,7 +20,7 @@ class _SigninPageState extends State<SigninPage> {
   }
 
   Future<void> signin() async {
-    if (nameController.text.isEmpty || passwordController.text.isEmpty || passwordController.text.isEmpty) {
+    if (nameController.text.isEmpty || passwordController.text.isEmpty || mailController.text.isEmpty) {
       showSnackbar(
         "${nameController.text.isEmpty ? "-User " : ""} ${mailController.text.isEmpty ? "- Correo " : ""} ${passwordController.text.isEmpty ? "- Contraseña " : ""} requerido");
       return;

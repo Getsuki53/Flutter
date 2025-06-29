@@ -1,9 +1,13 @@
-import mercadopago
+# import mercadopago  # Temporarily commented out
 from django.conf import settings
 from decimal import Decimal
 
 def crear_preferencia_pago(usuario, carrito):
-    sdk = mercadopago.SDK(settings.MERCADO_PAGO_ACCESS_TOKEN)
+    # Temporarily disabled mercadopago functionality
+    return "temp_preference_id", "temp_init_point"
+    
+    # Original code commented out:
+    # sdk = mercadopago.SDK(settings.MERCADO_PAGO_ACCESS_TOKEN)
 
     items = []
     for item in carrito.items.all():

@@ -2,7 +2,7 @@ from rest_framework import serializers
 from api.models import (
     Administrador, Carrito, ItemCarrito, 
     Persona, Producto, ProductoDeseado, SeguimientoTienda, 
-    Tienda, Usuario, tipoCategoria, Pago, Venta
+    Tienda, Usuario, tipoCategoria, Pago, 
 )
 from django.contrib.auth.models import User
 from rest_framework.authtoken.models import Token

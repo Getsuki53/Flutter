@@ -181,16 +181,16 @@ class Pago(models.Model):
         super().save(*args, **kwargs)
 
 # MODELO VENTA (OPCIONAL, PARA HISTORIAL)
-class Venta(models.Model):
-    comprador = models.ForeignKey(Usuario, on_delete=models.CASCADE, verbose_name='Usuario', null=False)
-    productoComprado = models.ForeignKey(Producto, on_delete=models.CASCADE, verbose_name='Producto', null=False)
-    cantidad = models.PositiveIntegerField(default=0)
-    fecha = models.DateTimeField(default=datetime.datetime.now)
-
-    def __str__(self):
-        return f'{self.comprador} compró {self.productoComprado}'
-
-    class Meta:
-        indexes = [
-            models.Index(fields=['comprador', 'productoComprado']),
-        ]
+#class Venta(models.Model):
+##    comprador = models.ForeignKey(Usuario, on_delete=models.CASCADE, verbose_name='Usuario', null=False)
+#    productoComprado = models.ForeignKey(Producto, on_delete=models.CASCADE, verbose_name='Producto', null=False)
+#    cantidad = models.PositiveIntegerField(default=0)
+#    fecha = models.DateTimeField(default=datetime.datetime.now)
+#
+ #   def __str__(self):
+  #      return f'{self.comprador} compró {self.productoComprado}'
+#
+ #   class Meta:
+  #      indexes = [
+   #         models.Index(fields=['comprador', 'productoComprado']),
+    #    ]

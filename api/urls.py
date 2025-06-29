@@ -1,7 +1,7 @@
 from rest_framework import routers
 from api.views import (
     ProductoViewSet, UsuarioViewSet, UserViewSet, LogoutView, 
-    LoginView, AdministradorViewSet, VentaViewSet, 
+    LoginView, AdministradorViewSet, #VentaViewSet, 
     ProductoDeseadoViewSet, tipoCategoriaViewSet, CarritoViewSet, 
     TiendaViewSet, SeguimientoTiendaViewSet, ProductoAdminViewSet,
     LoginUsuarioView, CheckoutView, MercadoPagoWebhookView, 

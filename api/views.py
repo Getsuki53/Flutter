@@ -1,22 +1,37 @@
-from rest_framework import viewsets, permissions
-from api.models import Producto, Usuario, Administrador, Venta, ProductoDeseado, tipoCategoria, Carrito, Tienda, SeguimientoTienda
-from api.serializers import ProductoSerializer, UsuarioSerializer, UserSerializer, AdministradorSerializer, VentaSerializer, ProductoDeseadoSerializer, tipoCategoriaSerializer, CarritoSerializer, TiendaSerializer, SeguimientoTiendaSerializer
-from rest_framework import status,views, response
-from rest_framework import authentication
-from django.contrib.auth.models import User
-from django.contrib.auth import logout ,authenticate, login 
-from rest_framework.authtoken.models import Token
-from rest_framework.decorators import action
+from rest_framework import viewsets, permissions, status, views, response, authentication
 from rest_framework.response import Response
+from rest_framework.decorators import action
+from django.contrib.auth.models import User
+from django.contrib.auth import logout, authenticate, login
+from rest_framework.authtoken.models import Token
+from django.shortcuts import get_object_or_404
+from django.views.decorators.csrf import csrf_exempt
+from django.utils.decorators import method_decorator
+import secrets
+from api.models import (
+    Producto, Usuario, 
+    Administrador, ProductoDeseado, tipoCategoria, 
+    Carrito, Tienda, SeguimientoTienda, ItemCarrito, Pago
+)
+from api.serializers import (
+    ProductoSerializer, 
+    UsuarioSerializer, UserSerializer, 
+    AdministradorSerializer,
+    ProductoDeseadoSerializer, tipoCategoriaSerializer, 
+    CarritoSerializer, TiendaSerializer, SeguimientoTiendaSerializer, 
+    ItemCarritoSerializer, PagoSerializer
+)
+from api.utils import crear_preferencia_pago
+from api.auth_usuario import UsuarioTokenAuthentication
+import mercadopago
+from django.conf import settings
 
+# ENDPOINTS DE PRODUCTO (ADMIN Y USUARIO)
 class ProductoAdminViewSet(viewsets.ModelViewSet):
     queryset = Producto.objects.filter(Estado=False)
     serializer_class = ProductoSerializer
     permission_classes = [permissions.AllowAny]
-    # permission_classes = [permissions.IsAuthenticatedOrReadOnly]
-    # authentication_classes = [authentication.BasicAuthentication]
 
-    #Obtiene solo Nombre, precio e imagen del producto
     @action(detail=False, methods=['get'])
     def ObtenerProductoMain(self, request):
         producto_id = request.query_params.get('producto_id')
@@ -24,13 +39,11 @@ class ProductoAdminViewSet(viewsets.ModelViewSet):
             return Response({'error': 'Debes enviar producto_id'}, status=400)
         try:
             producto = Producto.objects.get(pk=producto_id)
-            serializer = ProductoMainSerializer(producto)
+            serializer = ProductoSerializer(producto)
             return Response(serializer.data)
         except Producto.DoesNotExist:
             return Response({'error': 'Producto no encontrado'}, status=404)
-    
 
-    #Actualiza el estado del producto a 1
     @action(detail=True, methods=['patch'])
     def ActualizarEstadoProducto(self, request, pk=None):
         try:
@@ -43,7 +56,7 @@ class ProductoAdminViewSet(viewsets.ModelViewSet):
             return Response({'message': 'Estado del producto actualizado exitosamente y cantidad de productos actualizada'}, status=200)
         except Producto.DoesNotExist:
             return Response({'error': 'Producto no encontrado'}, status=404)
-        
+
     @action(detail=False, methods=['delete'])
     def EliminarProducto(self, request):
         producto_id = request.data.get('producto_id')
@@ -60,10 +73,7 @@ class ProductoViewSet(viewsets.ModelViewSet):
     queryset = Producto.objects.filter(Estado=True)
     serializer_class = ProductoSerializer
     permission_classes = [permissions.AllowAny]
-    # permission_classes = [permissions.IsAuthenticatedOrReadOnly]
-    # authentication_classes = [authentication.BasicAuthentication]
 
-    #Obtiene solo Nombre, precio e imagen del producto
     @action(detail=False, methods=['get'])
     def ObtenerProductoMain(self, request):
         producto_id = request.query_params.get('producto_id')
@@ -71,11 +81,11 @@ class ProductoViewSet(viewsets.ModelViewSet):
             return Response({'error': 'Debes enviar producto_id'}, status=400)
         try:
             producto = Producto.objects.get(pk=producto_id)
-            serializer = ProductoMainSerializer(producto)
+            serializer = ProductoSerializer(producto)
             return Response(serializer.data)
         except Producto.DoesNotExist:
             return Response({'error': 'Producto no encontrado'}, status=404)
-    
+
     @action(detail=False, methods=['get'])
     def ObtenerProductosPorTienda(self, request):
         tienda_id = request.query_params.get('tienda_id')
@@ -101,8 +111,7 @@ class ProductoViewSet(viewsets.ModelViewSet):
             return Response(serializer.data)
         except Usuario.DoesNotExist:
             return Response({'error': 'Usuario no encontrado'}, status=404)
-    
-    #Actualiza el estado del producto a 1
+
     @action(detail=False, methods=['patch'])
     def ActualizarEstadoProducto(self, request):
         producto_id = request.data.get('producto_id')
@@ -115,8 +124,8 @@ class ProductoViewSet(viewsets.ModelViewSet):
             return Response({'message': 'Estado del producto actualizado exitosamente'}, status=200)
         except Producto.DoesNotExist:
             return Response({'error': 'Producto no encontrado'}, status=404)
-            
 
+# ENDPOINTS DE USUARIO
 class UsuarioViewSet(viewsets.ModelViewSet):
     queryset = Usuario.objects.all()
     serializer_class = UsuarioSerializer
@@ -128,7 +137,7 @@ class UsuarioViewSet(viewsets.ModelViewSet):
         usuarios = Usuario.objects.all()
         serializer = self.get_serializer(usuarios, many=True)
         return Response(serializer.data)
-    
+
     @action(detail=False, methods=['patch'])
     def CambiarContrasena(self, request):
         usuario_id = request.data.get('usuario_id')
@@ -137,36 +146,169 @@ class UsuarioViewSet(viewsets.ModelViewSet):
             return Response({'error': 'Debes enviar usuario_id y nueva_contrasena'}, status=400)
         try:
             usuario = Usuario.objects.get(pk=usuario_id)
-            usuario.set_password(nueva_contrasena)
+            usuario.contraseña = nueva_contrasena
             usuario.save()
             return Response({'message': 'Contraseña actualizada exitosamente'}, status=200)
         except Usuario.DoesNotExist:
             return Response({'error': 'Usuario no encontrado'}, status=404)
 
-class AdministradorViewSet(viewsets.ModelViewSet):
-    queryset = Administrador.objects.all()
-    serializer_class = AdministradorSerializer
-    permission_classes = [permissions.AllowAny]
-    authentication_classes = [authentication.BasicAuthentication,]
+# ENDPOINTS DE AUTENTICACIÓN PERSONALIZADA
+class LoginUsuarioView(views.APIView):
+    permission_classes = []
+    authentication_classes = []
 
-    @action(detail=False, methods=['post'])
-    def AutenticacionarAdministrador(self, request):
-        username = request.data.get('username')
-        password = request.data.get('password')
-        if not username or not password:
-            return Response({'error': 'Debes enviar username y password'}, status=400)
+    def post(self, request):
+        correo = request.data.get('correo')
+        contrasena = request.data.get('contrasena')
+        if not correo or not contrasena:
+            return Response({'error': 'Correo y contraseña requeridos'}, status=status.HTTP_400_BAD_REQUEST)
         try:
-            administrador = Administrador.objects.get(username=username, password=password)
-            return Response({'message': 'Administrador autenticado exitosamente'}, status=200)
-        except Administrador.DoesNotExist:
-            return Response({'error': 'Administrador no encontrado o credenciales incorrectas'}, status=404)
+            usuario = Usuario.objects.get(correo=correo)
+        except Usuario.DoesNotExist:
+            return Response({'error': 'Usuario no existe'}, status=status.HTTP_404_NOT_FOUND)
+        if usuario.contraseña != contrasena:
+            return Response({'error': 'Contraseña incorrecta'}, status=status.HTTP_401_UNAUTHORIZED)
+        # Generar token si no existe
+        if not usuario.token:
+            usuario.token = secrets.token_hex(32)
+            usuario.save()
+        return Response({'token': usuario.token, 'usuario_id': usuario.id})
 
-class VentaViewSet(viewsets.ModelViewSet):
-    queryset = Venta.objects.all()
-    serializer_class = VentaSerializer
-    permission_classes = [permissions.AllowAny]
-    authentication_classes = [authentication.BasicAuthentication,]
+# ENDPOINTS DE CARRITO 
+class CarritoViewSet(viewsets.ModelViewSet):
+    queryset = Carrito.objects.all()
+    serializer_class = CarritoSerializer
+    permission_classes = [permissions.IsAuthenticated]
+    authentication_classes = [UsuarioTokenAuthentication]
 
+    def get_queryset(self):
+        usuario = self.request.user
+        return Carrito.objects.filter(usuario=usuario)
+
+    def retrieve(self, request, *args, **kwargs):
+        usuario = request.user
+        instance = get_object_or_404(Carrito, usuario=usuario)
+        serializer = self.get_serializer(instance)
+        return Response(serializer.data)
+
+# ENDPOINTS DE ITEMS DEL CARRITO
+class ItemCarritoViewSet(viewsets.ModelViewSet):
+    queryset = ItemCarrito.objects.all()
+    serializer_class = ItemCarritoSerializer
+    permission_classes = [permissions.IsAuthenticated]
+    authentication_classes = [UsuarioTokenAuthentication]
+
+    def get_queryset(self):
+        usuario = self.request.user
+        return ItemCarrito.objects.filter(carrito__usuario=usuario)
+
+    def perform_create(self, serializer):
+        usuario = self.request.user
+        carrito, _ = Carrito.objects.get_or_create(usuario=usuario)
+        serializer.save(carrito=carrito)
+
+    def partial_update(self, request, *args, **kwargs):
+        instance = self.get_object()
+        unidades = request.data.get('unidades')
+        restar = request.data.get('restar')
+        sumar = request.data.get('sumar')
+        cantidad_final = instance.unidades
+
+        if restar is not None:
+            try:
+                restar = int(restar)
+            except ValueError:
+                return Response({'error': 'La cantidad a restar debe ser un número entero.'}, status=400)
+            cantidad_final = instance.unidades - restar
+        elif sumar is not None:
+            try:
+                sumar = int(sumar)
+            except ValueError:
+                return Response({'error': 'La cantidad a sumar debe ser un número entero.'}, status=400)
+            cantidad_final = instance.unidades + sumar
+        elif unidades is not None:
+            try:
+                cantidad_final = int(unidades)
+            except ValueError:
+                return Response({'error': 'La cantidad debe ser un número entero.'}, status=400)
+
+        if cantidad_final < 0:
+            return Response({'error': 'La cantidad no puede ser menor a 0.'}, status=400)
+        if cantidad_final > instance.producto.Stock:
+            return Response({'error': f'Solo hay {instance.producto.Stock} unidades disponibles.'}, status=400)
+        if cantidad_final == 0:
+            instance.delete()
+            return Response({'message': 'Ítem eliminado del carrito.'}, status=204)
+        instance.unidades = cantidad_final
+        instance.save()
+        serializer = self.get_serializer(instance)
+        return Response(serializer.data)
+
+# ENDPOINTS DE PAGO Y MERCADO PAGO
+class CheckoutView(views.APIView):
+    permission_classes = [permissions.IsAuthenticated]
+    authentication_classes = [UsuarioTokenAuthentication]
+
+    def post(self, request):
+        usuario = request.user
+        try:
+            carrito = usuario.carrito
+        except Carrito.DoesNotExist:
+            return Response({"error": "El carrito está vacío"}, status=status.HTTP_400_BAD_REQUEST)
+
+        preference_id, init_point = crear_preferencia_pago(usuario, carrito)
+        pago, created = Pago.objects.get_or_create(
+            usuario=usuario,
+            carrito=carrito,
+            defaults={"estado": "pendiente"}
+        )
+        pago.preference_id = preference_id
+        pago.save()
+
+        return Response({
+            "preference_id": preference_id,
+            "init_point": init_point,
+        })
+
+@method_decorator(csrf_exempt, name='dispatch')
+class MercadoPagoWebhookView(views.APIView):
+    def post(self, request):
+        data = request.data
+        if data.get('type') != 'payment':
+            return Response({'message': 'Evento ignorado'}, status=status.HTTP_200_OK)
+        payment_id = data.get('data', {}).get('id')
+        if not payment_id:
+            return Response({'error': 'No payment_id'}, status=status.HTTP_400_BAD_REQUEST)
+        sdk = mercadopago.SDK(settings.MERCADO_PAGO_ACCESS_TOKEN)
+        payment_info = sdk.payment().get(payment_id)
+        payment = payment_info.get('response', {})
+        preference_id = payment.get('order', {}).get('id') or payment.get('preference_id')
+        status_mp = payment.get('status')
+        if not preference_id:
+            return Response({'error': 'No preference_id en pago'}, status=status.HTTP_400_BAD_REQUEST)
+        try:
+            pago = Pago.objects.get(preference_id=preference_id)
+        except Pago.DoesNotExist:
+            return Response({'error': 'Pago no encontrado'}, status=status.HTTP_404_NOT_FOUND)
+        if status_mp == 'approved':
+            pago.estado = 'aprobado'
+        elif status_mp == 'rejected':
+            pago.estado = 'rechazado'
+        else:
+            pago.estado = 'pendiente'
+        pago.save()
+        return Response({'message': f'Pago actualizado a {pago.estado}'}, status=status.HTTP_200_OK)
+
+class PagoViewSet(viewsets.ModelViewSet):
+    queryset = Pago.objects.all()
+    serializer_class = PagoSerializer
+    permission_classes = [permissions.IsAuthenticated]
+    authentication_classes = [UsuarioTokenAuthentication]
+
+    def get_queryset(self):
+        return Pago.objects.filter(usuario=self.request.user)
+
+# ENDPOINTS DESEADOS, TIENDA, SEGUIMIENTO, VENTA, ETC.
 class ProductoDeseadoViewSet(viewsets.ModelViewSet):
     queryset = ProductoDeseado.objects.all()
     serializer_class = ProductoDeseadoSerializer
@@ -245,38 +387,6 @@ class UserViewSet(viewsets.ReadOnlyModelViewSet):
     serializer_class = UserSerializer
     permission_classes = [permissions.IsAdminUser,]
     authentication_classes = [authentication.BasicAuthentication,]
-
-class CarritoViewSet(viewsets.ModelViewSet):
-    queryset = Carrito.objects.all()  # Assuming you want to list products in the cart
-    serializer_class = ProductoSerializer
-    permission_classes = [permissions.IsAuthenticated]
-    authentication_classes = [authentication.BasicAuthentication,]
-
-    @action(detail=False, methods=['post'])
-    def AgAlCarrito(request):
-        if request.method == 'POST':
-            usuario_id = request.data.get('usuario_id')
-            producto_id = request.data.get('producto_id')
-            unidades = request.data.get('unidades', 1)
-            if not usuario_id or not producto_id:
-                return Response({'error': 'Debes enviar usuario_id y producto_id'}, status=400)
-            try:
-                usuario = Usuario.objects.get(pk=usuario_id)
-                producto = Producto.objects.get(pk=producto_id)
-                carrito, created = Carrito.objects.get_or_create(usuario=usuario, producto=producto)
-                if created:
-                    carrito.unidades = unidades
-                    carrito.valortotal = producto.Precio * unidades
-                    carrito.save()
-                    return Response({'message': 'Producto agregado al carrito exitosamente'}, status=201)
-                else:
-                    carrito.unidades += unidades
-                    carrito.valortotal += producto.Precio * unidades
-                    carrito.save()
-                    return Response({'message': 'Producto actualizado en el carrito'}, status=200)
-            except (Usuario.DoesNotExist, Producto.DoesNotExist):
-                return Response({'error': 'Usuario o Producto no encontrado'}, status=404)
-        return Response({'error': 'Método no permitido'}, status=405)
 
 class TiendaViewSet(viewsets.ModelViewSet):
     queryset = Tienda.objects.all()  # Assuming you want to list products in the store
@@ -418,8 +528,6 @@ class SeguimientoTiendaViewSet(viewsets.ModelViewSet):
         except (Usuario.DoesNotExist, Tienda.DoesNotExist):
             return Response({'error': 'Usuario o Tienda no encontrado'}, status=404)
 
-            
-
 class LoginView(views.APIView):
     permission_classes = [permissions.AllowAny]
     def post(self, request):
@@ -451,4 +559,29 @@ class LogoutView(views.APIView):
         logout(request)
         # Devolvemos la respuesta al cliente
         return response.Response({'message':'Sessión Cerrada y Token Eliminado !!!!'},status=status.HTTP_200_OK)
+
+# ENDPOINT PARA ACTUALIZAR ESTADO DE PAGO Y VACIAR CARRITO
+class ActualizarEstadoPagoView(views.APIView):
+    def post(self, request):
+        pago_id = request.data.get('pago_id')
+        nuevo_estado = request.data.get('estado')
+        if not pago_id or not nuevo_estado:
+            return Response({'error': 'pago_id y estado son requeridos'}, status=status.HTTP_400_BAD_REQUEST)
+        try:
+            pago = Pago.objects.get(id=pago_id)
+            pago.estado = nuevo_estado
+            pago.save()
+            debug_info = {}
+            if nuevo_estado == 'aprobado':
+                carrito = pago.carrito
+                debug_info['carrito_id'] = carrito.id
+                debug_info['items_antes'] = list(carrito.items.values('id', 'producto_id', 'unidades'))
+                for item in carrito.items.all():
+                    item.producto.Stock = max(0, item.producto.Stock - item.unidades)
+                    item.producto.save()
+                carrito.items.all().delete()
+                debug_info['items_despues'] = list(carrito.items.values('id', 'producto_id', 'unidades'))
+            return Response({'message': 'Estado actualizado y carrito vaciado', 'debug': debug_info}, status=status.HTTP_200_OK)
+        except Pago.DoesNotExist:
+            return Response({'error': 'Pago no encontrado'}, status=status.HTTP_404_NOT_FOUND)
 

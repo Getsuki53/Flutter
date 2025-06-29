@@ -11,6 +11,10 @@ https://docs.djangoproject.com/en/5.2/ref/settings/
 """
 
 from pathlib import Path
+import os
+
+# Token de Mercado Pago para integración de pagos
+MERCADO_PAGO_ACCESS_TOKEN = "TEST-7564814394299669-062820-cb38adf09500d7f7cab89cda757c9882-230001938"
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -25,7 +29,6 @@ SECRET_KEY = 'django-insecure-(0d6l3zs-8qx#fv_d0tdm=yoqotog!sd7c#txl96ucv1^8*x10
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-import os
 ALLOWED_HOSTS = ['*']
 # Base url to serve media files  
 MEDIA_URL = '/media/'  
@@ -35,10 +38,7 @@ STATICFILES_DIR = (
     os.path.join(BASE_DIR, 'static'),
 )
 
-
-
 # Application definition
-
 INSTALLED_APPS = [
     'django.contrib.admin',
     'django.contrib.auth',
@@ -47,9 +47,8 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'rest_framework', 
-    'api.apps.ApiConfig',  # 'api',
+    'api.apps.ApiConfig',
     'rest_framework.authtoken',
-
 ]
 
 MIDDLEWARE = [
@@ -81,10 +80,8 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'ProyectoApi.wsgi.application'
 
-
 # Database
 # https://docs.djangoproject.com/en/5.2/ref/settings/#databases
-
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
@@ -99,11 +96,8 @@ DATABASES = {
     }
 }
 
-
-
 # Password validation
 # https://docs.djangoproject.com/en/5.2/ref/settings/#auth-password-validators
-
 AUTH_PASSWORD_VALIDATORS = [
     {
         'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator',
@@ -119,25 +113,17 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
-
 # Internationalization
 # https://docs.djangoproject.com/en/5.2/topics/i18n/
-
 LANGUAGE_CODE = 'en-us'
-
 TIME_ZONE = 'UTC'
-
 USE_I18N = True
-
 USE_TZ = True
-
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/5.2/howto/static-files/
-
 STATIC_URL = 'static/'
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.2/ref/settings/#default-auto-field
-
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'

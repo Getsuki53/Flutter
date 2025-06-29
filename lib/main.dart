@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'pantallas/MiPerfil.dart';
-import 'pantallas/HabilitarProducto.dart';
+import 'pantallas/sesion/Ingreso.dart';
+import 'pantallas/Home.dart';
 
 void main() {
   runApp(const MiTiendaApp());
@@ -13,50 +13,56 @@ class MiTiendaApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'Mi Tienda',
+      debugShowCheckedModeBanner: false,
       theme: ThemeData(
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.teal),
         useMaterial3: true,
       ),
-      home: const HomePage(),
+      home: const AppEntry(),
     );
   }
 }
 
-class HomePage extends StatelessWidget {
-  const HomePage({super.key});
+class AppEntry extends StatefulWidget {
+  const AppEntry({super.key});
+  
+  @override
+  State<AppEntry> createState() => _AppEntryState();
+}
+
+class _AppEntryState extends State<AppEntry> {
+  bool _loggedIn = false;
+
+  @override
+  void initState() {
+    super.initState();
+
+    // Esperar al primer frame antes de navegar
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _goToLogin();
+    });
+  }
+
+  Future<void> _goToLogin() async {
+    final resultado = await Navigator.push(
+      context,
+      MaterialPageRoute(builder: (_) => const LoginPage()),
+    );
+
+    // El login fue exitoso si retornó true
+    if (resultado == true) {
+      setState(() {
+        _loggedIn = true;
+      });
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(title: const Text('Mi Tienda')),
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            const SizedBox(height: 16),
-            ElevatedButton(
-              child: const Text('Habilitar producto'),
-              onPressed: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (_) => const HabilitarProducto()),
-                );
-              },
-            ),
-            const SizedBox(height: 16),
-            ElevatedButton(
-              child: const Text('Mi perfil'),
-              onPressed: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (_) => const MiPerfil()),
-                );
-              },
-            ),
-          ],
-        ),
-      ),
-    );
+    return _loggedIn
+        ? const HomePage()
+        : const Scaffold(
+            body: Center(child: CircularProgressIndicator()),
+          );
   }
 }
-

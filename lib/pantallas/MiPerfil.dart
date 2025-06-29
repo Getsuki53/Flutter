@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'MiTienda.dart';
+import 'Seguidos.dart';
+import 'Deseados.dart';
 
 class MiPerfil extends StatelessWidget {
   const MiPerfil({super.key});
@@ -42,7 +44,26 @@ class MiPerfil extends StatelessWidget {
                 );
               },
               child: const Text('Mi Tienda'),
-
+            ),
+            const SizedBox(height: 24),
+            ElevatedButton(
+              onPressed: () {
+                Navigator.push(
+                  context, 
+                  MaterialPageRoute(builder: (_) => const FollowedPage()),
+                );
+              },
+              child: const Text('Tiendas Seguidas'),
+            ),
+            const SizedBox(height: 24),
+            ElevatedButton(
+              onPressed: () {
+                Navigator.push(
+                  context, 
+                  MaterialPageRoute(builder: (_) => const WishedPage()),
+                );
+              },
+              child: const Text('Lista de deseos'),
             ),
           ],
         ),

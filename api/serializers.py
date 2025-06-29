@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from api.models import Producto, Client, Venta, VentaProducto, Person
+from api.models import Producto, Persona, Usuario, Administrador, Venta, ProductoDeseado, tipoCategoria, Carrito, Tienda, SeguimientoTienda
 from django.contrib.auth.models import User
 from rest_framework.authtoken.models import Token
 
@@ -9,28 +9,57 @@ class ProductoSerializer(serializers.ModelSerializer):
         fields = '__all__'
         read_only_fields = ('created_at',)
 
-class ClientSerializer(serializers.ModelSerializer):
+class ProductoMainSerializer(serializers.ModelSerializer):
     class Meta:
-        model = Client
+        model = Producto
+        fields = ['Nomprod', 'Precio', 'FotoProd']
+
+class ProductoCarritoSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Producto
+        fields = ['Nomprod', 'Precio', 'FotoProd', 'Stock']
+
+
+class UsuarioSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Usuario
+        fields = '__all__'
+
+class AdministradorSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Administrador
         fields = '__all__'
 
 class VentaSerializer(serializers.ModelSerializer):
     class Meta:
         model = Venta
         fields = '__all__'
-        extra_kwargs = {
-            'fecha': {'read_only': True, 'required': False},
-            # 'fecha': {'read_only': True},
-        }        
-class VentaProductoSerializer(serializers.ModelSerializer):
+
+class ProductoDeseadoSerializer(serializers.ModelSerializer):
     class Meta:
-        model = VentaProducto
+        model = ProductoDeseado
         fields = '__all__'
 
-class PersonSerializer(serializers.ModelSerializer):
+class tipoCategoriaSerializer(serializers.ModelSerializer):
     class Meta:
-        model = Person
+        model = tipoCategoria
         fields = '__all__'
+
+class CarritoSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Carrito
+        fields = '__all__'
+
+class TiendaSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Tienda
+        fields = '__all__'
+
+class SeguimientoTiendaSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = SeguimientoTienda
+        fields = '__all__'
+
 
 class UserSerializer(serializers.ModelSerializer):
     class Meta:

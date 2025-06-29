@@ -92,7 +92,7 @@ DATABASES = {
         'PORT':'3306',
         'USER':'root',
         'PASSWORD':'Sharingan1.',
-        'NAME':'bdempresa',
+        'NAME':'bdempresa2',
         'OPTIONS':{
             'init_command':"SET sql_mode='STRICT_TRANS_TABLES'"
         }

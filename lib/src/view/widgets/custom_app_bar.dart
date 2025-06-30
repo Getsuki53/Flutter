@@ -1,7 +1,6 @@
 // lib/src/view/widgets/custom_app_bar.dart
 
 import 'package:flutter/material.dart';
-
 class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
   final TextEditingController controller;
   //final VoidCallback onCartPressed;
@@ -36,9 +35,14 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
       ),
       /*actions: [
         IconButton(
-          icon: const Icon(Icons.shopping_cart_outlined, color: Colors.black),
-          onPressed: onCartPressed,
-        ),
+          icon: const Icon(Icons.shopping_cart),
+          onPressed: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (_) => const CartView()),
+            );
+          },
+        )
       ],*/
     );
   }

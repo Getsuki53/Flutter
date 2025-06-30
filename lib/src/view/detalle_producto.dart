@@ -2,17 +2,21 @@
 
 import 'package:flutter/material.dart';
 import 'package:scrollinghome/src/model/product_model.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:scrollinghome/src/provider/cart_provider.dart';
 
-class DetalleProducto extends StatefulWidget {
+
+class DetalleProducto extends ConsumerStatefulWidget {
   final Welcome producto;
 
   const DetalleProducto({super.key, required this.producto});
 
   @override
-  State<DetalleProducto> createState() => _DetalleProductoState();
+ConsumerState<DetalleProducto> createState() => _DetalleProductoState();
 }
 
-class _DetalleProductoState extends State<DetalleProducto> {
+class _DetalleProductoState extends ConsumerState<DetalleProducto> {
+
   int cantidad = 1;
 
   void aumentarCantidad() {
@@ -70,6 +74,7 @@ class _DetalleProductoState extends State<DetalleProducto> {
               child: ElevatedButton(
                 onPressed: () {
                   // Acción para agregar al carrito
+                  ref.read(cartProvider.notifier).addToCart(widget.producto, quantity: cantidad);
                   ScaffoldMessenger.of(context).showSnackBar(
                     SnackBar(content: Text('Agregado $cantidad al carrito')),
                   );

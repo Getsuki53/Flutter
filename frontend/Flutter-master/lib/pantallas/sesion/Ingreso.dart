@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:http/http.dart' as http;
+import 'package:prueba1/pantallas/HabilitarProducto.dart';
 import 'dart:convert';
 import 'Registro.dart';
 import '../MainScaffold.dart'; // Asegúrate de que esta ruta sea correcta
@@ -44,6 +46,11 @@ class _LoginPageState extends State<LoginPage> {
 
       if (response.statusCode == 200) {
         final data = json.decode(response.body);
+
+        // Guardar token y usuario_id en SharedPreferences
+        SharedPreferences prefs = await SharedPreferences.getInstance();
+        await prefs.setInt('usuario_id', data['usuario_id']);
+
         showSnackbar("Login exitoso!");
 
         // Guardar token (opcional)
@@ -92,10 +99,17 @@ class _LoginPageState extends State<LoginPage> {
       );
 
       if (response.statusCode == 200) {
+        final data = json.decode(response.body);
+
+        // Guardar token y usuario_id en SharedPreferences
+        SharedPreferences prefs = await SharedPreferences.getInstance();
+        await prefs.setInt('usuario_id', data['usuario_id']);
+
         showSnackbar("Admin login exitoso!");
+
         Navigator.pushAndRemoveUntil(
           context,
-          MaterialPageRoute(builder: (_) => const MainScaffold()),
+          MaterialPageRoute(builder: (_) => const HabilitarProducto()),
           (Route<dynamic> route) => false,
         );
       } else {

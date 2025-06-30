@@ -540,6 +540,18 @@ class TiendaViewSet(viewsets.ModelViewSet):
         except Tienda.DoesNotExist:
             return Response({'error': 'Tienda no encontrada'}, status=status.HTTP_404_NOT_FOUND)
 
+    @action(detail=False, methods=['get'])
+    def ObtenerTiendaPorPropietario(self, request):
+        propietario_id = request.query_params.get('propietario_id')
+        if not propietario_id:
+            return Response({'error': 'Debes enviar propietario_id'}, status=400)
+        try:
+            tienda = Tienda.objects.get(Propietario=propietario_id)
+            serializer = self.get_serializer(tienda)
+            return Response(serializer.data)
+        except Tienda.DoesNotExist:
+            return Response({'error': 'Tienda no encontrada'}, status=status.HTTP_404_NOT_FOUND)
+
 class SeguimientoTiendaViewSet(viewsets.ModelViewSet):
     queryset = SeguimientoTienda.objects.all()  # Assuming you want to track products in the store
     serializer_class = SeguimientoTiendaSerializer

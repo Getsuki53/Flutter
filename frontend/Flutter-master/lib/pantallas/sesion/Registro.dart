@@ -14,6 +14,7 @@ class _SigninPageState extends State<SigninPage> {
   final TextEditingController nameController = TextEditingController();
   final TextEditingController emailController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
+  final TextEditingController rPasswordController = TextEditingController();
   final TextEditingController apellidoController = TextEditingController();
   bool _isLoading = false;
 
@@ -26,8 +27,14 @@ class _SigninPageState extends State<SigninPage> {
   Future<void> registerWithBackend() async {
     if (emailController.text.isEmpty ||
         passwordController.text.isEmpty ||
-        nameController.text.isEmpty) {
-      showSnackbar("Nombre, email y contraseña son requeridos");
+        nameController.text.isEmpty ||
+        rPasswordController.text.isEmpty) {
+      showSnackbar("Nombre, email y contraseñas son requeridas");
+      return;
+    }
+
+    if (passwordController.text != rPasswordController.text) {
+      showSnackbar("Las contraseñas no coinciden");
       return;
     }
 
@@ -36,13 +43,13 @@ class _SigninPageState extends State<SigninPage> {
     });
 
     try {
-      // 📡 Conectar a tu backend Django
+      // Conectar a tu backend Django
       final response = await http.post(
         Uri.parse('http://127.0.0.1:8000/api/registro-usuario/'),
         headers: {'Content-Type': 'application/json'},
         body: json.encode({
           'correo': emailController.text,
-          'contraseña': passwordController.text,
+          'contrasena': passwordController.text,
           'nombre': nameController.text,
           'apellido': apellidoController.text.isEmpty
               ? 'vacio_'
@@ -156,6 +163,18 @@ class _SigninPageState extends State<SigninPage> {
                   decoration: const InputDecoration(
                     border: OutlineInputBorder(),
                     labelText: 'Contraseña *',
+                    prefixIcon: Icon(Icons.lock),
+                  ),
+                ),
+              ),
+              Container(
+                padding: const EdgeInsets.all(10),
+                child: TextField(
+                  controller: rPasswordController,
+                  obscureText: true,
+                  decoration: const InputDecoration(
+                    border: OutlineInputBorder(),
+                    labelText: 'Repetir Contraseña *',
                     prefixIcon: Icon(Icons.lock),
                   ),
                 ),

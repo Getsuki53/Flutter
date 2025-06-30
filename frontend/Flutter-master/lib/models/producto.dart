@@ -8,10 +8,10 @@ class Producto {
   final int stock;
   final String? fotoProd;
   final double precio;
-  final TipoCategoria tipoCategoria;
+  final String tipoCategoria; // Ahora es String
   final bool estado;
   final DateTime fechaPub;
-  final Tienda tienda;
+  final int tienda; // Ahora es int
 
   Producto({
     required this.id,
@@ -34,10 +34,12 @@ class Producto {
       stock: json['Stock'] ?? 0,
       fotoProd: json['FotoProd'],
       precio: double.tryParse(json['Precio'].toString()) ?? 0.0,
-      tipoCategoria: TipoCategoria.fromJson(json['tipoCategoria']),
+      tipoCategoria: json['tipoCategoria'] ?? '',
       estado: json['Estado'] ?? false,
       fechaPub: DateTime.parse(json['FechaPub']),
-      tienda: Tienda.fromJson(json['tienda']),
+      tienda: json['tienda'] is int
+          ? json['tienda']
+          : int.tryParse(json['tienda'].toString()) ?? 0,
     );
   }
 
@@ -49,10 +51,10 @@ class Producto {
       'Stock': stock,
       'FotoProd': fotoProd,
       'Precio': precio,
-      'tipoCategoria': tipoCategoria.toJson(),
+      'tipoCategoria': tipoCategoria,
       'Estado': estado,
       'FechaPub': fechaPub.toIso8601String(),
-      'tienda': tienda.toJson(),
+      'tienda': tienda,
     };
   }
 

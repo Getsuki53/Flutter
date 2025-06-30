@@ -10,6 +10,8 @@ class HomePage extends ConsumerWidget {
     return Scaffold(
       body: const ProductList(),
       backgroundColor: Colors.white,
+ // Call the function to fetch products
+
     );
   }
 }

@@ -20,7 +20,6 @@ class _LoginPageState extends State<LoginPage> {
     ScaffoldMessenger.of(context).showSnackBar(snack);
   }
 
-  // 🔥 NUEVA FUNCIÓN: Conectar con tu backend Django
   Future<void> loginWithBackend() async {
     if (nameController.text.isEmpty || passwordController.text.isEmpty) {
       showSnackbar("Usuario y contraseña requeridos");
@@ -38,13 +37,13 @@ class _LoginPageState extends State<LoginPage> {
         headers: {'Content-Type': 'application/json'},
         body: json.encode({
           'correo': nameController.text,
-          'contrasena': passwordController.text,
+          'contraseña': passwordController.text,
         }),
       );
 
       if (response.statusCode == 200) {
         final data = json.decode(response.body);
-        // ✅ Login exitoso
+
         showSnackbar("Login exitoso!");
 
         // Guardar token (opcional)
@@ -167,7 +166,7 @@ class _LoginPageState extends State<LoginPage> {
                 style: TextStyle(color: Colors.cyan),
               ),
             ),
-            // 🔥 BOTÓN LOGIN USUARIO
+
             Container(
               height: 50,
               padding: const EdgeInsets.fromLTRB(10, 0, 10, 0),
@@ -182,7 +181,7 @@ class _LoginPageState extends State<LoginPage> {
               ),
             ),
             SizedBox(height: 10),
-            // 🔥 BOTÓN LOGIN ADMIN
+
             Container(
               height: 50,
               padding: const EdgeInsets.fromLTRB(10, 0, 10, 0),

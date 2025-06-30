@@ -8,11 +8,7 @@ class WishedPage extends StatefulWidget {
 }
 
 class _WishedPageState extends State<WishedPage> {
-  final List<String> deseados = [
-    'Producto',
-    'Random',
-    'Idk'
-  ];
+  final List<String> deseados = ['Producto', 'Random', 'Idk'];
 
   void verDetalles(String producto) {
     // Redireccionar al producto
@@ -31,7 +27,7 @@ class _WishedPageState extends State<WishedPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text("Lista de deseados")),
+      appBar: AppBar(title: const Text("Lista de productos deseados")),
       body: Padding(
         padding: const EdgeInsets.all(10),
         child: ListView.builder(
@@ -53,9 +49,7 @@ class _WishedPageState extends State<WishedPage> {
                       onTap: () => verDetalles(producto),
                       child: Text(
                         producto,
-                        style: const TextStyle(
-                          fontSize: 16,
-                        ),
+                        style: const TextStyle(fontSize: 16),
                       ),
                     ),
                   ),

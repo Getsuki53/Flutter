@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
+import 'dart:convert';
 import 'Ingreso.dart';
 
 class SigninPage extends StatefulWidget {
@@ -10,145 +12,198 @@ class SigninPage extends StatefulWidget {
 
 class _SigninPageState extends State<SigninPage> {
   final TextEditingController nameController = TextEditingController();
-  final TextEditingController mailController = TextEditingController();
+  final TextEditingController emailController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
-  final TextEditingController rPasswordController = TextEditingController();
+  final TextEditingController apellidoController = TextEditingController();
+  bool _isLoading = false;
 
   void showSnackbar(String msg) {
     final snack = SnackBar(content: Text(msg));
     ScaffoldMessenger.of(context).showSnackBar(snack);
   }
 
-  Future<void> signin() async {
-    if (nameController.text.isEmpty || passwordController.text.isEmpty || passwordController.text.isEmpty) {
-      showSnackbar(
-        "${nameController.text.isEmpty ? "-User " : ""} ${mailController.text.isEmpty ? "- Correo " : ""} ${passwordController.text.isEmpty ? "- Contraseña " : ""} requerido");
+  // 🔥 FUNCIÓN: Registro con backend Django
+  Future<void> registerWithBackend() async {
+    if (emailController.text.isEmpty ||
+        passwordController.text.isEmpty ||
+        nameController.text.isEmpty) {
+      showSnackbar("Nombre, email y contraseña son requeridos");
       return;
     }
 
-    if (passwordController != rPasswordController) {
-      showSnackbar(
-        "Las contraseñas no coinciden"
+    setState(() {
+      _isLoading = true;
+    });
+
+    try {
+      // 📡 Conectar a tu backend Django
+      final response = await http.post(
+        Uri.parse('http://127.0.0.1:8000/api/registro-usuario/'),
+        headers: {'Content-Type': 'application/json'},
+        body: json.encode({
+          'correo': emailController.text,
+          'contraseña': passwordController.text,
+          'nombre': nameController.text,
+          'apellido': apellidoController.text.isEmpty
+              ? 'vacio_'
+              : apellidoController.text,
+        }),
       );
-      return;
-    }
 
-    // final datosUsuario = {
-    //   "username": nameController.text,
-    //   "mail": mailController.text,
-    //   "password": passwordController.text
-    // };
+      if (response.statusCode == 201) {
+        final data = json.decode(response.body);
+        showSnackbar("Usuario registrado exitosamente!");
+
+        // Redirigir al login
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (_) => const LoginPage()),
+        );
+      } else {
+        final error = json.decode(response.body);
+        showSnackbar(error['error'] ?? 'Error de registro');
+      }
+    } catch (e) {
+      showSnackbar("Error de conexión: $e");
+    } finally {
+      setState(() {
+        _isLoading = false;
+      });
+    }
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      //appBar: AppBar(title: const Text("Handmade Geeks")),
+      appBar: AppBar(
+        title: const Text('Registro'),
+        backgroundColor: Colors.cyan,
+      ),
       body: Padding(
-        padding: const EdgeInsets.all(10),
-        child: ListView(
-          children: [
-            Container(
-              padding: const EdgeInsets.all(10),
-              alignment: Alignment.center,
-              child: Row(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Image.asset('lib/imagenes/perro.jpeg', width: 70, height: 70),
-                  const SizedBox(width: 10),
-                  const Text('Handmade Geeks',
-                    style: TextStyle(
-                      fontSize: 24, 
-                      fontWeight: FontWeight.bold,
-                      color: Colors.cyan
-                    )
-                  ),
-                ],
-              ),
-            ),
-            Container(
-              alignment: Alignment.topLeft,
-              padding: const EdgeInsets.all(10),
-              child: const Text(
-                'Registrarse',
-                style: TextStyle(fontSize: 20),
-              ),
-            ),
-            Container(
-              padding: const EdgeInsets.all(10),
-              child: TextField(
-                controller: nameController,
-                decoration: const InputDecoration(
-                  border: OutlineInputBorder(),
-                  labelText: 'Nombre de Usuario',
-                ),
-              ),
-            ),
-            Container(
-              padding: const EdgeInsets.all(10),
-              child: TextField(
-                controller: mailController,
-                decoration: const InputDecoration(
-                  border: OutlineInputBorder(),
-                  labelText: 'Correo',
-                ),
-              ),
-            ),
-            Container(
-              padding: const EdgeInsets.all(10),
-              child: TextField(
-                controller: passwordController,
-                obscureText: true,
-                decoration: const InputDecoration(
-                  border: OutlineInputBorder(),
-                  labelText: 'Contraseña',
-                ),
-              ),
-            ),
-            Container(
-              padding: const EdgeInsets.all(10),
-              child: TextField(
-                controller: rPasswordController,
-                obscureText: true,
-                decoration: const InputDecoration(
-                  border: OutlineInputBorder(),
-                  labelText: 'Repetir Contraseña',
-                ),
-              ),
-            ),
-            Container(
-              height: 60,
-              padding: const EdgeInsets.fromLTRB(10, 10, 10, 0),
-              child: ElevatedButton(
-                onPressed: signin,
-                child: const Text(
-                  'Registrarse',
-                  style: TextStyle(color: Colors.cyan),
-                ),
-              ),
-            ),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: <Widget>[
-                const Text('Ya tengo cuenta'),
-                TextButton(
-                  child: const Text(
-                    'Ingresar',
-                    style: TextStyle(
-                      fontSize: 20,
+        padding: const EdgeInsets.all(16.0),
+        child: SingleChildScrollView(
+          child: Column(
+            children: [
+              const SizedBox(height: 20),
+              Container(
+                alignment: Alignment.center,
+                child: Image.asset(
+                  'lib/imagenes/perro.jpeg',
+                  width: 120,
+                  height: 70,
+                  errorBuilder: (context, error, stackTrace) {
+                    return const Icon(
+                      Icons.image,
+                      size: 70,
                       color: Colors.cyan,
-                    ),
-                  ),
-                  onPressed: () {
-                    Navigator.push(
-                      context, 
-                      MaterialPageRoute(builder: (_) => const LoginPage()),
                     );
                   },
                 ),
-              ],
-            ),
-          ],
+              ),
+              const SizedBox(height: 20),
+              Container(
+                alignment: Alignment.center,
+                child: const Text(
+                  'Crear Cuenta',
+                  style: TextStyle(
+                    fontSize: 24,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.cyan,
+                  ),
+                ),
+              ),
+              const SizedBox(height: 30),
+              Container(
+                padding: const EdgeInsets.all(10),
+                child: TextField(
+                  controller: nameController,
+                  decoration: const InputDecoration(
+                    border: OutlineInputBorder(),
+                    labelText: 'Nombre *',
+                    prefixIcon: Icon(Icons.person),
+                  ),
+                ),
+              ),
+              Container(
+                padding: const EdgeInsets.all(10),
+                child: TextField(
+                  controller: apellidoController,
+                  decoration: const InputDecoration(
+                    border: OutlineInputBorder(),
+                    labelText: 'Apellido (opcional)',
+                    prefixIcon: Icon(Icons.person_outline),
+                  ),
+                ),
+              ),
+              Container(
+                padding: const EdgeInsets.all(10),
+                child: TextField(
+                  controller: emailController,
+                  decoration: const InputDecoration(
+                    border: OutlineInputBorder(),
+                    labelText: 'Correo electrónico *',
+                    prefixIcon: Icon(Icons.email),
+                  ),
+                  keyboardType: TextInputType.emailAddress,
+                ),
+              ),
+              Container(
+                padding: const EdgeInsets.all(10),
+                child: TextField(
+                  controller: passwordController,
+                  obscureText: true,
+                  decoration: const InputDecoration(
+                    border: OutlineInputBorder(),
+                    labelText: 'Contraseña *',
+                    prefixIcon: Icon(Icons.lock),
+                  ),
+                ),
+              ),
+              const SizedBox(height: 20),
+              Container(
+                height: 50,
+                width: double.infinity,
+                padding: const EdgeInsets.symmetric(horizontal: 10),
+                child: ElevatedButton(
+                  onPressed: _isLoading ? null : registerWithBackend,
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.cyan,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                  ),
+                  child: _isLoading
+                      ? const CircularProgressIndicator(color: Colors.white)
+                      : const Text(
+                          'Registrarse',
+                          style: TextStyle(color: Colors.white, fontSize: 18),
+                        ),
+                ),
+              ),
+              const SizedBox(height: 20),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  const Text('¿Ya tienes cuenta?'),
+                  TextButton(
+                    onPressed: () {
+                      Navigator.pushReplacement(
+                        context,
+                        MaterialPageRoute(builder: (_) => const LoginPage()),
+                      );
+                    },
+                    child: const Text(
+                      'Iniciar Sesión',
+                      style: TextStyle(
+                        color: Colors.cyan,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ],
+          ),
         ),
       ),
     );

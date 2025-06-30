@@ -20,15 +20,21 @@ class _SigninPageState extends State<SigninPage> {
   }
 
   Future<void> signin() async {
-    if (nameController.text.isEmpty || passwordController.text.isEmpty || passwordController.text.isEmpty) {
+    if (nameController.text.isEmpty || passwordController.text.isEmpty || mailController.text.isEmpty) {
       showSnackbar(
         "${nameController.text.isEmpty ? "-User " : ""} ${mailController.text.isEmpty ? "- Correo " : ""} ${passwordController.text.isEmpty ? "- Contraseña " : ""} requerido");
       return;
     }
 
-    if (passwordController != rPasswordController) {
+    if (passwordController.text != rPasswordController.text) {
       showSnackbar(
         "Las contraseñas no coinciden"
+      );
+      return;
+    }
+    else {
+      showSnackbar(
+        "Sign in Proceso"
       );
       return;
     }
@@ -140,10 +146,7 @@ class _SigninPageState extends State<SigninPage> {
                     ),
                   ),
                   onPressed: () {
-                    Navigator.push(
-                      context, 
-                      MaterialPageRoute(builder: (_) => const LoginPage()),
-                    );
+                    Navigator.pushReplacement(context, MaterialPageRoute(builder: (_) => const LoginPage()),);
                   },
                 ),
               ],

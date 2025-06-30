@@ -1,7 +1,7 @@
 class Usuario {
   final int id;
   final String correo;
-  final String contraseña;
+  final String contrasena;
   final String nombre;
   final String apellido;
   final String? foto;
@@ -10,7 +10,7 @@ class Usuario {
   Usuario({
     required this.id,
     required this.correo,
-    required this.contraseña,
+    required this.contrasena,
     required this.nombre,
     required this.apellido,
     this.foto,
@@ -21,7 +21,7 @@ class Usuario {
     return Usuario(
       id: json['id'],
       correo: json['correo'] ?? '',
-      contraseña: json['contraseña'] ?? '',
+      contrasena: json['contraseña'] ?? '',
       nombre: json['nombre'] ?? '',
       apellido: json['apellido'] ?? '',
       foto: json['foto'],
@@ -33,7 +33,7 @@ class Usuario {
     return {
       'id': id,
       'correo': correo,
-      'contraseña': contraseña,
+      'contraseña': contrasena,
       'nombre': nombre,
       'apellido': apellido,
       'foto': foto,

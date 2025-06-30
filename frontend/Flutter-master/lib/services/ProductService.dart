@@ -1,21 +1,17 @@
 // lib/src/service/product_service.dart
 
-import 'package:http/http.dart' as http;
 import 'dart:convert';
-
-import 'package:prueba1/models/ProductModel.dart';
+import 'package:http/http.dart' as http;
+import '../models/producto.dart';
 
 class ProductService {
-  static Future<List<Welcome>> fetchProducts({int skip = 0, int limit = 20}) async {
-    final url = Uri.parse("https://dummyjson.com/products?limit=$limit&skip=$skip");
-    final response = await http.get(url);
-
+  static Future<List<Producto>> fetchProducts() async {
+    final response = await http.get(Uri.parse('http://localhost:8000/api/producto/'));
     if (response.statusCode == 200) {
-      final data = json.decode(response.body);
-      final List<dynamic> products = data['products'];
-      return products.map((item) => Welcome.fromJson(item)).toList();
+      final List<dynamic> data = jsonDecode(response.body);
+      return data.map((json) => Producto.fromJson(json)).toList();
     } else {
-      throw Exception('Failed to load products');
+      throw Exception('Error al cargar productos');
     }
   }
 }

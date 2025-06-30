@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'pantallas/sesion/Ingreso.dart';
 
 void main() {
-  runApp(const MiTiendaApp());
+  runApp(
+    ProviderScope(child: MiTiendaApp()),
+  );
 }
 
 class MiTiendaApp extends StatelessWidget {

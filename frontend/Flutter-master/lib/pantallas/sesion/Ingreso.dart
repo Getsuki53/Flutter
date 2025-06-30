@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'Registro.dart';
-import '../Home.dart'; // Asegúrate de que esta ruta sea correcta
+import '../MainScaffold.dart'; // Asegúrate de que esta ruta sea correcta
 
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
@@ -52,7 +52,7 @@ class _LoginPageState extends State<LoginPage> {
 
         Navigator.pushAndRemoveUntil(
           context,
-          MaterialPageRoute(builder: (_) => const HomePage()),
+          MaterialPageRoute(builder: (_) => const MainScaffold()),
           (Route<dynamic> route) => false,
         );
       } else {
@@ -95,7 +95,7 @@ class _LoginPageState extends State<LoginPage> {
         showSnackbar("Admin login exitoso!");
         Navigator.pushAndRemoveUntil(
           context,
-          MaterialPageRoute(builder: (_) => const HomePage()),
+          MaterialPageRoute(builder: (_) => const MainScaffold()),
           (Route<dynamic> route) => false,
         );
       } else {

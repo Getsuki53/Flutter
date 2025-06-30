@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 class DetalleProducto extends StatefulWidget {
   final String nombre;
   final String descripcion;
-  final int precio;
+  final double precio;
   final String imagen;
   final int stock;
   final String? categoria;

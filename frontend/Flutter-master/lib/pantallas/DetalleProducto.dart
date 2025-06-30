@@ -52,11 +52,17 @@ class _DetalleProductoState extends State<DetalleProducto> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Center(
-              child: Image.asset(
-                widget.imagen,
-                height: 180,
-                fit: BoxFit.contain,
-              ),
+              child: widget.imagen.startsWith('http')
+              ? Image.network(
+                  widget.imagen,
+                  height: 180,
+                  fit: BoxFit.contain,
+                )
+              : Image.asset(
+                  widget.imagen,
+                  height: 180,
+                  fit: BoxFit.contain,
+                ),
             ),
             const SizedBox(height: 16),
             const Text('Descripción:', style: TextStyle(fontWeight: FontWeight.bold)),

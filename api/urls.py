@@ -1,10 +1,10 @@
 from rest_framework import routers
 from api.views import (
     ProductoViewSet, UsuarioViewSet, UserViewSet, LogoutView, 
-    LoginView, AdministradorViewSet, #VentaViewSet, 
+     AdministradorViewSet, #VentaViewSet, 
     ProductoDeseadoViewSet, tipoCategoriaViewSet, CarritoViewSet, 
     TiendaViewSet, SeguimientoTiendaViewSet, ProductoAdminViewSet,
-    LoginUsuarioView, CheckoutView, MercadoPagoWebhookView, 
+    LoginUsuarioView, RegistroUsuarioView, CheckoutView, MercadoPagoWebhookView, 
     ActualizarEstadoPagoView, ItemCarritoViewSet, PagoViewSet
 )
 from rest_framework.authtoken.views import obtain_auth_token
@@ -27,9 +27,9 @@ router.register('productoadmin', ProductoAdminViewSet, basename='productoadmin')
 
 urlpatterns = [
     path('api-token-auth/', obtain_auth_token, name='api_token_auth'),
-    path('login/', LoginView.as_view()),
     path('logout/', LogoutView.as_view()),
     path('login-usuario/', LoginUsuarioView.as_view()),
+    path('registro-usuario/', RegistroUsuarioView.as_view()),
     path('checkout/', CheckoutView.as_view()),
     path('webhook-mercadopago/', MercadoPagoWebhookView.as_view()),
     path('actualizar-estado-pago/', ActualizarEstadoPagoView.as_view()),

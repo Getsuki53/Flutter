@@ -35,14 +35,21 @@ class AdministradorViewSet(viewsets.ModelViewSet):
 
     @action(detail=False, methods=['post'])
     def AutenticarAdministrador(self, request):
-        username = request.data.get('username')
-        password = request.data.get('password')
-        if not username or not password:
-            return Response({'error': 'Debes enviar username y password'}, status=400)
+        correo = request.data.get('correo')
+        password = request.data.get('contraseña')
+        
+        print(f"DEBUG: Intentando autenticar - correo: {correo}, password: {password}")
+        
+        if not correo or not password:
+            return Response({'error': 'Debes enviar correo y contraseña'}, status=400)
+        
         try:
-            administrador = Administrador.objects.get(username=username, password=password)
+            administrador = Administrador.objects.get(correo=correo, contraseña=password)
+            print(f"DEBUG: Administrador encontrado: {administrador}")
             return Response({'message': 'Administrador autenticado exitosamente'}, status=200)
         except Administrador.DoesNotExist:
+            print(f"DEBUG: No se encontró administrador con correo: {correo}")
+            print(f"DEBUG: Administradores en DB: {list(Administrador.objects.all())}")
             return Response({'error': 'Administrador no encontrado o credenciales incorrectas'}, status=404)
         
 # ENDPOINTS DE PRODUCTO (ADMIN Y USUARIO)
@@ -192,6 +199,52 @@ class LoginUsuarioView(views.APIView):
             usuario.token = secrets.token_hex(32)
             usuario.save()
         return Response({'token': usuario.token, 'usuario_id': usuario.id})
+
+# ENDPOINT DE REGISTRO DE USUARIO
+class RegistroUsuarioView(views.APIView):
+    permission_classes = []
+    authentication_classes = []
+
+    def post(self, request):
+        correo = request.data.get('correo')
+        contrasena = request.data.get('contrasena')
+        nombre = request.data.get('nombre')
+        apellido = request.data.get('apellido', 'vacio_')
+        foto = request.FILES.get('foto', None)
+
+        # Validar campos requeridos
+        if not correo or not contrasena or not nombre:
+            return Response({'error': 'Correo, contraseña y nombre son requeridos'}, status=status.HTTP_400_BAD_REQUEST)
+
+        # Verificar si el usuario ya existe
+        if Usuario.objects.filter(correo=correo).exists():
+            return Response({'error': 'Ya existe un usuario con este correo'}, status=status.HTTP_400_BAD_REQUEST)
+
+        try:
+            # Crear nuevo usuario
+            usuario = Usuario.objects.create(
+                correo=correo,
+                contraseña=contrasena,
+                nombre=nombre,
+                apellido=apellido,
+                foto=foto,
+                token=secrets.token_hex(32)  # Generar token automáticamente
+            )
+            
+            return Response({
+                'message': 'Usuario registrado exitosamente',
+                'token': usuario.token,
+                'usuario_id': usuario.id,
+                'usuario': {
+                    'id': usuario.id,
+                    'correo': usuario.correo,
+                    'nombre': usuario.nombre,
+                    'apellido': usuario.apellido
+                }
+            }, status=status.HTTP_201_CREATED)
+            
+        except Exception as e:
+            return Response({'error': f'Error al crear usuario: {str(e)}'}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 # ENDPOINTS DE CARRITO 
 class CarritoViewSet(viewsets.ModelViewSet):
@@ -557,29 +610,7 @@ class SeguimientoTiendaViewSet(viewsets.ModelViewSet):
                 return Response({'message': 'No estabas siguiendo esta tienda'}, status=404)
         except (Usuario.DoesNotExist, Tienda.DoesNotExist):
             return Response({'error': 'Usuario o Tienda no encontrado'}, status=404)
-
-class LoginView(views.APIView):
-    permission_classes = [permissions.AllowAny]
-    def post(self, request):
-        # Recuperamos las credenciales y autenticamos al usuario
-        username2= request.data.get('username', None)
-        password2 = request.data.get('password', None)
-        if username2 is None or password2 is None:
-            return response.Response({'message': 'Please provide both username and password'},status=status.HTTP_400_BAD_REQUEST)
-        user2 = authenticate(username=username2, password=password2)
-        if not user2:
-            return response.Response({'message': 'Usuario o Contraseña incorrecto !!!! '},status=status.HTTP_404_NOT_FOUND)
-
-        token, _ = Token.objects.get_or_create(user=user2)
-        # Si es correcto añadimos a la request la información de sesión
-        if user2:
-            # para loguearse una sola vez
-            # login(request, user)
-            return response.Response({'message':'usuario y contraseña correctos!!!!'},status=status.HTTP_200_OK)
-            #return response.Response({'token': token.key}, status=status.HTTP_200_OK)
-
-        # Si no es correcto devolvemos un error en la petición
-        return response.Response(status=status.HTTP_404_NOT_FOUND)        
+     
 
 class LogoutView(views.APIView):
     authentication_classes = [authentication.TokenAuthentication]

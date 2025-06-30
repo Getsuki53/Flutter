@@ -87,10 +87,10 @@ WSGI_APPLICATION = 'ProyectoApi.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
-        'HOST': 'localhost',
+        'HOST': '127.0.0.1',
         'PORT':'3306',
         'USER':'root',
-        'PASSWORD':'omt1.',
+        'PASSWORD':'omt1',
         'NAME':'bdempresa5',
         'OPTIONS':{
             'init_command':"SET sql_mode='STRICT_TRANS_TABLES'"
@@ -130,14 +130,13 @@ STATIC_URL = 'static/'
 # https://docs.djangoproject.com/en/5.2/ref/settings/#default-auto-field
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-# CORS Configuration for Frontend Integration
+# CORS Configuration for Flutter Integration
 CORS_ALLOWED_ORIGINS = [
-    "http://localhost:3000",  # React default port
+    "http://localhost:3000",
     "http://127.0.0.1:3000",
-    "http://localhost:5173",  # Vite default port
-    "http://127.0.0.1:5173",
-    "http://localhost:8080",  # Vue CLI default port
-    "http://127.0.0.1:8080",
+    "http://10.0.2.2:8000",  # Android emulator
+    "http://localhost:8000",
+    "http://127.0.0.1:8000",
 ]
 
 # Allow all origins during development (LESS SECURE - only for development)

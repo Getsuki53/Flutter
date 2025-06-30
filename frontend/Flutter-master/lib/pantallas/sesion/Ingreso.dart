@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'Registro.dart';
+import '../Home.dart'; // Asegúrate de que esta ruta sea correcta
 
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
@@ -20,7 +21,7 @@ class _LoginPageState extends State<LoginPage> {
     ScaffoldMessenger.of(context).showSnackBar(snack);
   }
 
-  // 🔥 NUEVA FUNCIÓN: Conectar con tu backend Django
+  // NUEVA FUNCIÓN: Conectar con tu backend Django
   Future<void> loginWithBackend() async {
     if (nameController.text.isEmpty || passwordController.text.isEmpty) {
       showSnackbar("Usuario y contraseña requeridos");
@@ -32,7 +33,7 @@ class _LoginPageState extends State<LoginPage> {
     });
 
     try {
-      // 📡 Conectar a tu backend Django
+      // Conectar a tu backend Django
       final response = await http.post(
         Uri.parse('http://127.0.0.1:8000/api/login-usuario/'),
         headers: {'Content-Type': 'application/json'},
@@ -44,14 +45,18 @@ class _LoginPageState extends State<LoginPage> {
 
       if (response.statusCode == 200) {
         final data = json.decode(response.body);
-        // ✅ Login exitoso
+        // Login exitoso
         showSnackbar("Login exitoso!");
 
         // Guardar token (opcional)
         // SharedPreferences prefs = await SharedPreferences.getInstance();
         // await prefs.setString('auth_token', data['token']);
 
-        Navigator.pop(context, true);
+        Navigator.pushAndRemoveUntil(
+          context,
+          MaterialPageRoute(builder: (_) => const HomePage()),
+          (Route<dynamic> route) => false,
+        );
       } else {
         final error = json.decode(response.body);
         showSnackbar(error['error'] ?? 'Error de login');
@@ -65,7 +70,7 @@ class _LoginPageState extends State<LoginPage> {
     }
   }
 
-  // 🔥 TAMBIÉN login de administrador
+  // TAMBIÉN login de administrador
   Future<void> loginAdmin() async {
     if (nameController.text.isEmpty || passwordController.text.isEmpty) {
       showSnackbar("Usuario y contraseña requeridos");
@@ -90,7 +95,11 @@ class _LoginPageState extends State<LoginPage> {
 
       if (response.statusCode == 200) {
         showSnackbar("Admin login exitoso!");
-        Navigator.pop(context, true);
+        Navigator.pushAndRemoveUntil(
+          context,
+          MaterialPageRoute(builder: (_) => const HomePage()),
+          (Route<dynamic> route) => false,
+        );
       } else {
         final error = json.decode(response.body);
         showSnackbar(error['error'] ?? 'Error de admin login');
@@ -167,7 +176,7 @@ class _LoginPageState extends State<LoginPage> {
                 style: TextStyle(color: Colors.cyan),
               ),
             ),
-            // 🔥 BOTÓN LOGIN USUARIO
+            // BOTÓN LOGIN USUARIO
             Container(
               height: 50,
               padding: const EdgeInsets.fromLTRB(10, 0, 10, 0),
@@ -182,7 +191,7 @@ class _LoginPageState extends State<LoginPage> {
               ),
             ),
             SizedBox(height: 10),
-            // 🔥 BOTÓN LOGIN ADMIN
+            // BOTÓN LOGIN ADMIN
             Container(
               height: 50,
               padding: const EdgeInsets.fromLTRB(10, 0, 10, 0),

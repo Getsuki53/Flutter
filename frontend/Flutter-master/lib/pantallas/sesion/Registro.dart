@@ -140,10 +140,7 @@ class _SigninPageState extends State<SigninPage> {
                     ),
                   ),
                   onPressed: () {
-                    Navigator.push(
-                      context, 
-                      MaterialPageRoute(builder: (_) => const LoginPage()),
-                    );
+                    Navigator.pushReplacement(context, MaterialPageRoute(builder: (_) => const LoginPage()),);
                   },
                 ),
               ],

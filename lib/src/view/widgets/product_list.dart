@@ -1,16 +1,14 @@
-// lib/src/view/widgets/product_list.dart
-
 import 'package:flutter/material.dart';
-import 'package:Flutter/src/model/product_model.dart';
-import 'package:Flutter/src/view/widgets/product_list_tile.dart';
-import 'package:Flutter/src/service/product_service.dart';
+import 'package:Flutter/src/model/producto.dart';
+import 'package:Flutter/src/service/ProductService.dart';
+import 'product_list_tile.dart';
 
 class ProductList extends StatelessWidget {
   const ProductList({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return FutureBuilder<List<Welcome>>(
+    return FutureBuilder<List<Producto>>(
       future: ProductService.fetchProducts(),
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
@@ -19,6 +17,10 @@ class ProductList extends StatelessWidget {
 
         if (snapshot.hasError) {
           return Center(child: Text("Error: ${snapshot.error}"));
+        }
+
+        if (!snapshot.hasData || snapshot.data!.isEmpty) {
+          return const Center(child: Text("No hay productos"));
         }
 
         final products = snapshot.data!;

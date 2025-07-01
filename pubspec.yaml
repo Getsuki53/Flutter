@@ -16,6 +16,7 @@ dependencies:
   html: ^0.15.6
   riverpod: ^2.6.1
   flutter_riverpod: ^2.6.1
+  shared_preferences: ^2.2.2
 
 dev_dependencies:
   flutter_test:

@@ -22,7 +22,6 @@ class _MainScaffoldState extends State<MainScaffold> {
     MiPerfil(),
     FollowedPage(),
     MiTienda()
-    //Center(child: Text('La Belen es tan pero tan watona que')),
   ];
 
   void _onItemTapped(int index) {

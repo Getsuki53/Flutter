@@ -1,26 +1,32 @@
-// lib/src/view/product_detail.dart
-
 import 'package:flutter/material.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:Flutter/src/model/product_model.dart';
-import 'package:Flutter/src/provider/cart_provider.dart';
 
+class DetalleProducto extends StatefulWidget {
+  final String nombre;
+  final String descripcion;
+  final double precio;
+  final String imagen;
+  final int stock;
+  final String? categoria;
 
-class DetalleProducto extends ConsumerStatefulWidget {
-  final Welcome producto;
-
-  const DetalleProducto({super.key, required this.producto});
+  const DetalleProducto({
+    super.key,
+    required this.nombre,
+    required this.descripcion,
+    required this.precio,
+    required this.imagen,
+    required this.stock,
+    required this.categoria,
+  });
 
   @override
-ConsumerState<DetalleProducto> createState() => _DetalleProductoState();
+  State<DetalleProducto> createState() => _DetalleProductoState();
 }
 
-class _DetalleProductoState extends ConsumerState<DetalleProducto> {
-
+class _DetalleProductoState extends State<DetalleProducto> {
   int cantidad = 1;
 
   void aumentarCantidad() {
-    if (cantidad < widget.producto.stock) {
+    if (cantidad < widget.stock) {
       setState(() {
         cantidad++;
       });
@@ -35,38 +41,43 @@ class _DetalleProductoState extends ConsumerState<DetalleProducto> {
     }
   }
 
+
   @override
   Widget build(BuildContext context) {
-    final producto = widget.producto;
-
     return Scaffold(
-      appBar: AppBar(title: Text(producto.title)),
+      appBar: AppBar(title: Text(widget.nombre)),
       body: Padding(
         padding: const EdgeInsets.all(16),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Center(
-              child: Image.network(
-                producto.thumbnail,
+              child: Image.asset(
+                widget.imagen,
                 height: 180,
                 fit: BoxFit.contain,
               ),
             ),
             const SizedBox(height: 16),
             const Text('Descripción:', style: TextStyle(fontWeight: FontWeight.bold)),
-            Text(producto.description),
+            Text(widget.descripcion),
             const SizedBox(height: 16),
-            Text('Precio: \$${producto.price}', style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+            Text('Precio: \$${widget.precio}', style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
             const SizedBox(height: 16),
-            Text('Stock disponible: ${producto.stock}'),
+            Text('Stock disponible: ${widget.stock}'),
             const SizedBox(height: 16),
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                IconButton(onPressed: disminuirCantidad, icon: const Icon(Icons.remove)),
+                IconButton(
+                  onPressed: disminuirCantidad,
+                  icon: const Icon(Icons.remove),
+                ),
                 Text('$cantidad', style: const TextStyle(fontSize: 18)),
-                IconButton(onPressed: aumentarCantidad, icon: const Icon(Icons.add)),
+                IconButton(
+                  onPressed: aumentarCantidad,
+                  icon: const Icon(Icons.add),
+                ),
               ],
             ),
             const SizedBox(height: 16),
@@ -74,7 +85,6 @@ class _DetalleProductoState extends ConsumerState<DetalleProducto> {
               child: ElevatedButton(
                 onPressed: () {
                   // Acción para agregar al carrito
-                  ref.read(cartProvider.notifier).addToCart(widget.producto, quantity: cantidad);
                   ScaffoldMessenger.of(context).showSnackBar(
                     SnackBar(content: Text('Agregado $cantidad al carrito')),
                   );

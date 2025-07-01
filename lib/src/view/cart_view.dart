@@ -1,7 +1,8 @@
 import 'detalle_producto.dart';
 import 'package:flutter/material.dart';
+import 'package:Flutter/src/model/producto.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:Flutter/src/provider/cart_provider.dart';
+import 'package:Flutter/src/provider/CartProvider.dart';
 
 class CartView extends ConsumerWidget {
   const CartView({super.key});
@@ -23,7 +24,7 @@ class CartView extends ConsumerWidget {
         itemCount: cartItems.length,
         itemBuilder: (_, index) {
           final item = cartItems[index];
-          final product = item.product;
+          final product = item.producto;
 
           return ListTile(
             leading: Image.network(product.thumbnail, width: 60),

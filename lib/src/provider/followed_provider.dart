@@ -1,10 +1,11 @@
+//ADAPTAR AL BACKEND
+import 'package:Flutter/src/model/producto.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:Flutter/src/model/product_model.dart';
 
-class FollowedNotifier extends StateNotifier<List<Welcome>> {
+class FollowedNotifier extends StateNotifier<List<Producto>> {
   FollowedNotifier() : super([]);
 
-  void toggleFollow(Welcome product) {
+  void toggleFollow(Producto product) {
     final exists = state.any((p) => p.id == product.id);
     if (exists) {
       state = state.where((p) => p.id != product.id).toList();
@@ -13,7 +14,7 @@ class FollowedNotifier extends StateNotifier<List<Welcome>> {
     }
   }
 
-  bool isFollowed(Welcome product) {
+  bool isFollowed(Producto product) {
     return state.any((p) => p.id == product.id);
   }
 

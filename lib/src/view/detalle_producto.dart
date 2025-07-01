@@ -1,9 +1,9 @@
 // lib/src/view/product_detail.dart
 
 import 'package:flutter/material.dart';
-import 'package:scrollinghome/src/model/product_model.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:scrollinghome/src/provider/cart_provider.dart';
+import 'package:Flutter/src/model/product_model.dart';
+import 'package:Flutter/src/provider/cart_provider.dart';
 
 
 class DetalleProducto extends ConsumerStatefulWidget {

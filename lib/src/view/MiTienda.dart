@@ -1,8 +1,8 @@
+import 'detalle_producto.dart';
+import 'PublicarProducto.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'detalle_producto.dart';
-import 'package:scrollinghome/src/provider/products_provider.dart'; // <-- Tu provider real
-import 'PublicarProducto.dart';
+import 'package:Flutter/src/provider/products_provider.dart';
 
 class MiTienda extends ConsumerWidget {
   const MiTienda({super.key});
@@ -13,7 +13,7 @@ class MiTienda extends ConsumerWidget {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Nombre de la tienda'),
+        title: const Text('Mi Tienda'),
       ),
       body: Padding(
         padding: const EdgeInsets.all(16),
@@ -32,17 +32,17 @@ class MiTienda extends ConsumerWidget {
                   children: const [
                     CircleAvatar(
                       radius: 45,
-                      backgroundImage: AssetImage('lib/imagenes/vicho.png'),
+                      backgroundImage: AssetImage('lib/assets/minimalist-landscape-to-1920x1080.jpg'),
                     ),
                     SizedBox(width: 16),
                     Expanded(
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Text('Nombre de la tienda', style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
+                          Text('AndyDays', style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
                           Text('Correo'),
                           Text('Teléfono'),
-                          Text('Descripción de la tienda'),
+                          Text('Me gusta hacer stickers y dibujos, puedes pedirme cosas personalizadas!!'),
                         ],
                       ),
                     ),

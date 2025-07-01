@@ -1,8 +1,8 @@
 // lib/src/provider/cart_provider.dart
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:scrollinghome/src/model/cart_item.dart';
-import 'package:scrollinghome/src/model/product_model.dart';
+import 'package:Flutter/src/model/cart_item.dart';
+import 'package:Flutter/src/model/product_model.dart';
 
 class CartNotifier extends StateNotifier<List<CartItem>> {
   CartNotifier() : super([]);

@@ -1,12 +1,10 @@
-// lib/src/view/main_scaffold.dart
-
 import 'package:flutter/material.dart';
-import 'package:scrollinghome/src/view/MiPerfil.dart';
-import 'package:scrollinghome/src/view/MiTienda.dart';
-import 'package:scrollinghome/src/view/cart_view.dart';
-import 'package:scrollinghome/src/view/home.dart';
-import 'package:scrollinghome/src/view/widgets/custom_app_bar.dart';
-
+import 'package:Flutter/src/view/MiPerfil.dart';
+import 'package:Flutter/src/view/MiTienda.dart';
+import 'package:Flutter/src/view/Seguidos.dart';
+import 'package:Flutter/src/view/cart_view.dart';
+import 'package:Flutter/src/view/home.dart';
+import 'package:Flutter/src/view/widgets/custom_app_bar.dart';
 class MainScaffold extends StatefulWidget {
   const MainScaffold({super.key});
 
@@ -21,8 +19,9 @@ class _MainScaffoldState extends State<MainScaffold> {
   final List<Widget> _pages = const [
     HomeView(),
     CartView(),
-    MiTienda(),
     MiPerfil(),
+    FollowedPage(),
+    MiTienda()
     //Center(child: Text('La Belen es tan pero tan watona que')),
   ];
 
@@ -49,7 +48,8 @@ class _MainScaffoldState extends State<MainScaffold> {
           BottomNavigationBarItem(icon: Icon(Icons.home), label: 'Inicio'),
           BottomNavigationBarItem(icon: Icon(Icons.shopping_cart_checkout), label: 'Carrito'),
           BottomNavigationBarItem(icon: Icon(Icons.person), label: 'Perfil'),
-          BottomNavigationBarItem(icon: Icon(Icons.settings), label: 'Configuración'),
+          BottomNavigationBarItem(icon: Icon(Icons.favorite), label: 'Favoritos'),
+          BottomNavigationBarItem(icon: Icon(Icons.shop), label: 'Tienda'),
         ],
       ),
     );

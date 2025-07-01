@@ -1,7 +1,7 @@
 import 'dart:convert';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:http/http.dart' as http;
-import 'package:scrollinghome/src/model/product_model.dart';
+import 'package:Flutter/src/model/product_model.dart';
 
 final productsProvider = FutureProvider<List<Welcome>>((ref) async {
   const int skip = 0;

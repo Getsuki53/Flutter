@@ -1,6 +1,6 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:scrollinghome/src/repository/product_repository.dart';
-import 'package:scrollinghome/src/state/product_list_state.dart';
+import 'package:Flutter/src/repository/product_repository.dart';
+import 'package:Flutter/src/state/product_list_state.dart';
 
 final productControllerProvider = StateNotifierProvider<ProductListController, ProductListState>((ref){
   final repository = ref.watch(productRepositoryProvider);

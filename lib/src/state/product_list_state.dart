@@ -1,4 +1,4 @@
-import 'package:scrollinghome/src/model/product_model.dart';
+import 'package:Flutter/src/model/product_model.dart';
 
 class ProductListState {
   final List<Welcome> products;

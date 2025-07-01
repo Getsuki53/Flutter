@@ -1,9 +1,9 @@
 import 'dart:convert';
 import 'dart:developer';
-import 'package:scrollinghome/src/network/network.dart';
-import 'package:scrollinghome/src/res/endpoints.dart';
+import 'package:Flutter/src/network/network.dart';
+import 'package:Flutter/src/res/endpoints.dart';
+import 'package:Flutter/src/model/product_model.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:scrollinghome/src/model/product_model.dart';
 
 
 final productRepositoryProvider = Provider((ref) {

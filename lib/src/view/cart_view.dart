@@ -1,9 +1,7 @@
-// lib/src/view/cart_view.dart
-
+import 'detalle_producto.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:scrollinghome/src/provider/cart_provider.dart';
-import 'detalle_producto.dart';
+import 'package:Flutter/src/provider/cart_provider.dart';
 
 class CartView extends ConsumerWidget {
   const CartView({super.key});

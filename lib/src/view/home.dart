@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:scrollinghome/src/view/widgets/product_list.dart';
+import 'package:Flutter/src/view/widgets/product_list.dart';
 
 class HomeView extends ConsumerWidget {
   const HomeView({super.key});

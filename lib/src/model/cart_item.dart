@@ -1,6 +1,6 @@
 // lib/src/model/cart_item.dart
 
-import 'package:scrollinghome/src/model/product_model.dart';
+import 'package:Flutter/src/model/product_model.dart';
 
 class CartItem {
   final Welcome product;

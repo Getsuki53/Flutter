@@ -1,9 +1,9 @@
 // lib/src/view/widgets/product_list.dart
 
 import 'package:flutter/material.dart';
-import 'package:scrollinghome/src/model/product_model.dart';
-import 'package:scrollinghome/src/view/widgets/product_list_tile.dart';
-import 'package:scrollinghome/src/service/product_service.dart';
+import 'package:Flutter/src/model/product_model.dart';
+import 'package:Flutter/src/view/widgets/product_list_tile.dart';
+import 'package:Flutter/src/service/product_service.dart';
 
 class ProductList extends StatelessWidget {
   const ProductList({super.key});

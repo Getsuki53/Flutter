@@ -1,8 +1,8 @@
-import 'package:flutter/material.dart';
-import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'registro.dart';
-import 'package:scrollinghome/src/view/home.dart';
+import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
+import 'package:Flutter/src/view/home.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});

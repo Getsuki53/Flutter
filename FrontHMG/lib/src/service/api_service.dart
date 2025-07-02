@@ -1,11 +1,10 @@
 import 'dart:convert';
-import 'package:Flutter/config.dart';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 
 class ApiService {
-  // Como tu backend está en el mismo directorio, usa localhost
-  static const String baseUrl = 'http://127.0.0.1:8000/api/';
+  //AQUI CAMBIEN A SU IP
+  static const String baseUrl = 'http://192.168.1.6:8000/api/';
   
   // Headers base
   Map<String, String> get _headers => {

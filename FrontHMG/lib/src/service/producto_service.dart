@@ -1,8 +1,6 @@
-//PENDIENTE
-
 import 'dart:convert';
+import '../model/producto.dart';
 import 'api_service.dart';
-import 'package:Flutter/src/model/producto.dart';
 
 class ProductoService {
   final ApiService _apiService = ApiService();

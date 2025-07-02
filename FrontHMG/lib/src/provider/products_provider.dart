@@ -1,7 +1,6 @@
-//CAMBIAR PARA QUE FUNCIONE CON EL BACKEND
 import 'dart:convert';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:http/http.dart' as http;
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:Flutter/src/model/producto.dart';
 
 final productsProvider = FutureProvider<List<Producto>>((ref) async {
@@ -9,12 +8,11 @@ final productsProvider = FutureProvider<List<Producto>>((ref) async {
   const int limit = 20;
 
   final response = await http.get(Uri.parse(
-    "https://dummyjson.com/products?limit=$limit&skip=$skip",
+    "http://192.168.1.6:8000/api/producto/?skip=$skip&limit=$limit",
   ));
 
   if (response.statusCode == 200) {
-    final Map<String, dynamic> jsonResponse = json.decode(response.body);
-    final List<dynamic> productsJson = jsonResponse["products"];
+    final List<dynamic> productsJson = json.decode(response.body);
     return productsJson.map((json) => Producto.fromJson(json)).toList();
   } else {
     throw Exception('Error al cargar productos');

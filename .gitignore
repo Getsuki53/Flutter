@@ -1,0 +1,8 @@
+/env/
+/BACKEND-HGEEKS/ProyectoApi/
+/BACKEND-HGEEKS/api/
+
+#Ignore por IP
+/FrontHMG/lib/src/provider/product_provider.dart
+/FrontHMG/lib/src/services/api_service.dart
+/FrontHMG/lib/src/services/ProductService.dart

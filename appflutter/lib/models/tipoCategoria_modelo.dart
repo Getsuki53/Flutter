@@ -1,15 +1,15 @@
 import 'dart:convert';
 
 class TipoCategoria {
-  late String? NomCat;
+  late String NomCat;
 
   TipoCategoria({
-    this.NomCat,
+    required this.NomCat,
   });
 
   factory TipoCategoria.fromJson(Map<String, dynamic> json) {
     return TipoCategoria(
-      NomCat: json['NomCat'] as String?,
+      NomCat: json['NomCat'] as String,
     );
   }
 

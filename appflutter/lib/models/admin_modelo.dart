@@ -3,20 +3,20 @@ import 'persona_modelo.dart';
 
 class Administrador {
   late int? id;
-  late String? correo;
-  late String? contrasena;
+  late String correo;
+  late String contrasena;
 
   Administrador({
     this.id,
-    this.correo,
-    this.contrasena,
+    required this.correo,
+    required this.contrasena,
   });
 
   factory Administrador.fromJson(Map<String, dynamic> json) {
     return Administrador(
       id: json['id'] as int?,
-      correo: json['correo'] as String?,
-      contrasena: json['contrasena'] as String?,
+      correo: json['correo'] as String,
+      contrasena: json['contrasena'] as String,
     );
   }
 

@@ -3,16 +3,16 @@ import 'package:http/http.dart' as http;
 import 'package:appflutter/models/tienda_modelo.dart';
 import '../../config.dart';
 
-// Esta clase se encarga de obtener el perfil de la tienda.
-class APIDetalleTienda {
+// Esta clase se encarga de obtener solo el nombre e imagen de una tienda que subió un producto.
+class APIImgNomTiendaXProducto {
   static var client = http.Client();
 
-  static Future<Tienda?> detalleTienda(int id) async {
+  static Future<Tienda?> obtenerImgNomTiendaPorProducto(int id) async {
     Map<String, String> headers = {
       "Content-Type": "application/json",
     };
 
-    var url = Uri.http(Config.apiURL, "${Config.tiendaAPI}/ObtenerDetallesTienda/?tienda_id=$id/");
+    var url = Uri.http(Config.apiURL, "${Config.tiendaAPI}/ObtenerImgNomTiendaPorProducto/?producto_id=$id/");
 
     var response = await client.get(url, headers: headers);
 

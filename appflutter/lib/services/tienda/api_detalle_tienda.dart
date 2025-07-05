@@ -7,12 +7,12 @@ import '../../config.dart';
 class APIDetalleTienda {
   static var client = http.Client();
 
-  static Future<Tienda?> detalleTienda(int id) async {
+  static Future<Tienda?> detalleTienda(int tienda) async {
     Map<String, String> headers = {
       "Content-Type": "application/json",
     };
 
-    var url = Uri.http(Config.apiURL, "${Config.tiendaAPI}/ObtenerDetallesTienda/?tienda_id=$id/");
+    var url = Uri.http(Config.apiURL, "${Config.tiendaAPI}/ObtenerDetallesTienda/?tienda_id=$tienda/");
 
     var response = await client.get(url, headers: headers);
 

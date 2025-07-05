@@ -6,12 +6,12 @@ import '../../config.dart';
 class APIPerfil {
   static var client = http.Client();
 
-  static Future<Usuario?> obtenerPerfil(int id) async {
+  static Future<Usuario?> obtenerPerfil(int usuario) async {
     Map<String, String> headers = {
       "Content-Type": "application/json",
     };
 
-    var url = Uri.http(Config.apiURL, "${Config.usuarioAPI}/usuario/$id/");
+    var url = Uri.http(Config.apiURL, "${Config.usuarioAPI}/usuario/$usuario/");
 
     var response = await client.get(url, headers: headers);
 

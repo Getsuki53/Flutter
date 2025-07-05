@@ -7,12 +7,12 @@ import '../../config.dart';
 class APIObtenerListaUsuarioQueSiguenTienda {
   static var client = http.Client();
 
-  static Future<Tienda?> obtenerListaUsuarioQueSiguenTienda(int id) async {
+  static Future<Tienda?> obtenerListaUsuarioQueSiguenTienda(int tienda) async {
     Map<String, String> headers = {
       "Content-Type": "application/json",
     };
 
-    var url = Uri.http(Config.apiURL, "${Config.seguimientotiendaAPI}/ObtenerListaUsuarioQueSiguenTienda/?tienda_id=$id/");
+    var url = Uri.http(Config.apiURL, "${Config.seguimientotiendaAPI}/ObtenerListaUsuarioQueSiguenTienda/?tienda_id=$tienda/");
 
     var response = await client.get(url, headers: headers);
 

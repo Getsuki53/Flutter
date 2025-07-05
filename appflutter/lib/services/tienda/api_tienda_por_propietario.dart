@@ -3,16 +3,16 @@ import 'package:http/http.dart' as http;
 import 'package:appflutter/models/tienda_modelo.dart';
 import '../../config.dart';
 
-// Esta clase se encarga de obtener la lista de tiendas que sigue un usuario.
-class APIObtenerListaTiendasSeguidasPorUsuario {
+// Esta clase se encarga de obtener solo el nombre e imagen de una tienda que subió un producto.
+class APIObtenerTiendaPorPropietario {
   static var client = http.Client();
 
-  static Future<Tienda?> obtenerListaTiendasSeguidasPorUsuario(int usuario) async {
+  static Future<Tienda?> obtenerTiendaPorPropietario(int usuario) async {
     Map<String, String> headers = {
       "Content-Type": "application/json",
     };
 
-    var url = Uri.http(Config.apiURL, "${Config.seguimientotiendaAPI}/ObtenerImgNomTiendaPorProducto/?usuario_id=$usuario/");
+    var url = Uri.http(Config.apiURL, "${Config.tiendaAPI}/ObtenerTiendaPorPropietario/?propietario_id=$usuario/");
 
     var response = await client.get(url, headers: headers);
 
@@ -20,7 +20,7 @@ class APIObtenerListaTiendasSeguidasPorUsuario {
       var data = jsonDecode(response.body);
       return Tienda.fromJson(data);
     } else {
-      print("Error al obtener tiendas: ${response.body}");
+      print("Error al obtener tienda: ${response.body}");
       return null;
     }
   }

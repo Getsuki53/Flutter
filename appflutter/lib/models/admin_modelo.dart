@@ -1,30 +1,31 @@
 import 'dart:convert';
 import 'persona_modelo.dart';
 
-class Administrador {
+class Administrador extends Persona {
   late int? id;
-  late String? correo;
-  late String? contrasena;
 
   Administrador({
     this.id,
-    this.correo,
-    this.contrasena,
-  });
+    required String correo,
+    required String contrasena,
+  }): super(
+          correo: correo,
+          contrasena: contrasena,
+        );
+
 
   factory Administrador.fromJson(Map<String, dynamic> json) {
     return Administrador(
       id: json['id'] as int?,
-      correo: json['correo'] as String?,
-      contrasena: json['contrasena'] as String?,
+      correo: json['correo'] as String,
+      contrasena: json['contrasena'] as String,
     );
   }
 
+  @override
   Map<String, dynamic> toJson() {
-    final data = <String, dynamic>{};
+    final data = super.toJson(); // Incluye correo y contrasena
     data['id'] = id;
-    data['correo'] = correo;
-    data['contrasena'] = contrasena;
     return data;
   }
 }

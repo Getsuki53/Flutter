@@ -127,13 +127,14 @@ class _MiTiendaState extends State<MiTienda> {
                                       context,
                                       MaterialPageRoute(
                                         builder: (_) => DetalleProducto(
-                                        nombre: producto.nomprod,
-                                        // descripcion: producto.descripcionProd,
-                                        precio: double.tryParse(producto.precio.toString()) ?? 0.0,
-                                        imagen: producto.fotoProd,
-                                        // stock: int.tryParse(producto.stock.toString()) ?? 0,
-                                        // categoria: producto.tipoCategoria.toString(),
-                                      ),
+                                          id: producto.id!,
+                                          nombre: producto.nomprod,
+                                          descripcion: producto.descripcionProd,
+                                          precio: double.tryParse(producto.precio.toString()) ?? 0.0,
+                                          imagen: producto.fotoProd,
+                                          stock: int.tryParse(producto.stock.toString()) ?? 0,
+                                          categoria: producto.tipoCategoria.toString(),
+                                        ),
                                       ),
                                     );
                                   },

@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:appflutter/models/productoHome_modelo.dart';
+import 'package:appflutter/models/producto_modelo.dart';
 import 'package:appflutter/pages/Producto/detalle_producto.dart';
 import 'package:appflutter/services/productos/api_productos.dart';
 
-Future<List<ProductoHomeModel>> fetchProductos() async {
+Future<List<Producto>> fetchProductos() async {
   return await APIProductos.obtenerProductos();
 }
 
@@ -25,7 +25,7 @@ class ProductList extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return FutureBuilder<List<ProductoHomeModel>>(
+    return FutureBuilder<List<Producto>>(
       future: fetchProductos(), // Cambia aquí por tu función real
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
@@ -56,7 +56,7 @@ class ProductList extends StatelessWidget {
 class ProductListTile extends StatefulWidget {
   const ProductListTile({super.key, required this.product});
 
-  final ProductoHomeModel product;
+  final Producto product;
 
   @override
   State<ProductListTile> createState() => _ProductListTileState();
@@ -82,9 +82,13 @@ class _ProductListTileState extends State<ProductListTile> {
           context,
           MaterialPageRoute(
             builder: (_) => DetalleProducto(
+              id: widget.product.id!,
               nombre: widget.product.nomprod,
+              descripcion: widget.product.descripcionProd,
               precio: widget.product.precio,
               imagen: widget.product.fotoProd,
+              stock: widget.product.stock,
+              categoria: widget.product.tipoCategoria,
             ),
           ),
         );

@@ -1,5 +1,4 @@
 import 'dart:convert';
-import 'producto_modelo.dart';
 
 List<ProductoHomeModel> productosHomeFromJson(String responseBody) {
   final parsed = jsonDecode(responseBody).cast<Map<String, dynamic>>();

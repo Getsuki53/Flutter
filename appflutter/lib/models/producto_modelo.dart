@@ -1,5 +1,3 @@
-import 'dart:convert';
-import 'tienda_modelo.dart';
 
 class Producto {
   final int? id;
@@ -11,7 +9,7 @@ class Producto {
   final String tipoCategoria;
   final bool? estado;
   final DateTime? fechaPub;
-  final Tienda? tienda;
+  final int? idTienda;
 
   Producto({
     this.id,
@@ -23,42 +21,46 @@ class Producto {
     required this.tipoCategoria,
     this.estado,
     this.fechaPub,
-    this.tienda,
+    this.idTienda,
   });
 
   factory Producto.fromJson(Map<String, dynamic> json) {
     return Producto(
       id: json['id'] as int?,
-      nomprod: json['nomprod'] as String,
-      descripcionProd: json['descripcionProd'] as String,
-      stock: json['stock'] as int,
-      fotoProd: json['fotoProd'] as String,
-      precio: (json['precio'] as num).toDouble(),
+      nomprod: json['Nomprod'] as String,
+      descripcionProd: json['DescripcionProd'] as String,
+      stock: json['Stock'] as int,
+      fotoProd: json['FotoProd'] as String,
+      precio: _parsePrecio(json['Precio']),
       tipoCategoria: json['tipoCategoria'] as String,
-      estado: json['estado'] as bool?,
-      fechaPub: json['fechaPub'] != null
-          ? DateTime.parse(json['fechaPub'])
+      estado: json['Estado'] as bool?,
+      fechaPub: json['FechaPub'] != null
+          ? DateTime.parse(json['FechaPub'])
           : null,
-      tienda: json['tienda'] != null
-          ? Tienda.fromJson(json['tienda'])
-          : null, 
+      idTienda: json['tienda'] is int ? json['tienda'] : null,
     );
+  }
+
+  // Función de utilidad para convertir a double de forma segura
+  static double _parsePrecio(dynamic value) {
+    if (value == null) return 0.0;
+    if (value is num) return value.toDouble();
+    if (value is String) return double.tryParse(value) ?? 0.0;
+    return 0.0;
   }
 
   Map<String, dynamic> toJson() {
     final data = <String, dynamic>{};
     data['id'] = id;
-    data['nomprod'] = nomprod;
-    data['descripcionProd'] = descripcionProd;
-    data['stock'] = stock;
-    data['fotoProd'] = fotoProd;
-    data['precio'] = precio;
+    data['Nomprod'] = nomprod;
+    data['DescripcionProd'] = descripcionProd;
+    data['Stock'] = stock;
+    data['FotoProd'] = fotoProd;
+    data['Precio'] = precio;
+    data['Estado'] = estado;
+    data['FechaPub'] = fechaPub?.toIso8601String();
     data['tipoCategoria'] = tipoCategoria;
-    data['estado'] = estado;
-    data['fechaPub'] = fechaPub?.toIso8601String();
-    if (tienda != null) {
-      data['tienda'] = tienda!.toJson();
-    }
+    data['tienda'] = idTienda;
     return data;
   }
 }

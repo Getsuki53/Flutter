@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:appflutter/models/producto_modelo.dart';
+import 'package:appflutter/models/productoHome_modelo.dart';
 import 'package:appflutter/pages/Producto/detalle_producto.dart';
 import 'package:appflutter/services/productos/api_productos.dart';
 
-Future<List<Producto>> fetchProductos() async {
+Future<List<ProductoHomeModel>> fetchProductos() async {
   return await APIProductos.obtenerProductos();
 }
 
@@ -25,7 +25,7 @@ class ProductList extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return FutureBuilder<List<Producto>>(
+    return FutureBuilder<List<ProductoHomeModel>>(
       future: fetchProductos(), // Cambia aquí por tu función real
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
@@ -56,7 +56,7 @@ class ProductList extends StatelessWidget {
 class ProductListTile extends StatefulWidget {
   const ProductListTile({super.key, required this.product});
 
-  final Producto product;
+  final ProductoHomeModel product;
 
   @override
   State<ProductListTile> createState() => _ProductListTileState();
@@ -83,11 +83,8 @@ class _ProductListTileState extends State<ProductListTile> {
           MaterialPageRoute(
             builder: (_) => DetalleProducto(
               nombre: widget.product.nomprod,
-              descripcion: widget.product.descripcionProd,
               precio: widget.product.precio,
               imagen: widget.product.fotoProd,
-              stock: widget.product.stock,
-              categoria: widget.product.tipoCategoria,
             ),
           ),
         );
@@ -104,6 +101,17 @@ class _ProductListTileState extends State<ProductListTile> {
                   widget.product.fotoProd,
                   height: 250,
                   fit: BoxFit.contain,
+                  errorBuilder: (context, error, stackTrace) {
+                    return Container(
+                      height: 250,
+                      color: Colors.grey[300],
+                      child: const Icon(
+                        Icons.image_not_supported,
+                        size: 50,
+                        color: Colors.grey,
+                      ),
+                    );
+                  },
                 ),
                 Positioned(
                   top: 8,

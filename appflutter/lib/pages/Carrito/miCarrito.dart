@@ -52,11 +52,11 @@ class CartView extends StatelessWidget {
                     MaterialPageRoute(
                       builder: (_) => DetalleProducto(
                         nombre: product.nomprod,
-                        descripcion: product.descripcionProd,
+                        // descripcion: product.descripcionProd,
                         precio: product.precio,
                         imagen: product.fotoProd,
-                        stock: product.stock,
-                        categoria: product.tipoCategoria,
+                        // stock: product.stock,
+                        // categoria: product.tipoCategoria,
                       ),
                     ),
                   );

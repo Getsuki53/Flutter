@@ -47,11 +47,11 @@ class WishedPage extends StatelessWidget {
                             MaterialPageRoute(
                               builder: (_) => DetalleProducto(
                                 nombre: producto.nomprod,
-                                descripcion: producto.descripcionProd,
+                                // descripcion: producto.descripcionProd,
                                 precio: producto.precio,
                                 imagen: producto.fotoProd,
-                                stock: producto.stock,
-                                categoria: producto.tipoCategoria,
+                                // stock: producto.stock,
+                                // categoria: producto.tipoCategoria,
                               ),
                             ),
                           );

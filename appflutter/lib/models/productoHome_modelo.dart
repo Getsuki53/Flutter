@@ -21,17 +21,25 @@ class ProductoHomeModel {
 
   factory ProductoHomeModel.fromJson(Map<String, dynamic> json) {
     return ProductoHomeModel(
-      nomprod: json['nomprod'] as String,
-      fotoProd: json['fotoProd'] as String,
-      precio: (json['precio'] as num).toDouble(),
+      nomprod: json['Nomprod'] as String,
+      fotoProd: json['FotoProd'] as String,
+      precio: _parsePrecio(json['Precio']),
     );
+  }
+
+  // Función de utilidad para convertir a double de forma segura
+  static double _parsePrecio(dynamic value) {
+    if (value == null) return 0.0;
+    if (value is num) return value.toDouble();
+    if (value is String) return double.tryParse(value) ?? 0.0;
+    return 0.0;
   }
 
   Map<String, dynamic> toJson() {
     final data = <String, dynamic>{};
-    data['nomprod'] = nomprod;
-    data['fotoProd'] = fotoProd;
-    data['precio'] = precio;
+    data['Nomprod'] = nomprod;
+    data['FotoProd'] = fotoProd;
+    data['Precio'] = precio;
     return data;
   }
 }

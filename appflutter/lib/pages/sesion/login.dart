@@ -1,8 +1,7 @@
-import 'dart:convert';
 import 'registro.dart';
 import 'package:flutter/material.dart';
-import 'package:http/http.dart' as http;
-import 'package:Flutter/src/view/home.dart';
+import 'package:appflutter/pages/inicio/main_scaffold.dart';
+import 'package:appflutter/services/usuario/api_ingreso.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
@@ -32,70 +31,20 @@ class _LoginPageState extends State<LoginPage> {
     });
 
     try {
-      // 📡 Conectar a tu backend Django
-      final response = await http.post(
-        Uri.parse('http://127.0.0.1:8000/api/login-usuario/'),
-        headers: {'Content-Type': 'application/json'},
-        body: json.encode({
-          'correo': nameController.text,
-          'contraseña': passwordController.text,
-        }),
+      final mensaje = await APIIngreso.ingresoUsuario(
+        nameController.text,
+        passwordController.text,
       );
 
-      if (response.statusCode == 200) {
-        final data = json.decode(response.body);
-
+      if (mensaje != null) {
         showSnackbar("Login exitoso!");
-
-        // Navegar al HomeView y eliminar pantallas anteriores
         Navigator.pushAndRemoveUntil(
           context,
-          MaterialPageRoute(builder: (_) => const HomeView()),
+          MaterialPageRoute(builder: (_) => const MainScaffold()),
           (route) => false,
         );
-      } 
-      else {
-        final error = json.decode(response.body);
-        showSnackbar(error['error'] ?? 'Error de login');
-      }
-    } catch (e) {
-      showSnackbar("Error de conexión: $e");
-    } finally {
-      setState(() {
-        _isLoading = false;
-      });
-    }
-  }
-
-  // 🔥 TAMBIÉN login de administrador
-  Future<void> loginAdmin() async {
-    if (nameController.text.isEmpty || passwordController.text.isEmpty) {
-      showSnackbar("Usuario y contraseña requeridos");
-      return;
-    }
-
-    setState(() {
-      _isLoading = true;
-    });
-
-    try {
-      final response = await http.post(
-        Uri.parse(
-          'http://127.0.0.1:8000/api/administrador/AutenticarAdministrador/',
-        ),
-        headers: {'Content-Type': 'application/json'},
-        body: json.encode({
-          'correo': nameController.text,
-          'contraseña': passwordController.text,
-        }),
-      );
-
-      if (response.statusCode == 200) {
-        showSnackbar("Admin login exitoso!");
-        Navigator.pop(context, true);
       } else {
-        final error = json.decode(response.body);
-        showSnackbar(error['error'] ?? 'Error de admin login');
+        showSnackbar("Usuario o contraseña incorrectos");
       }
     } catch (e) {
       showSnackbar("Error de conexión: $e");
@@ -117,7 +66,7 @@ class _LoginPageState extends State<LoginPage> {
               padding: const EdgeInsets.fromLTRB(10, 30, 10, 10),
               alignment: Alignment.center,
               child: Image.asset(
-                'lib/imagenes/perro.jpeg',
+                'lib/imagenes/logo.png',
                 width: 120,
                 height: 70,
               ),
@@ -178,24 +127,8 @@ class _LoginPageState extends State<LoginPage> {
                 child: _isLoading
                     ? CircularProgressIndicator(color: Colors.cyan)
                     : const Text(
-                        'Acceder como Usuario',
+                        'Acceder',
                         style: TextStyle(color: Colors.cyan),
-                      ),
-              ),
-            ),
-            SizedBox(height: 10),
-
-            Container(
-              height: 50,
-              padding: const EdgeInsets.fromLTRB(10, 0, 10, 0),
-              child: ElevatedButton(
-                onPressed: _isLoading ? null : loginAdmin,
-                style: ElevatedButton.styleFrom(backgroundColor: Colors.orange),
-                child: _isLoading
-                    ? CircularProgressIndicator(color: Colors.white)
-                    : const Text(
-                        'Acceder como Admin',
-                        style: TextStyle(color: Colors.white),
                       ),
               ),
             ),

@@ -1,6 +1,5 @@
+import 'package:appflutter/services/usuario/api_registro.dart';
 import 'package:flutter/material.dart';
-import 'package:http/http.dart' as http;
-import 'dart:convert';
 import 'login.dart';
 
 class SigninPage extends StatefulWidget {
@@ -12,9 +11,9 @@ class SigninPage extends StatefulWidget {
 
 class _SigninPageState extends State<SigninPage> {
   final TextEditingController nameController = TextEditingController();
+  final TextEditingController apellidoController = TextEditingController();
   final TextEditingController emailController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
-  final TextEditingController apellidoController = TextEditingController();
   bool _isLoading = false;
 
   void showSnackbar(String msg) {
@@ -22,7 +21,6 @@ class _SigninPageState extends State<SigninPage> {
     ScaffoldMessenger.of(context).showSnackBar(snack);
   }
 
-  // 🔥 FUNCIÓN: Registro con backend Django
   Future<void> registerWithBackend() async {
     if (emailController.text.isEmpty ||
         passwordController.text.isEmpty ||
@@ -36,32 +34,21 @@ class _SigninPageState extends State<SigninPage> {
     });
 
     try {
-      // 📡 Conectar a tu backend Django
-      final response = await http.post(
-        Uri.parse('http://127.0.0.1:8000/api/registro-usuario/'),
-        headers: {'Content-Type': 'application/json'},
-        body: json.encode({
-          'correo': emailController.text,
-          'contraseña': passwordController.text,
-          'nombre': nameController.text,
-          'apellido': apellidoController.text.isEmpty
-              ? 'vacio_'
-              : apellidoController.text,
-        }),
+      final mensaje = await APIRegistro.registro(
+          emailController.text,
+          nameController.text,
+          apellidoController.text,
+          passwordController.text,
       );
 
-      if (response.statusCode == 201) {
-        final data = json.decode(response.body);
+      if (mensaje != null) {
         showSnackbar("Usuario registrado exitosamente!");
-
-        // Redirigir al login
         Navigator.pushReplacement(
           context,
           MaterialPageRoute(builder: (_) => const LoginPage()),
         );
       } else {
-        final error = json.decode(response.body);
-        showSnackbar(error['error'] ?? 'Error de registro');
+        showSnackbar('Error de registro');
       }
     } catch (e) {
       showSnackbar("Error de conexión: $e");
@@ -88,7 +75,7 @@ class _SigninPageState extends State<SigninPage> {
               Container(
                 alignment: Alignment.center,
                 child: Image.asset(
-                  'lib/imagenes/perro.jpeg',
+                  'lib/imagenes/logo.png',
                   width: 120,
                   height: 70,
                   errorBuilder: (context, error, stackTrace) {

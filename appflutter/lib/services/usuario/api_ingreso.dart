@@ -11,7 +11,7 @@ class APIIngreso {
       "Content-Type": "application/json",
     };
 
-    var url = Uri.http(Config.apiURL, "${Config.loginAPI}/");
+    var url = Uri.http(Config.apiURL, "${Config.loginAPI}");
 
     var body = jsonEncode({
       "correo": correo,

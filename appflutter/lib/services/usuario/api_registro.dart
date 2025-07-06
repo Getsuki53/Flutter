@@ -6,7 +6,7 @@ import '../../config.dart';
 class APIRegistro {
   static var client = http.Client();
 
-  static Future<String?> registro(String correo, String nombre, String contrasena) async {
+  static Future<String?> registro(String correo, String nombre, String apellido, String contrasena) async {
     Map<String, String> headers = {
       "Content-Type": "application/json",
     };
@@ -14,9 +14,11 @@ class APIRegistro {
     var url = Uri.http(Config.apiURL, "${Config.usuarioAPI}/CrearUsuario/");
 
     var body = jsonEncode({
-      "correo": correo,
       "nombre": nombre,
+      "apellido": apellido, // Puedes cambiar esto si necesitas un apellido
+      "foto": "",
       "contrasena": contrasena,
+      "correo": correo,
     });
 
     var response = await client.post(url, headers: headers, body: body);

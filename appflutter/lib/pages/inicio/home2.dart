@@ -4,10 +4,6 @@ import 'package:appflutter/models/producto_modelo.dart';
 import 'package:appflutter/pages/Producto/detalle_producto.dart';
 import 'package:appflutter/services/productos/api_productos.dart';
 
-Future<List<Producto>> fetchProductos() async {
-  return await APIProductos.obtenerProductos();
-}
-
 class HomeView extends ConsumerWidget {
   const HomeView({super.key});
 
@@ -26,7 +22,7 @@ class ProductList extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return FutureBuilder<List<Producto>>(
-      future: fetchProductos(), // Cambia aquí por tu función real
+      future: APIProductos.obtenerProductos(),
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
           return const Center(child: CircularProgressIndicator());

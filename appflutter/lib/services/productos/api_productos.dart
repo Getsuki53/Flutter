@@ -3,16 +3,16 @@ import 'package:http/http.dart' as http;
 import 'package:appflutter/models/producto_modelo.dart';
 import '../../config.dart';
 
-// Esta clase se encarga de obtener la lista de productos deseados de un usuario específico.
-class APIObtenerListaDeseadosPorUsuario {
+// Esta clase se encarga de obtener la lista de productos.
+class APIProductos {
   static var client = http.Client();
 
-  static Future<List<Producto>> obtenerListaDeseadosPorUsuario(int usuario) async {
+  static Future<List<Producto>> obtenerProductos() async {
     Map<String, String> headers = {
       "Content-Type": "application/json",
     };
 
-    var url = Uri.http(Config.apiURL, "${Config.productodeseadoAPI}/ObtenerListaDeseadosPorUsuario/?usuario_id=$usuario/");
+    var url = Uri.http(Config.apiURL, "${Config.productoAPI}");
 
     var response = await client.get(url, headers: headers);
 

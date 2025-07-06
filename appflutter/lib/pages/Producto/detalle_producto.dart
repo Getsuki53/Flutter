@@ -41,7 +41,6 @@ class _DetalleProductoState extends State<DetalleProducto> {
     }
   }
 
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -52,17 +51,49 @@ class _DetalleProductoState extends State<DetalleProducto> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Center(
-              child: Image.asset(
-                widget.imagen,
-                height: 180,
-                fit: BoxFit.contain,
-              ),
+              child:
+                  widget.imagen.isNotEmpty
+                      ? Image.network(
+                        widget.imagen,
+                        height: 180,
+                        fit: BoxFit.contain,
+                        errorBuilder: (context, error, stackTrace) {
+                          print(
+                            '🚨 ERROR detalle - No se pudo cargar imagen: ${widget.imagen}',
+                          );
+                          print('🚨 ERROR detalle - Error: $error');
+                          return Container(
+                            height: 180,
+                            color: Colors.grey[300],
+                            child: const Icon(
+                              Icons.image_not_supported,
+                              size: 60,
+                              color: Colors.grey,
+                            ),
+                          );
+                        },
+                      )
+                      : Container(
+                        height: 180,
+                        color: Colors.grey[300],
+                        child: const Icon(
+                          Icons.image,
+                          size: 60,
+                          color: Colors.grey,
+                        ),
+                      ),
             ),
             const SizedBox(height: 16),
-            const Text('Descripción:', style: TextStyle(fontWeight: FontWeight.bold)),
+            const Text(
+              'Descripción:',
+              style: TextStyle(fontWeight: FontWeight.bold),
+            ),
             Text(widget.descripcion),
             const SizedBox(height: 16),
-            Text('Precio: \$${widget.precio}', style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+            Text(
+              'Precio: \$${widget.precio}',
+              style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+            ),
             const SizedBox(height: 16),
             Text('Stock disponible: ${widget.stock}'),
             const SizedBox(height: 16),

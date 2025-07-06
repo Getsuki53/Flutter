@@ -45,7 +45,27 @@ class CartView extends StatelessWidget {
               return ListTile(
                 leading:
                     product.fotoProd != null && product.fotoProd!.isNotEmpty
-                        ? Image.network(product.fotoProd!, width: 60)
+                        ? Image.network(
+                          product.fotoProd!,
+                          width: 60,
+                          height: 60,
+                          fit: BoxFit.cover,
+                          errorBuilder: (context, error, stackTrace) {
+                            print(
+                              '🚨 ERROR carrito - No se pudo cargar imagen: ${product.fotoProd}',
+                            );
+                            print('🚨 ERROR carrito - Error: $error');
+                            return Container(
+                              width: 60,
+                              height: 60,
+                              color: Colors.grey[300],
+                              child: const Icon(
+                                Icons.image_not_supported,
+                                color: Colors.grey,
+                              ),
+                            );
+                          },
+                        )
                         : Container(
                           width: 60,
                           height: 60,

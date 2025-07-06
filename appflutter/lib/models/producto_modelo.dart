@@ -65,8 +65,9 @@ class Producto {
 
   // Método auxiliar para parsear imagen - construye la URL completa del backend
   static String? _parseImage(dynamic fotoData) {
+    print('🔍 DEBUG Producto - Imagen recibida: $fotoData');
+
     if (fotoData == null || fotoData == '') {
-      // Si no hay imagen, devolver null
       return null;
     }
 
@@ -76,16 +77,69 @@ class Producto {
         return fotoData;
       }
 
-      // Si es una ruta que ya incluye /media/, solo agregar el dominio
+      String cleanPath = fotoData;
+
+      // Si es una ruta que incluye /media/, extraemos la parte del archivo
       if (fotoData.startsWith('/media/')) {
-        return 'http://127.0.0.1:8000$fotoData';
+        cleanPath = fotoData; // Mantenemos la ruta completa de Django
+
+        // Extraer solo el nombre del archivo para "limpiarlo"
+        final parts = fotoData.split('/');
+        if (parts.isNotEmpty) {
+          final fileName = parts.last;
+
+          // Limpiar el nombre del archivo eliminando sufijos de Django (_x8HUMfX, etc.)
+          final cleanFileName = _cleanFileName(fileName);
+
+          // Reconstruir la ruta con el nombre limpio
+          parts[parts.length - 1] = cleanFileName;
+          cleanPath = parts.join('/');
+        }
+
+        final url = 'http://127.0.0.1:8000$cleanPath';
+        print(
+          '🔍 DEBUG Producto - URL original: http://127.0.0.1:8000$fotoData',
+        );
+        print('🔍 DEBUG Producto - URL limpia: $url');
+        print('🔍 DEBUG Producto - Extensión del archivo: ${cleanPath.split('.').last}');
+        return url;
       }
 
-      // Si es solo el nombre del archivo, agregar la ruta completa
-      return 'http://127.0.0.1:8000/media/$fotoData';
+      // Si es solo el nombre del archivo, limpiarlo y agregar la ruta completa
+      final cleanFileName = _cleanFileName(fotoData);
+      final url = 'http://127.0.0.1:8000/media/$cleanFileName';
+      print('🔍 DEBUG Producto - Archivo limpio: $url');
+      return url;
     }
 
     return null;
+  }
+
+  // Método auxiliar para limpiar nombres de archivo de sufijos de Django
+  static String _cleanFileName(String fileName) {
+    // Patrón para detectar sufijos de Django: _[caracteres].[extensión]
+    // Ejemplo: baulmimbre_x8HUMfX.png -> baulmimbre.png
+    final regex = RegExp(r'_[a-zA-Z0-9]+\.([a-zA-Z0-9]+)$');
+
+    if (regex.hasMatch(fileName)) {
+      // Extraer el nombre base y la extensión
+      final extensionMatch = regex.firstMatch(fileName);
+      if (extensionMatch != null) {
+        final extension = extensionMatch.group(1);
+        final baseName =
+            fileName.split(
+              '_',
+            )[0]; // Tomar solo la primera parte antes del primer _
+        final cleanName = '$baseName.$extension';
+        print(
+          '🔍 DEBUG Producto - Archivo original: $fileName -> Limpio: $cleanName',
+        );
+        return cleanName;
+      }
+    }
+
+    // Si no hay sufijo, devolver el nombre original
+    return fileName;
   }
 
   factory Producto.fromJson(Map<String, dynamic> json) {

@@ -1,4 +1,3 @@
-import 'dart:convert';
 import 'tienda_modelo.dart';
 
 class Producto {
@@ -6,7 +5,7 @@ class Producto {
   final String nomprod;
   final String descripcionProd;
   final int stock;
-  final String? fotoProd; // Cambiado a nullable
+  final String? fotoProd; // Nullable - puede no tener imagen
   final double precio;
   final String tipoCategoria;
   final bool? estado;
@@ -18,7 +17,7 @@ class Producto {
     required this.nomprod,
     required this.descripcionProd,
     required this.stock,
-    this.fotoProd, // Cambiado a opcional
+    this.fotoProd, // Opcional ya que es nullable
     required this.precio,
     required this.tipoCategoria,
     this.estado,
@@ -64,6 +63,31 @@ class Producto {
     return null;
   }
 
+  // Método auxiliar para parsear imagen - construye la URL completa del backend
+  static String? _parseImage(dynamic fotoData) {
+    if (fotoData == null || fotoData == '') {
+      // Si no hay imagen, devolver null
+      return null;
+    }
+
+    if (fotoData is String && fotoData.isNotEmpty) {
+      // Si ya es una URL completa, devolverla tal como está
+      if (fotoData.startsWith('http')) {
+        return fotoData;
+      }
+
+      // Si es una ruta que ya incluye /media/, solo agregar el dominio
+      if (fotoData.startsWith('/media/')) {
+        return 'http://127.0.0.1:8000$fotoData';
+      }
+
+      // Si es solo el nombre del archivo, agregar la ruta completa
+      return 'http://127.0.0.1:8000/media/$fotoData';
+    }
+
+    return null;
+  }
+
   factory Producto.fromJson(Map<String, dynamic> json) {
     return Producto(
       id: json['id'] as int?,
@@ -71,7 +95,9 @@ class Producto {
       descripcionProd:
           json['DescripcionProd'] as String? ?? '', // ← Corregido: Mayúscula
       stock: _parseInt(json['Stock']), // ← Usar método auxiliar
-      fotoProd: json['FotoProd'] as String?, // ← Corregido: Mayúscula
+      fotoProd: _parseImage(
+        json['FotoProd'],
+      ), // ← Usar método auxiliar para imagen
       precio: _parsePrice(
         json['Precio'],
       ), // ← Método auxiliar para manejar string/number

@@ -36,7 +36,7 @@ class _MiPerfilState extends State<MiPerfil> {
         title: const Text('Mi Perfil'),
       ),
       body: usuarioId == null
-          ? const Center(child: CircularProgressIndicator())
+          ? Center(child: Text("UsuarioID = $usuarioId"))
           : FutureBuilder<Usuario?>(
               future: APIPerfil.obtenerPerfil(usuarioId!),
               builder: (context, snapshot) {
@@ -96,14 +96,16 @@ class _MiPerfilState extends State<MiPerfil> {
                       ),
                       const SizedBox(height: 24),
                       ElevatedButton(
-                        onPressed: () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (_) => WishedPage(usuarioId: usuarioId!),
-                            ),
-                          );
-                        },
+                        onPressed: usuarioId == null
+                            ? null
+                            : () {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (_) => WishedPage(usuarioId: usuarioId!),
+                                  ),
+                                );
+                              },
                         child: const Text('Lista de deseos'),
                       ),
                     ],

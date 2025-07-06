@@ -9,7 +9,7 @@ class Config {
   static const loginAPI = "api/login-usuario/";
   static const obtenertokenAPI = "api/api-token-auth/";
   static const productoadminAPI = "api/productoadmin/";
-  static const usuarioAPI = "api/usuario/";
+  static const usuarioAPI = "api/usuario";
   static const administradorAPI = "api/administrador";
   static const productodeseadoAPI = "api/productodeseado";
   static const tipocategoriaAPI = "api/tipocategoria";

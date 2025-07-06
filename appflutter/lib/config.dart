@@ -1,6 +1,7 @@
 class Config {
   static const String appName = "Handmade Geeks";
-  static const String apiURL = '192.168.1.101';
+  static const String apiURL =
+      '127.0.0.1:8000'; // ← Host y puerto para Uri.http()
 
   // Endpoints básicos de modelos
   static const obtenerProductoMainAPI = "api/producto/obtenerproductomain";

@@ -12,7 +12,10 @@ class WishedPage extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(title: const Text("Lista de deseados")),
       body: FutureBuilder<List<Producto>>(
-        future: APIObtenerListaDeseadosPorUsuario.obtenerListaDeseadosPorUsuario(usuarioId),
+        future:
+            APIObtenerListaDeseadosPorUsuario.obtenerListaDeseadosPorUsuario(
+              usuarioId,
+            ),
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
             return const Center(child: CircularProgressIndicator());
@@ -45,14 +48,15 @@ class WishedPage extends StatelessWidget {
                           Navigator.push(
                             context,
                             MaterialPageRoute(
-                              builder: (_) => DetalleProducto(
-                                nombre: producto.nomprod,
-                                descripcion: producto.descripcionProd,
-                                precio: producto.precio,
-                                imagen: producto.fotoProd,
-                                stock: producto.stock,
-                                categoria: producto.tipoCategoria,
-                              ),
+                              builder:
+                                  (_) => DetalleProducto(
+                                    nombre: producto.nomprod,
+                                    descripcion: producto.descripcionProd,
+                                    precio: producto.precio,
+                                    imagen: producto.fotoProd ?? '',
+                                    stock: producto.stock,
+                                    categoria: producto.tipoCategoria,
+                                  ),
                             ),
                           );
                         },

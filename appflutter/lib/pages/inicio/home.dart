@@ -13,10 +13,7 @@ class HomeView extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    return Scaffold(
-      body: const ProductList(),
-      backgroundColor: Colors.white,
-    );
+    return Scaffold(body: const ProductList(), backgroundColor: Colors.white);
   }
 }
 
@@ -81,14 +78,15 @@ class _ProductListTileState extends State<ProductListTile> {
         Navigator.push(
           context,
           MaterialPageRoute(
-            builder: (_) => DetalleProducto(
-              nombre: widget.product.nomprod,
-              descripcion: widget.product.descripcionProd,
-              precio: widget.product.precio,
-              imagen: widget.product.fotoProd,
-              stock: widget.product.stock,
-              categoria: widget.product.tipoCategoria,
-            ),
+            builder:
+                (_) => DetalleProducto(
+                  nombre: widget.product.nomprod,
+                  descripcion: widget.product.descripcionProd,
+                  precio: widget.product.precio,
+                  imagen: widget.product.fotoProd ?? '',
+                  stock: widget.product.stock,
+                  categoria: widget.product.tipoCategoria,
+                ),
           ),
         );
       },
@@ -100,11 +98,33 @@ class _ProductListTileState extends State<ProductListTile> {
           children: [
             Stack(
               children: [
-                Image.network(
-                  widget.product.fotoProd,
-                  height: 250,
-                  fit: BoxFit.contain,
-                ),
+                widget.product.fotoProd != null &&
+                        widget.product.fotoProd!.isNotEmpty
+                    ? Image.network(
+                      widget.product.fotoProd!,
+                      height: 250,
+                      fit: BoxFit.contain,
+                      errorBuilder: (context, error, stackTrace) {
+                        return Container(
+                          height: 250,
+                          color: Colors.grey[300],
+                          child: const Icon(
+                            Icons.image_not_supported,
+                            size: 50,
+                            color: Colors.grey,
+                          ),
+                        );
+                      },
+                    )
+                    : Container(
+                      height: 250,
+                      color: Colors.grey[300],
+                      child: const Icon(
+                        Icons.image,
+                        size: 50,
+                        color: Colors.grey,
+                      ),
+                    ),
                 Positioned(
                   top: 8,
                   right: 8,

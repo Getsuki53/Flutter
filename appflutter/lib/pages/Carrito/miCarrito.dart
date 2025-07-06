@@ -43,21 +43,30 @@ class CartView extends StatelessWidget {
             itemBuilder: (_, index) {
               final product = cartItems[index];
               return ListTile(
-                leading: Image.network(product.fotoProd, width: 60),
+                leading:
+                    product.fotoProd != null && product.fotoProd!.isNotEmpty
+                        ? Image.network(product.fotoProd!, width: 60)
+                        : Container(
+                          width: 60,
+                          height: 60,
+                          color: Colors.grey[300],
+                          child: const Icon(Icons.image, color: Colors.grey),
+                        ),
                 title: Text(product.nomprod),
                 subtitle: Text("\$${product.precio}"),
                 onTap: () {
                   Navigator.push(
                     context,
                     MaterialPageRoute(
-                      builder: (_) => DetalleProducto(
-                        nombre: product.nomprod,
-                        descripcion: product.descripcionProd,
-                        precio: product.precio,
-                        imagen: product.fotoProd,
-                        stock: product.stock,
-                        categoria: product.tipoCategoria,
-                      ),
+                      builder:
+                          (_) => DetalleProducto(
+                            nombre: product.nomprod,
+                            descripcion: product.descripcionProd,
+                            precio: product.precio,
+                            imagen: product.fotoProd ?? '',
+                            stock: product.stock,
+                            categoria: product.tipoCategoria,
+                          ),
                     ),
                   );
                 },

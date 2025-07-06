@@ -65,11 +65,7 @@ class _LoginPageState extends State<LoginPage> {
             Container(
               padding: const EdgeInsets.fromLTRB(10, 30, 10, 10),
               alignment: Alignment.center,
-              child: Image.asset(
-                'lib/imagenes/logo.png',
-                width: 120,
-                height: 70,
-              ),
+              child: Image.asset('lib/images/logo.png', width: 120, height: 70),
             ),
             Container(
               alignment: Alignment.center,
@@ -124,12 +120,13 @@ class _LoginPageState extends State<LoginPage> {
               padding: const EdgeInsets.fromLTRB(10, 0, 10, 0),
               child: ElevatedButton(
                 onPressed: _isLoading ? null : loginWithBackend,
-                child: _isLoading
-                    ? CircularProgressIndicator(color: Colors.cyan)
-                    : const Text(
-                        'Acceder',
-                        style: TextStyle(color: Colors.cyan),
-                      ),
+                child:
+                    _isLoading
+                        ? CircularProgressIndicator(color: Colors.cyan)
+                        : const Text(
+                          'Acceder',
+                          style: TextStyle(color: Colors.cyan),
+                        ),
               ),
             ),
             Row(

@@ -3,9 +3,9 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
-import 'package:appflutter/pages/cliente/cliente_list.dart';
-import 'package:appflutter/pages/producto/producto_list.dart';
-import 'package:appflutter/pages/inicio/inicio.dart';
+// import 'package:appflutter/pages/cliente/cliente_list.dart';
+// import 'package:appflutter/pages/producto/producto_list.dart';
+// import 'package:appflutter/pages/inicio/inicio.dart';
 
 class Menu extends StatefulWidget {
   @override
@@ -15,14 +15,14 @@ class Menu extends StatefulWidget {
 class MenuState extends State<Menu> {
   int _selectDrawerItem = 0;
   getDrawerItemWidget(int pos) {
-    switch (pos) {
-      case 0:
-        return const inicio();
-      case 1:
-        return const ClientesList();
-      case 2:
-        return const ProductosList();
-    }
+    // switch (pos) {
+    //   case 0:
+    //     return const inicio();
+    //   case 1:
+    //     return const ClientesList();
+    //   case 2:
+    //     return const ProductosList();
+    // }
   }
 
   _onSelectItem(int pos) {

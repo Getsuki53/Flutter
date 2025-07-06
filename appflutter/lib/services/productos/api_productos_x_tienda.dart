@@ -7,7 +7,7 @@ import '../../config.dart';
 class APIObtenerListaProductosPorTienda {
   static var client = http.Client();
 
-  static Future<Producto?> obtenerListaTiendasProductosPorTienda(int tienda) async {
+  static Future<List<Producto>> obtenerListaTiendasProductosPorTienda(int tienda) async {
     Map<String, String> headers = {
       "Content-Type": "application/json",
     };
@@ -18,10 +18,10 @@ class APIObtenerListaProductosPorTienda {
 
     if (response.statusCode == 200) {
       var data = jsonDecode(response.body);
-      return Producto.fromJson(data);
+      return List<Producto>.from(data.map((item) => Producto.fromJson(item)));
     } else {
       print("Error al obtener productos: ${response.body}");
-      return null;
+      return [];
     }
   }
 }

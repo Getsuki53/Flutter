@@ -1,146 +1,104 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:Flutter/src/provider/followed_provider.dart';
-import 'package:Flutter/src/view/detalle_producto.dart';
-class FollowedPage extends ConsumerWidget {
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:appflutter/models/tienda_modelo.dart';
+import 'package:appflutter/services/seguimiento/api_seg_tienda_x_usuario.dart';
+
+class FollowedPage extends StatefulWidget {
   const FollowedPage({super.key});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final followed = ref.watch(followedProvider);
-
-    return Scaffold(
-      appBar: AppBar(title: const Text("Productos Seguidos")),
-      body: followed.isEmpty
-          ? const Center(child: Text("No estás siguiendo productos"))
-          : ListView.builder(
-              padding: const EdgeInsets.all(10),
-              itemCount: followed.length,
-              itemBuilder: (context, index) {
-                final producto = followed[index];
-
-                return Container(
-                  margin: const EdgeInsets.symmetric(vertical: 6),
-                  padding: const EdgeInsets.all(12),
-                  decoration: BoxDecoration(
-                    color: const Color.fromARGB(255, 241, 249, 255),
-                    borderRadius: BorderRadius.circular(8),
-                  ),
-                  child: Row(
-                    children: [
-                      Expanded(
-                        flex: 7,
-                        child: InkWell(
-                          onTap: () {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (_) => DetalleProducto(producto: producto),
-                              ),
-                            );
-                          },
-                          child: Text(producto.title),
-                        ),
-                      ),
-                      Expanded(
-                        flex: 3,
-                        child: OutlinedButton(
-                          onPressed: () {
-                            ref.read(followedProvider.notifier).removeFollow(producto.id);
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              SnackBar(content: Text('Dejaste de seguir: ${producto.title}')),
-                            );
-                          },
-                          style: OutlinedButton.styleFrom(
-                            backgroundColor: Colors.red,
-                            foregroundColor: Colors.white,
-                          ),
-                          child: const Text("Dejar de seguir", style: TextStyle(fontSize: 12)),
-                        ),
-                      )
-                    ],
-                  ),
-                );
-              },
-            ),
-    );
-  }
+  State<FollowedPage> createState() => _FollowedPageState();
 }
-class _FollowedPageState extends State<FollowedPage> {
-  final List<String> seguidos = [
-    'Asignar',
-    'Nombres',
-    'De ejemplo'
-  ];
 
-  void verDetalles(String tienda) {
-    // Redireccionar a la tienda
+class _FollowedPageState extends State<FollowedPage> {
+  int? usuarioId;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadUsuarioId();
   }
 
-  void dejarDeSeguir(String tienda) {
+  Future<void> _loadUsuarioId() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
     setState(() {
-      seguidos.remove(tienda);
+      usuarioId = prefs.getInt('usuario_id');
     });
-
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text('Has dejado de seguir a "$tienda"')),
-    );
   }
 
   @override
   Widget build(BuildContext context) {
+    if (usuarioId == null) {
+      return const Scaffold(
+        // appBar: AppBar(title: Text("Tiendas seguidas")),
+        body: Center(child: CircularProgressIndicator()),
+      );
+    }
+
     return Scaffold(
-      appBar: AppBar(title: const Text("Lista de seguidos")),
-      body: Padding(
-        padding: const EdgeInsets.all(10),
-        child: ListView.builder(
-          itemCount: seguidos.length,
-          itemBuilder: (context, index) {
-            final tienda = seguidos[index];
-            return Container(
-              margin: const EdgeInsets.symmetric(vertical: 6),
-              padding: const EdgeInsets.all(12),
-              decoration: BoxDecoration(
-                color: const Color.fromARGB(255, 241, 249, 255),
-                borderRadius: BorderRadius.circular(8),
-              ),
-              child: Row(
-                children: [
-                  Expanded(
-                    flex: 7,
-                    child: InkWell(
-                      onTap: () => verDetalles(tienda),
+      appBar: AppBar(title: const Text("Tiendas seguidas")),
+      body: FutureBuilder<List<Tienda>>(
+        future: APIObtenerListaTiendasSeguidasPorUsuario.obtenerListaTiendasSeguidasPorUsuario(usuarioId!),
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return const Center(child: CircularProgressIndicator());
+          }
+          if (snapshot.hasError) {
+            return Center(child: Text("Error: ${snapshot.error}"));
+          }
+          final tiendas = snapshot.data ?? [];
+          if (tiendas.isEmpty) {
+            return const Center(child: Text("No sigues ninguna tienda"));
+          }
+          return ListView.builder(
+            padding: const EdgeInsets.all(10),
+            itemCount: tiendas.length,
+            itemBuilder: (context, index) {
+              final tienda = tiendas[index];
+              return Container(
+                margin: const EdgeInsets.symmetric(vertical: 6),
+                padding: const EdgeInsets.all(12),
+                decoration: BoxDecoration(
+                  color: const Color.fromARGB(255, 241, 249, 255),
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                child: Row(
+                  children: [
+                    CircleAvatar(
+                      backgroundImage: tienda.logo != null && tienda.logo!.isNotEmpty
+                          ? NetworkImage(tienda.logo!)
+                          : const AssetImage('lib/imagenes/logo.png') as ImageProvider,
+                      radius: 24,
+                    ),
+                    const SizedBox(width: 16),
+                    Expanded(
                       child: Text(
-                        tienda,
-                        style: const TextStyle(
-                          fontSize: 16,
-                        ),
+                        tienda.nomTienda ?? 'Sin nombre',
+                        style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
                       ),
                     ),
-                  ),
-                  Expanded(
-                    flex: 3,
-                    child: OutlinedButton(
-                      onPressed: () => dejarDeSeguir(tienda),
+                    OutlinedButton(
+                      onPressed: () {
+                        // Aquí puedes implementar dejar de seguir tienda
+                        // y refrescar la lista si lo deseas
+                      },
                       style: OutlinedButton.styleFrom(
                         backgroundColor: Colors.red,
                         foregroundColor: Colors.white,
                         side: const BorderSide(color: Colors.red),
-                        alignment: Alignment.center,
                         padding: const EdgeInsets.symmetric(vertical: 12),
                       ),
                       child: const Text(
                         'Dejar de seguir',
-                        textAlign: TextAlign.center,
                         style: TextStyle(fontSize: 12),
                       ),
                     ),
-                  ),
-                ],
-              ),
-            );
-          },
-        ),
+                  ],
+                ),
+              );
+            },
+          );
+        },
       ),
     );
   }

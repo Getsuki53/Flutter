@@ -1,5 +1,3 @@
-import 'dart:convert';
-
 class Persona {
   late String? correo;
   late String? contrasena;

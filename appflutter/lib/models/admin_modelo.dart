@@ -1,4 +1,3 @@
-import 'dart:convert';
 import 'persona_modelo.dart';
 
 class Administrador extends Persona {

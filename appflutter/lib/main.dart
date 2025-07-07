@@ -5,6 +5,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 import 'pages/Inicio/main_scaffold.dart';
 import 'pages/Sesion/login.dart';
+import 'pages/Tienda/CrearTienda.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -35,6 +36,7 @@ class MyApp extends StatelessWidget {
         '/login': (context) => const LoginPage(),
         '/register': (context) => const SigninPage(),
         '/home': (context) => const MainScaffold(),
+        '/crearTienda': (context) => const CrearTienda(),
       },
     );
   }

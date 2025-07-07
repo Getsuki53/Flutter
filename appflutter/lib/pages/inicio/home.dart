@@ -13,7 +13,10 @@ class HomeView extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    return Scaffold(body: const ProductList(), backgroundColor: Colors.white);
+    return const Scaffold(
+      body: ProductList(),
+      backgroundColor: Colors.white,
+    );
   }
 }
 
@@ -28,16 +31,13 @@ class ProductList extends StatelessWidget {
         if (snapshot.connectionState == ConnectionState.waiting) {
           return const Center(child: CircularProgressIndicator());
         }
-
         if (snapshot.hasError) {
           return Center(child: Text("Error: ${snapshot.error}"));
         }
-
         final products = snapshot.data;
         if (products == null || products.isEmpty) {
           return const Center(child: Text("No hay productos disponibles."));
         }
-
         return PageView.builder(
           scrollDirection: Axis.vertical,
           itemCount: products.length,
@@ -52,7 +52,6 @@ class ProductList extends StatelessWidget {
 
 class ProductListTile extends StatefulWidget {
   const ProductListTile({super.key, required this.product});
-
   final Producto product;
 
   @override
@@ -75,8 +74,6 @@ class _ProductListTileState extends State<ProductListTile> {
     setState(() {
       usuarioId = prefs.getInt('usuario_id');
     });
-
-    // Verificar si el producto ya está en favoritos
     if (usuarioId != null && widget.product.id != null) {
       _verificarEstadoFavorito();
     }
@@ -86,9 +83,9 @@ class _ProductListTileState extends State<ProductListTile> {
     try {
       bool esFavorito =
           await APIVerificarProductoDeseado.verificarProductoDeseadoConCache(
-            usuarioId!,
-            widget.product.id!,
-          );
+        usuarioId!,
+        widget.product.id!,
+      );
       setState(() {
         isFavorite = esFavorito;
       });
@@ -114,15 +111,12 @@ class _ProductListTileState extends State<ProductListTile> {
 
     try {
       String? mensaje;
-
       if (isFavorite) {
-        // Si está en favoritos, lo eliminamos
         mensaje = await APIEliminarProductoDeseado.eliminarProductoDeseado(
           usuarioId!,
           widget.product.id!,
         );
       } else {
-        // Si no está en favoritos, lo agregamos
         mensaje = await APIAgregarProductoDeseado.agregarProductoDeseado(
           usuarioId!,
           widget.product.id!,
@@ -133,11 +127,10 @@ class _ProductListTileState extends State<ProductListTile> {
         setState(() {
           isFavorite = !isFavorite;
         });
-        // Limpiar cache para que se actualice en otros productos
         APIVerificarProductoDeseado.limpiarCache();
-        ScaffoldMessenger.of(
-          context,
-        ).showSnackBar(SnackBar(content: Text(mensaje)));
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text(mensaje)),
+        );
       } else {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
@@ -150,9 +143,9 @@ class _ProductListTileState extends State<ProductListTile> {
         );
       }
     } catch (e) {
-      ScaffoldMessenger.of(
-        context,
-      ).showSnackBar(SnackBar(content: Text('Error: $e')));
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Error: $e')),
+      );
     } finally {
       setState(() {
         isLoading = false;
@@ -169,16 +162,15 @@ class _ProductListTileState extends State<ProductListTile> {
         Navigator.push(
           context,
           MaterialPageRoute(
-            builder:
-                (_) => DetalleProducto(
-                  id: widget.product.id!,
-                  nombre: widget.product.nomprod,
-                  descripcion: widget.product.descripcionProd,
-                  precio: widget.product.precio,
-                  imagen: widget.product.fotoProd ?? '', // ← Manejo de null
-                  stock: widget.product.stock,
-                  categoria: widget.product.tipoCategoria,
-                ),
+            builder: (_) => DetalleProducto(
+              id: widget.product.id!,
+              nombre: widget.product.nomprod,
+              descripcion: widget.product.descripcionProd,
+              precio: widget.product.precio,
+              imagen: widget.product.fotoProd,
+              stock: widget.product.stock,
+              categoria: widget.product.tipoCategoria,
+            ),
           ),
         );
       },
@@ -190,45 +182,42 @@ class _ProductListTileState extends State<ProductListTile> {
           children: [
             Stack(
               children: [
-                widget.product.fotoProd != null &&
-                        widget.product.fotoProd!.isNotEmpty
+                // Solo comprobamos si la cadena no está vacía
+                (widget.product.fotoProd).isNotEmpty
                     ? Image.network(
-                      widget.product.fotoProd!,
-                      height: 250,
-                      fit: BoxFit.contain,
-                      errorBuilder: (context, error, stackTrace) {
-                        print(
-                          '🚨 ERROR home - No se pudo cargar imagen: ${widget.product.fotoProd}',
-                        );
-                        print('🚨 ERROR home - Error: $error');
-                        return Container(
-                          height: 250,
-                          color: Colors.grey[300],
-                          child: const Icon(
-                            Icons.image_not_supported,
-                            size: 50,
-                            color: Colors.grey,
-                          ),
-                        );
-                      },
-                    )
+                        widget.product.fotoProd,
+                        height: 250,
+                        fit: BoxFit.contain,
+                        errorBuilder: (context, error, stackTrace) {
+                          print(
+                            '🚨 ERROR home - No se pudo cargar imagen: ${widget.product.fotoProd}',
+                          );
+                          print('🚨 ERROR home - Error: $error');
+                          return Container(
+                            height: 250,
+                            color: Colors.grey[300],
+                            child: const Icon(
+                              Icons.image_not_supported,
+                              size: 50,
+                              color: Colors.grey,
+                            ),
+                          );
+                        },
+                      )
                     : Container(
-                      height: 250,
-                      color: Colors.grey[300],
-                      child: const Icon(
-                        Icons.image,
-                        size: 50,
-                        color: Colors.grey,
+                        height: 250,
+                        color: Colors.grey[300],
+                        child: const Icon(
+                          Icons.image,
+                          size: 50,
+                          color: Colors.grey,
+                        ),
                       ),
-                    ),
                 Positioned(
                   top: 8,
                   right: 8,
                   child: GestureDetector(
-                    onTap:
-                        isLoading
-                            ? null
-                            : toggleFavorite, // ← Deshabilitar si está cargando
+                    onTap: isLoading ? null : toggleFavorite,
                     child: Container(
                       decoration: BoxDecoration(
                         shape: BoxShape.circle,
@@ -239,25 +228,24 @@ class _ProductListTileState extends State<ProductListTile> {
                         ),
                       ),
                       padding: const EdgeInsets.all(6),
-                      child:
-                          isLoading
-                              ? const SizedBox(
-                                width: 16,
-                                height: 16,
-                                child: CircularProgressIndicator(
-                                  strokeWidth: 2,
-                                  valueColor: AlwaysStoppedAnimation<Color>(
-                                    Colors.black,
-                                  ),
+                      child: isLoading
+                          ? const SizedBox(
+                              width: 16,
+                              height: 16,
+                              child: CircularProgressIndicator(
+                                strokeWidth: 2,
+                                valueColor: AlwaysStoppedAnimation<Color>(
+                                  Colors.black,
                                 ),
-                              )
-                              : Icon(
-                                isFavorite
-                                    ? Icons.favorite
-                                    : Icons.favorite_border,
-                                color: isFavorite ? Colors.white : Colors.black,
-                                size: 24,
                               ),
+                            )
+                          : Icon(
+                              isFavorite
+                                  ? Icons.favorite
+                                  : Icons.favorite_border,
+                              color: isFavorite ? Colors.white : Colors.black,
+                              size: 24,
+                            ),
                     ),
                   ),
                 ),

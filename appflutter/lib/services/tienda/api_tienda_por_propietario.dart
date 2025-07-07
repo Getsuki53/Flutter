@@ -12,7 +12,11 @@ class APIObtenerTiendaPorPropietario {
       "Content-Type": "application/json",
     };
 
-    var url = Uri.http(Config.apiURL, "${Config.tiendaAPI}/ObtenerTiendaPorPropietario/?propietario_id=$usuario/");
+    var url = Uri.http(
+      Config.apiURL,
+      "${Config.tiendaAPI}/ObtenerTiendaPorPropietario",
+      {"usuario_id": usuario.toString()},
+    );
 
     var response = await client.get(url, headers: headers);
 

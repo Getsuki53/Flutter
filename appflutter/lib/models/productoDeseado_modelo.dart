@@ -42,6 +42,7 @@ class ProductoDeseado {
         id: json['producto'],
         nomprod: '',
         descripcionProd: '',
+        fotoProd: '',
         stock: 0,
         precio: 0.0,
         tipoCategoria: '',

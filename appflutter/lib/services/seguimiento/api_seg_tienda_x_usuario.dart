@@ -12,7 +12,11 @@ class APIObtenerListaTiendasSeguidasPorUsuario {
       "Content-Type": "application/json",
     };
 
-    var url = Uri.parse(Config.buildUrl("${Config.seguimientotiendaAPI}/ObtenerImgNomTiendaPorProducto/?usuario_id=$usuario/")); // ✅ Cambiar Uri.http por Uri.parse
+    var url = Uri.http(
+      Config.apiURL,
+      "${Config.seguimientotiendaAPI}/ObtenerListaTiendasSeguidasPorUsuario",
+      {"usuario_id": usuario.toString()},
+    );
 
     var response = await client.get(url, headers: headers);
 

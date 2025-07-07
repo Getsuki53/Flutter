@@ -140,7 +140,7 @@ class _WishedPageState extends State<WishedPage> {
                             child: ClipRRect(
                               borderRadius: BorderRadius.circular(8),
                               child: Image.network(
-                                producto.fotoProd ?? '',
+                                producto.fotoProd,
                                 fit: BoxFit.cover,
                                 errorBuilder: (context, error, stackTrace) {
                                   return const Icon(
@@ -164,7 +164,7 @@ class _WishedPageState extends State<WishedPage> {
                                           nombre: producto.nomprod,
                                           descripcion: producto.descripcionProd,
                                           precio: producto.precio,
-                                          imagen: producto.fotoProd ?? '',
+                                          imagen: producto.fotoProd,
                                           stock: producto.stock,
                                           categoria: producto.tipoCategoria,
                                         ),

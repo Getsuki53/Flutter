@@ -12,7 +12,11 @@ class APIDetalleTienda {
       "Content-Type": "application/json",
     };
 
-    var url = Uri.http(Config.apiURL, "${Config.tiendaObtenerDetallesTiendaAPI}/?tienda_id=$tienda/");
+    var url = Uri.http(
+      Config.apiURL, 
+      "${Config.tiendaAPI}/ObtenerDetallesTienda",
+      {"tienda_id": tienda.toString()},
+    );
 
     var response = await client.get(url, headers: headers);
 

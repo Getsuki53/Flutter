@@ -1,67 +1,20 @@
 import 'package:flutter/material.dart';
-import 'package:appflutter/pages/Producto/detalle_producto.dart';
-import 'package:appflutter/pages/Producto/Publicarproducto.dart';
-import 'package:appflutter/services/tienda/api_detalle_tienda.dart';
-import 'package:appflutter/services/productos/api_productos_x_tienda.dart';
-import 'package:appflutter/services/tienda/api_tienda_por_propietario.dart';
 import 'package:appflutter/models/tienda_modelo.dart';
 import 'package:appflutter/models/producto_modelo.dart';
-import 'package:shared_preferences/shared_preferences.dart';
+import 'package:appflutter/services/tienda/api_detalle_tienda.dart';
+import 'package:appflutter/services/productos/api_productos_x_tienda.dart';
+import 'package:appflutter/pages/Producto/detalle_producto.dart';
 
-class MiTienda extends StatefulWidget {
-  const MiTienda({super.key});
-
-  @override
-  State<MiTienda> createState() => _MiTiendaState();
-}
-
-class _MiTiendaState extends State<MiTienda> {
-  int? tiendaId;
-
-  @override
-  void initState() {
-    super.initState();
-    _loadTienda();
-  }
-
-  Future<void> _loadTienda() async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    // Suponiendo que tienes guardado el usuario_id en SharedPreferences
-    int? usuarioId = prefs.getInt('usuario_id');
-    if (usuarioId == null) {
-      // Si no hay usuario, podrías redirigir a login o mostrar error
-      Navigator.pushReplacementNamed(context, '/login');
-      return;
-    }
-    // Usar la API para obtener la tienda por propietario
-    final tienda = await APIObtenerTiendaPorPropietario.obtenerTiendaPorPropietario(usuarioId);
-
-    if (tienda != null && tienda.id != null) {
-      setState(() {
-        tiendaId = tienda.id;
-      });
-
-    } else {
-      // Si no tiene tienda, redirigir a crear tienda
-      Navigator.pushReplacementNamed(context, '/crearTienda');
-    }
-  }
+class DetalleTienda extends StatelessWidget {
+  final int tiendaId;
+  const DetalleTienda({super.key, required this.tiendaId});
 
   @override
   Widget build(BuildContext context) {
-    if (tiendaId == null) {
-      return Scaffold(
-        appBar: AppBar(title: const Text('Mi Tienda'),),
-        body: Center(child: CircularProgressIndicator()),
-      );
-    }
-
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Mi Tienda'),
-      ),
+      appBar: AppBar(title: const Text('Perfil de la Tienda')),
       body: FutureBuilder<Tienda?>(
-        future: APIDetalleTienda.detalleTienda(tiendaId!),
+        future: APIDetalleTienda.detalleTienda(tiendaId),
         builder: (context, tiendaSnapshot) {
           if (tiendaSnapshot.connectionState == ConnectionState.waiting) {
             return const Center(child: CircularProgressIndicator());
@@ -75,7 +28,7 @@ class _MiTiendaState extends State<MiTienda> {
           }
 
           return FutureBuilder<List<Producto>>(
-            future: APIObtenerListaProductosPorTienda.obtenerListaTiendasProductosPorTienda(tiendaId!),
+            future: APIObtenerListaProductosPorTienda.obtenerListaTiendasProductosPorTienda(tiendaId),
             builder: (context, productosSnapshot) {
               if (productosSnapshot.connectionState == ConnectionState.waiting) {
                 return const Center(child: CircularProgressIndicator());
@@ -111,16 +64,6 @@ class _MiTiendaState extends State<MiTienda> {
                           ),
                         ),
                       ],
-                    ),
-                    const SizedBox(height: 24),
-                    ElevatedButton(
-                      onPressed: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(builder: (_) => const PublicarProducto()),
-                        );
-                      },
-                      child: const Text('Publicar producto'),
                     ),
                     const SizedBox(height: 24),
                     const Text('Productos publicados:', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
@@ -186,3 +129,4 @@ class _MiTiendaState extends State<MiTienda> {
     );
   }
 }
+

@@ -66,9 +66,9 @@ class _LoginPageState extends State<LoginPage> {
               padding: const EdgeInsets.fromLTRB(10, 30, 10, 10),
               alignment: Alignment.center,
               child: Image.asset(
-                'lib/imagenes/logo.png',
-                width: 120,
-                height: 70,
+                'assets/images/logo.png',
+                width: 200,
+                height: 120,
               ),
             ),
             Container(

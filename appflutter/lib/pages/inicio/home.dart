@@ -5,6 +5,7 @@ import 'package:appflutter/pages/Producto/detalle_producto.dart';
 import 'package:appflutter/services/productos/api_productos.dart';
 import 'package:appflutter/services/deseados/api_agregar_producto_deseado.dart';
 import 'package:appflutter/services/deseados/api_eliminar_producto_deseado.dart';
+import 'package:appflutter/services/deseados/api_verificar_producto_deseado.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class HomeView extends ConsumerWidget {
@@ -74,6 +75,29 @@ class _ProductListTileState extends State<ProductListTile> {
     setState(() {
       usuarioId = prefs.getInt('usuario_id');
     });
+
+    // Verificar si el producto ya está en favoritos
+    if (usuarioId != null && widget.product.id != null) {
+      _verificarEstadoFavorito();
+    }
+  }
+
+  Future<void> _verificarEstadoFavorito() async {
+    try {
+      bool esFavorito =
+          await APIVerificarProductoDeseado.verificarProductoDeseadoConCache(
+            usuarioId!,
+            widget.product.id!,
+          );
+      setState(() {
+        isFavorite = esFavorito;
+      });
+      print(
+        '🔍 Producto ${widget.product.nomprod} ${esFavorito ? "SÍ" : "NO"} está en favoritos',
+      );
+    } catch (e) {
+      print('❌ Error al verificar estado de favorito: $e');
+    }
   }
 
   Future<void> toggleFavorite() async {
@@ -109,6 +133,8 @@ class _ProductListTileState extends State<ProductListTile> {
         setState(() {
           isFavorite = !isFavorite;
         });
+        // Limpiar cache para que se actualice en otros productos
+        APIVerificarProductoDeseado.limpiarCache();
         ScaffoldMessenger.of(
           context,
         ).showSnackBar(SnackBar(content: Text(mensaje)));

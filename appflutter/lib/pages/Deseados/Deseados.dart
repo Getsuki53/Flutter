@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:appflutter/models/producto_modelo.dart';
 import 'package:appflutter/services/deseados/api_deseados_x_usuario.dart';
 import 'package:appflutter/services/deseados/api_eliminar_producto_deseado.dart';
+import 'package:appflutter/services/deseados/api_verificar_producto_deseado.dart';
 import 'package:appflutter/pages/Producto/detalle_producto.dart';
 
 class WishedPage extends StatefulWidget {
@@ -63,6 +64,8 @@ class _WishedPageState extends State<WishedPage> {
         setState(() {
           deseados.removeAt(index);
         });
+        // Limpiar cache para que se actualice en la página principal
+        APIVerificarProductoDeseado.limpiarCache();
         ScaffoldMessenger.of(
           context,
         ).showSnackBar(SnackBar(content: Text(mensaje)));

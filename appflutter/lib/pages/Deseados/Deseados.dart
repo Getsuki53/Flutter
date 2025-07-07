@@ -5,8 +5,8 @@ import 'package:appflutter/services/deseados/api_eliminar_producto_deseado.dart'
 import 'package:appflutter/pages/Producto/detalle_producto.dart';
 
 class WishedPage extends StatefulWidget {
-  final int usuarioId;
-  const WishedPage({super.key, required this.usuarioId});
+  final int usuario_id;
+  const WishedPage({super.key, required this.usuario_id});
 
   @override
   State<WishedPage> createState() => _WishedPageState();
@@ -30,10 +30,10 @@ class _WishedPageState extends State<WishedPage> {
     try {
       final productos =
           await APIObtenerListaDeseadosPorUsuario.obtenerListaDeseadosPorUsuario(
-            widget.usuarioId,
+            widget.usuario_id,
           );
       setState(() {
-        deseados = productos ?? [];
+        deseados = productos;
       });
     } catch (e) {
       print('Error al cargar deseados: $e');
@@ -47,7 +47,7 @@ class _WishedPageState extends State<WishedPage> {
   Future<void> _quitarDeDeseados(Producto producto, int index) async {
     try {
       final mensaje = await APIEliminarProductoDeseado.eliminarProductoDeseado(
-        widget.usuarioId,
+        widget.usuario_id,
         producto.id!,
       );
 
@@ -77,7 +77,7 @@ class _WishedPageState extends State<WishedPage> {
       body: FutureBuilder<List<Producto>>(
         future:
             APIObtenerListaDeseadosPorUsuario.obtenerListaDeseadosPorUsuario(
-              usuarioId,
+              widget.usuario_id,
             ),
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
@@ -117,7 +117,7 @@ class _WishedPageState extends State<WishedPage> {
                                     nombre: producto.nomprod,
                                     descripcion: producto.descripcionProd,
                                     precio: producto.precio,
-                                    imagen: producto.fotoProd,
+                                    imagen: producto.fotoProd ?? '',
                                     stock: producto.stock,
                                     categoria: producto.tipoCategoria,
                                   ),
@@ -134,8 +134,7 @@ class _WishedPageState extends State<WishedPage> {
                       flex: 3,
                       child: OutlinedButton(
                         onPressed: () {
-                          // Aquí deberías llamar a la API para quitar de deseados
-                          // y luego actualizar el estado (si usas StatefulWidget)
+                          _quitarDeDeseados(producto, index);
                         },
                         style: OutlinedButton.styleFrom(
                           backgroundColor: Colors.red,

@@ -62,7 +62,7 @@ class ProductoDeseado {
     final data = <String, dynamic>{};
     data['id'] = id;
     data['usuario'] = usuario.toJson();
-    data['productoDeseado'] = producto.toJson();
+    data['producto'] = producto.toJson();
     return data;
   }
 }

@@ -18,16 +18,15 @@ class _MiPerfilState extends State<MiPerfil> {
   int? usuarioId;
 
   void cerrarSesion(BuildContext context) {
-  // Aquí puedes limpiar cualquier estado o token si fuera necesario
-  // Por ejemplo: await SharedPreferences.getInstance().then((prefs) => prefs.clear());
+    // Aquí puedes limpiar cualquier estado o token si fuera necesario
+    // Por ejemplo: await SharedPreferences.getInstance().then((prefs) => prefs.clear());
 
-  Navigator.pushAndRemoveUntil(
-    context,
-    MaterialPageRoute(builder: (_) => const LoginPage()),
-    (Route<dynamic> route) => false,
-  );
-}
-
+    Navigator.pushAndRemoveUntil(
+      context,
+      MaterialPageRoute(builder: (_) => const LoginPage()),
+      (Route<dynamic> route) => false,
+    );
+  }
 
   @override
   void initState() {
@@ -45,93 +44,111 @@ class _MiPerfilState extends State<MiPerfil> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Mi Perfil'),
-      ),
-      body: usuarioId == null
-          ? Center(child: Text("UsuarioID = $usuarioId"))
-          : FutureBuilder<Usuario?>(
-              future: APIPerfil.obtenerPerfil(usuarioId!),
-              builder: (context, snapshot) {
-                if (snapshot.connectionState == ConnectionState.waiting) {
-                  return const Center(child: CircularProgressIndicator());
-                }
-                if (snapshot.hasError) {
-                  return Center(child: Text("Error: ${snapshot.error}"));
-                }
-                final usuario = snapshot.data;
-                if (usuario == null) {
-                  return const Center(child: Text("No se pudo cargar el perfil"));
-                }
-                return Padding(
-                  padding: const EdgeInsets.all(16.0),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Row(
-                        children: [
-                          CircleAvatar(
-                            radius: 45,
-                            backgroundImage: usuario.foto.isNotEmpty
-                                ? NetworkImage(usuario.foto)
-                                : const AssetImage('lib/imagenes/logo.png'),
-                          ),
-                          const SizedBox(width: 16),
-                          Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text("${usuario.nombre} ${usuario.apellido}", style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
-                              Text(usuario.correo ?? ''),
-                            ],
-                          ),
-                        ],
-                      ),
-                      const SizedBox(height: 24),
-                      ElevatedButton(
-                        onPressed: () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(builder: (_) => const MiTienda()),
-                          );
-                        },
-                        child: const Text('Mi Tienda'),
-                      ),
-                      const SizedBox(height: 24),
-                      ElevatedButton(
-                        onPressed: () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(builder: (_) => const FollowedPage()),
-                          );
-                        },
-                        child: const Text('Tiendas Seguidas'),
-                      ),
-                      const SizedBox(height: 24),
-                      ElevatedButton(
-                        onPressed: usuarioId == null
-                            ? null
-                            : () {
-                                Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                    builder: (_) => WishedPage(usuarioId: usuarioId!),
+      appBar: AppBar(title: const Text('Mi Perfil')),
+      body:
+          usuarioId == null
+              ? Center(child: Text("UsuarioID = $usuarioId"))
+              : FutureBuilder<Usuario?>(
+                future: APIPerfil.obtenerPerfil(usuarioId!),
+                builder: (context, snapshot) {
+                  if (snapshot.connectionState == ConnectionState.waiting) {
+                    return const Center(child: CircularProgressIndicator());
+                  }
+                  if (snapshot.hasError) {
+                    return Center(child: Text("Error: ${snapshot.error}"));
+                  }
+                  final usuario = snapshot.data;
+                  if (usuario == null) {
+                    return const Center(
+                      child: Text("No se pudo cargar el perfil"),
+                    );
+                  }
+                  return Padding(
+                    padding: const EdgeInsets.all(16.0),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Row(
+                          children: [
+                            CircleAvatar(
+                              radius: 45,
+                              backgroundImage:
+                                  usuario.foto.isNotEmpty
+                                      ? NetworkImage(usuario.foto)
+                                      : const AssetImage(
+                                        'lib/imagenes/logo.png',
+                                      ),
+                            ),
+                            const SizedBox(width: 16),
+                            Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  "${usuario.nombre} ${usuario.apellido}",
+                                  style: const TextStyle(
+                                    fontSize: 20,
+                                    fontWeight: FontWeight.bold,
                                   ),
-                                );
-                              },
-                        child: const Text('Lista de deseos'),
-                      ),
-                      const SizedBox(height: 24),
-                      ElevatedButton(
-                        onPressed: () {
-                          cerrarSesion(context);
-                        },
-                        child: const Text('Cerrar sesión'),
-                      ),
-                    ],
-                  ),
-                );
-              },
-            ),
+                                ),
+                                Text(usuario.correo ?? ''),
+                              ],
+                            ),
+                          ],
+                        ),
+                        const SizedBox(height: 24),
+                        ElevatedButton(
+                          onPressed: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (_) => const MiTienda(),
+                              ),
+                            );
+                          },
+                          child: const Text('Mi Tienda'),
+                        ),
+                        const SizedBox(height: 24),
+                        ElevatedButton(
+                          onPressed: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (_) => const FollowedPage(),
+                              ),
+                            );
+                          },
+                          child: const Text('Tiendas Seguidas'),
+                        ),
+                        const SizedBox(height: 24),
+                        ElevatedButton(
+                          onPressed:
+                              usuarioId == null
+                                  ? null
+                                  : () {
+                                    Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                        builder:
+                                            (_) => WishedPage(
+                                              usuario_id: usuarioId!,
+                                            ),
+                                      ),
+                                    );
+                                  },
+                          child: const Text('Lista de deseos'),
+                        ),
+                        const SizedBox(height: 24),
+                        ElevatedButton(
+                          onPressed: () {
+                            cerrarSesion(context);
+                          },
+                          child: const Text('Cerrar sesión'),
+                        ),
+                      ],
+                    ),
+                  );
+                },
+              ),
     );
   }
 }

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:appflutter/services/productos/api_productos_x_carrito.dart';
+import 'package:appflutter/models/carrito_item_detallado.dart';
 
 class CartView extends StatelessWidget {
   final int? usuarioId;
@@ -34,10 +35,10 @@ class CartView extends StatelessWidget {
             return const Center(child: Text("Usuario no identificado"));
           }
 
-          print('🔍 Usuario ID para carrito: $userId'); // Debug
+          print('🔍 Usuario ID para carrito: $userId');
 
-          return FutureBuilder<List<Map<String, dynamic>>>(
-            future: APIObtenerProductosCarrito.obtenerProductosCarrito(userId),
+          return FutureBuilder<List<CarritoItemDetallado>>(
+            future: APIObtenerProductosCarrito.obtenerProductosCarritoDetallado(userId),
             builder: (context, snapshot) {
               if (snapshot.connectionState == ConnectionState.waiting) {
                 return const Center(child: CircularProgressIndicator());
@@ -49,7 +50,7 @@ class CartView extends StatelessWidget {
 
               final cartItems = snapshot.data ?? [];
 
-              print('🔍 Items en carrito: ${cartItems.length}'); // Debug
+              print('🔍 Items detallados en carrito: ${cartItems.length}');
 
               if (cartItems.isEmpty) {
                 return const Center(
@@ -87,57 +88,82 @@ class CartView extends StatelessWidget {
                       itemCount: cartItems.length,
                       itemBuilder: (_, index) {
                         final item = cartItems[index];
+                        final producto = item.producto;
                         
                         return Card(
                           margin: const EdgeInsets.symmetric(vertical: 4),
                           child: ListTile(
                             leading: Container(
-                              width: 50,
-                              height: 50,
+                              width: 60,
+                              height: 60,
                               decoration: BoxDecoration(
-                                color: Colors.blue.shade100,
                                 borderRadius: BorderRadius.circular(8),
+                                color: Colors.grey.shade200,
                               ),
-                              child: const Icon(Icons.shopping_bag, color: Colors.blue),
+                              child: producto?.fotoProd != null
+                                  ? ClipRRect(
+                                      borderRadius: BorderRadius.circular(8),
+                                      child: Image.network(
+                                        producto!.fotoProd,
+                                        fit: BoxFit.cover,
+                                        errorBuilder: (context, error, stackTrace) {
+                                          return const Icon(Icons.image_not_supported, color: Colors.grey);
+                                        },
+                                      ),
+                                    )
+                                  : const Icon(Icons.shopping_bag, color: Colors.grey),
                             ),
                             title: Text(
-                              "Producto ID: ${item['producto']}",
+                              producto?.nomprod ?? "Producto #${item.productoId}",
                               style: const TextStyle(fontWeight: FontWeight.bold),
+                              maxLines: 2,
+                              overflow: TextOverflow.ellipsis,
                             ),
                             subtitle: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                Text("Unidades: ${item['unidades']}"),
-                                Text("Valor total: \$${item['valortotal']}"),
-                                Text("Item ID: ${item['id']}", style: TextStyle(color: Colors.grey.shade600, fontSize: 12)),
+                                const SizedBox(height: 4),
+                                Text("Cantidad: ${item.unidades}"),
+                                Text(
+                                  "Precio unitario: \$${producto?.precio ?? 'N/A'}",
+                                  style: TextStyle(color: Colors.grey.shade600),
+                                ),
+                                const SizedBox(height: 4),
+                                Text(
+                                  "Total: \$${(producto?.precio ?? 0) * item.unidades}",
+                                  style: const TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                    color: Colors.green,
+                                  ),
+                                ),
                               ],
                             ),
                             trailing: Row(
                               mainAxisSize: MainAxisSize.min,
                               children: [
                                 IconButton(
-                                  icon: const Icon(Icons.remove),
+                                  icon: const Icon(Icons.remove_circle_outline),
                                   onPressed: () {
-                                    // TODO: Implementar reducir cantidad
-                                    print("Reducir cantidad del item ${item['id']}");
+                                    print("Reducir cantidad del item ${item.id}");
                                   },
                                 ),
                                 Text(
-                                  "${item['unidades']}",
+                                  "${item.unidades}",
                                   style: const TextStyle(fontWeight: FontWeight.bold),
                                 ),
                                 IconButton(
-                                  icon: const Icon(Icons.add),
+                                  icon: const Icon(Icons.add_circle_outline),
                                   onPressed: () {
-                                    // TODO: Implementar aumentar cantidad
-                                    print("Aumentar cantidad del item ${item['id']}");
+                                    print("Aumentar cantidad del item ${item.id}");
                                   },
                                 ),
                               ],
                             ),
                             onTap: () {
-                              // TODO: Navegar a detalle del producto
-                              print("Ver detalle del producto ${item['producto']}");
+                              if (producto != null) {
+                                print("Ver detalle del producto ${producto.nomprod}");
+                                // TODO: Navegar a detalle del producto
+                              }
                             },
                           ),
                         );
@@ -149,20 +175,49 @@ class CartView extends StatelessWidget {
                     Container(
                       width: double.infinity,
                       padding: const EdgeInsets.all(16),
-                      child: ElevatedButton(
-                        onPressed: () {
-                          // TODO: Implementar checkout
-                          print("Proceder al checkout");
-                        },
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: Colors.green,
-                          foregroundColor: Colors.white,
-                          padding: const EdgeInsets.symmetric(vertical: 16),
-                        ),
-                        child: Text(
-                          "Proceder al Pago (${cartItems.length} items)",
-                          style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-                        ),
+                      child: Column(
+                        children: [
+                          // Total general
+                          Container(
+                            padding: const EdgeInsets.all(12),
+                            decoration: BoxDecoration(
+                              color: Colors.grey.shade100,
+                              borderRadius: BorderRadius.circular(8),
+                            ),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                const Text(
+                                  "Total:",
+                                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                                ),
+                                Text(
+                                  "\$${cartItems.fold(0.0, (sum, item) => sum + ((item.producto?.precio ?? 0) * item.unidades)).toStringAsFixed(2)}",
+                                  style: const TextStyle(
+                                    fontSize: 18,
+                                    fontWeight: FontWeight.bold,
+                                    color: Colors.green,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                          const SizedBox(height: 12),
+                          ElevatedButton(
+                            onPressed: () {
+                              print("Proceder al checkout");
+                            },
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: Colors.green,
+                              foregroundColor: Colors.white,
+                              padding: const EdgeInsets.symmetric(vertical: 16),
+                            ),
+                            child: Text(
+                              "Proceder al Pago (${cartItems.length} items)",
+                              style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                            ),
+                          ),
+                        ],
                       ),
                     ),
                 ],

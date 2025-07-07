@@ -24,4 +24,28 @@ class APIDetalleProducto {
       return null;
     }
   }
+
+  static Future<Producto?> obtenerProductoPorId(int productoId) async {
+    Map<String, String> headers = {
+      "Content-Type": "application/json",
+    };
+
+    // Asumiendo que tienes un endpoint para obtener producto por ID
+    var url = Uri.parse(Config.buildUrl("${Config.productoAPI}/$productoId/"));
+
+    print('🔍 URL detalle producto: $url');
+
+    var response = await client.get(url, headers: headers);
+
+    print('🔍 Status code producto: ${response.statusCode}');
+    print('🔍 Response body producto: ${response.body}');
+
+    if (response.statusCode == 200) {
+      var data = jsonDecode(response.body);
+      return Producto.fromJson(data);
+    } else {
+      print("Error al obtener producto: ${response.body}");
+      return null;
+    }
+  }
 }

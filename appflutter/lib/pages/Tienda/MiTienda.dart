@@ -41,7 +41,9 @@ class _MiTiendaState extends State<MiTienda> {
     }
 
     return Scaffold(
-      appBar: AppBar(title: const Text('Mi Tienda')),
+      appBar: AppBar(
+        title: const Text('Mi Tienda'),
+      ),
       body: FutureBuilder<Tienda?>(
         future: APIDetalleTienda.detalleTienda(tiendaId!),
         builder: (context, tiendaSnapshot) {
@@ -57,13 +59,9 @@ class _MiTiendaState extends State<MiTienda> {
           }
 
           return FutureBuilder<List<Producto>>(
-            future:
-                APIObtenerListaProductosPorTienda.obtenerListaTiendasProductosPorTienda(
-                  tiendaId!,
-                ),
+            future: APIObtenerListaProductosPorTienda.obtenerListaTiendasProductosPorTienda(tiendaId!),
             builder: (context, productosSnapshot) {
-              if (productosSnapshot.connectionState ==
-                  ConnectionState.waiting) {
+              if (productosSnapshot.connectionState == ConnectionState.waiting) {
                 return const Center(child: CircularProgressIndicator());
               }
               if (productosSnapshot.hasError) {
@@ -80,24 +78,16 @@ class _MiTiendaState extends State<MiTienda> {
                       children: [
                         CircleAvatar(
                           radius: 45,
-                          backgroundImage:
-                              (tienda.logo != null && tienda.logo!.isNotEmpty)
-                                  ? NetworkImage(tienda.logo!)
-                                  : const AssetImage('lib/assets/logo.png')
-                                      as ImageProvider,
+                          backgroundImage: (tienda.logo != null && tienda.logo!.isNotEmpty)
+                              ? NetworkImage(tienda.logo!)
+                              : const AssetImage('lib/assets/logo.png') as ImageProvider,
                         ),
                         const SizedBox(width: 16),
                         Expanded(
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              Text(
-                                tienda.nomTienda ?? '',
-                                style: const TextStyle(
-                                  fontSize: 20,
-                                  fontWeight: FontWeight.bold,
-                                ),
-                              ),
+                              Text(tienda.nomTienda ?? '', style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
                               Text(tienda.descripcionTienda ?? ''),
                               Text("Productos: ${tienda.cantProductos ?? 0}"),
                               Text("Seguidores: ${tienda.cantSeguidores ?? 0}"),
@@ -111,121 +101,64 @@ class _MiTiendaState extends State<MiTienda> {
                       onPressed: () {
                         Navigator.push(
                           context,
-                          MaterialPageRoute(
-                            builder: (_) => const PublicarProducto(),
-                          ),
+                          MaterialPageRoute(builder: (_) => const PublicarProducto()),
                         );
                       },
                       child: const Text('Publicar producto'),
                     ),
                     const SizedBox(height: 24),
-                    const Text(
-                      'Productos publicados:',
-                      style: TextStyle(
-                        fontSize: 18,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
+                    const Text('Productos publicados:', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
                     const SizedBox(height: 8),
                     Expanded(
-                      child:
-                          productos.isEmpty
-                              ? const Center(
-                                child: Text('No hay productos publicados.'),
-                              )
-                              : GridView.builder(
-                                gridDelegate:
-                                    const SliverGridDelegateWithFixedCrossAxisCount(
-                                      crossAxisCount: 3,
-                                      crossAxisSpacing: 8,
-                                      mainAxisSpacing: 8,
-                                    ),
-                                itemCount: productos.length,
-                                itemBuilder: (context, index) {
-                                  final producto = productos[index];
-                                  return GestureDetector(
-                                    onTap: () {
-                                      Navigator.push(
-                                        context,
-                                        MaterialPageRoute(
-                                          builder:
-                                              (_) => DetalleProducto(
-                                                id: producto.id!,
-                                                nombre: producto.nomprod,
-                                                descripcion:
-                                                    producto.descripcionProd,
-                                                precio:
-                                                    double.tryParse(
-                                                      producto.precio
-                                                          .toString(),
-                                                    ) ??
-                                                    0.0,
-                                                imagen: producto.fotoProd,
-                                                stock:
-                                                    int.tryParse(
-                                                      producto.stock.toString(),
-                                                    ) ??
-                                                    0,
-                                                categoria:
-                                                    producto.tipoCategoria
-                                                        .toString(),
-                                              ),
-                                        ),
-                                      );
-                                    },
-                                    child: Column(
-                                      children: [
-                                        producto.fotoProd != null &&
-                                                producto.fotoProd!.isNotEmpty
-                                            ? Image.network(
-                                              producto.fotoProd!,
-                                              height: 70,
-                                              width: 70,
-                                              fit: BoxFit.cover,
-                                              errorBuilder: (
-                                                context,
-                                                error,
-                                                stackTrace,
-                                              ) {
-                                                print(
-                                                  '🚨 ERROR tienda - No se pudo cargar imagen: ${producto.fotoProd}',
-                                                );
-                                                print(
-                                                  '🚨 ERROR tienda - Error: $error',
-                                                );
-                                                return Container(
-                                                  height: 70,
-                                                  width: 70,
-                                                  color: Colors.grey[300],
-                                                  child: const Icon(
-                                                    Icons.image_not_supported,
-                                                    color: Colors.grey,
-                                                  ),
-                                                );
-                                              },
-                                            )
-                                            : Container(
-                                              height: 70,
-                                              width: 70,
-                                              color: Colors.grey[300],
-                                              child: const Icon(
-                                                Icons.image,
-                                                color: Colors.grey,
-                                              ),
-                                            ),
-                                        const SizedBox(height: 4),
-                                        Text(
-                                          producto.nomprod,
-                                          textAlign: TextAlign.center,
-                                          overflow: TextOverflow.ellipsis,
-                                          maxLines: 2,
-                                          style: const TextStyle(fontSize: 12),
-                                        ),
-                                      ],
-                                    ),
-                                  );
-                                },
+                      child: productos.isEmpty
+                          ? const Center(child: Text('No hay productos publicados.'))
+                          : GridView.builder(
+                              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                                crossAxisCount: 3,
+                                crossAxisSpacing: 8,
+                                mainAxisSpacing: 8,
                               ),
+                              itemCount: productos.length,
+                              itemBuilder: (context, index) {
+                                final producto = productos[index];
+                                return GestureDetector(
+                                  onTap: () {
+                                    Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                        builder: (_) => DetalleProducto(
+                                          id: producto.id!,
+                                          nombre: producto.nomprod,
+                                          descripcion: producto.descripcionProd,
+                                          precio: double.tryParse(producto.precio.toString()) ?? 0.0,
+                                          imagen: producto.fotoProd,
+                                          stock: int.tryParse(producto.stock.toString()) ?? 0,
+                                          categoria: producto.tipoCategoria.toString(),
+                                        ),
+                                      ),
+                                    );
+                                  },
+                                  child: Column(
+                                    children: [
+                                      Image.network(
+                                        producto.fotoProd,
+                                        height: 70,
+                                        width: 70,
+                                        fit: BoxFit.cover,
+                                      ),
+                                      const SizedBox(height: 4),
+                                      Text(
+                                        producto.nomprod,
+                                        textAlign: TextAlign.center,
+                                        overflow: TextOverflow.ellipsis,
+                                        maxLines: 2,
+                                        style: const TextStyle(fontSize: 12),
+                                      ),
+                                    ],
+                                  ),
+                                );
+                              },
+                            ),
                     ),
                   ],
                 ),

@@ -1,5 +1,3 @@
-import 'dart:convert';
-
 class TipoCategoria {
   late String NomCat;
 

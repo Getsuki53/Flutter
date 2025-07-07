@@ -44,13 +44,6 @@ class _MainScaffoldState extends State<MainScaffold> {
 
     return Scaffold(
       body: pages[_selectedIndex],
-      floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          Navigator.pushNamed(context, '/test');
-        },
-        child: const Icon(Icons.bug_report),
-        tooltip: 'Test Imagen',
-      ),
       bottomNavigationBar: BottomNavigationBar(
         currentIndex: _selectedIndex,
         onTap: (index) {

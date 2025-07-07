@@ -1,3 +1,4 @@
+import 'package:appflutter/pages/Sesion/login.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../Tienda/MiTienda.dart';
@@ -15,6 +16,18 @@ class MiPerfil extends StatefulWidget {
 
 class _MiPerfilState extends State<MiPerfil> {
   int? usuarioId;
+
+  void cerrarSesion(BuildContext context) {
+  // Aquí puedes limpiar cualquier estado o token si fuera necesario
+  // Por ejemplo: await SharedPreferences.getInstance().then((prefs) => prefs.clear());
+
+  Navigator.pushAndRemoveUntil(
+    context,
+    MaterialPageRoute(builder: (_) => const LoginPage()),
+    (Route<dynamic> route) => false,
+  );
+}
+
 
   @override
   void initState() {
@@ -59,16 +72,15 @@ class _MiPerfilState extends State<MiPerfil> {
                         children: [
                           CircleAvatar(
                             radius: 45,
-                            backgroundImage: (usuario.foto != null && usuario.foto!.isNotEmpty)
-                                ? NetworkImage(usuario.foto!)
-                                : const AssetImage('lib/imagenes/logo.png') as ImageProvider,
+                            backgroundImage: usuario.foto.isNotEmpty
+                                ? NetworkImage(usuario.foto)
+                                : const AssetImage('lib/imagenes/logo.png'),
                           ),
                           const SizedBox(width: 16),
                           Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              Text(usuario.nombre, style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
-                              Text(usuario.apellido ?? ''),
+                              Text("${usuario.nombre} ${usuario.apellido}", style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
                               Text(usuario.correo ?? ''),
                             ],
                           ),
@@ -107,6 +119,13 @@ class _MiPerfilState extends State<MiPerfil> {
                                 );
                               },
                         child: const Text('Lista de deseos'),
+                      ),
+                      const SizedBox(height: 24),
+                      ElevatedButton(
+                        onPressed: () {
+                          cerrarSesion(context);
+                        },
+                        child: const Text('Cerrar sesión'),
                       ),
                     ],
                   ),

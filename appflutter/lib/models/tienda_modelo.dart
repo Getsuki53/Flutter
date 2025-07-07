@@ -1,4 +1,3 @@
-import 'dart:convert';
 import 'usuario_modelo.dart';
 
 class Tienda {

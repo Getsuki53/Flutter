@@ -4,16 +4,15 @@ import 'package:appflutter/models/producto_modelo.dart';
 import 'package:appflutter/pages/Producto/detalle_producto.dart';
 import 'package:appflutter/services/productos/api_productos.dart';
 
-Future<List<Producto>> fetchProductos() async {
-  return await APIProductos.obtenerProductos();
-}
-
 class HomeView extends ConsumerWidget {
   const HomeView({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    return Scaffold(body: const ProductList(), backgroundColor: Colors.white);
+    return Scaffold(
+      body: const ProductList(),
+      backgroundColor: Colors.white,
+    );
   }
 }
 
@@ -23,7 +22,7 @@ class ProductList extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return FutureBuilder<List<Producto>>(
-      future: fetchProductos(), // Cambia aquí por tu función real
+      future: APIProductos.obtenerProductos(),
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
           return const Center(child: CircularProgressIndicator());
@@ -78,16 +77,15 @@ class _ProductListTileState extends State<ProductListTile> {
         Navigator.push(
           context,
           MaterialPageRoute(
-            builder:
-                (_) => DetalleProducto(
-                  id: widget.product.id!,
-                  nombre: widget.product.nomprod,
-                  descripcion: widget.product.descripcionProd,
-                  precio: widget.product.precio,
-                  imagen: widget.product.fotoProd,
-                  stock: widget.product.stock,
-                  categoria: widget.product.tipoCategoria,
-                ),
+            builder: (_) => DetalleProducto(
+              id: widget.product.id!,
+              nombre: widget.product.nomprod,
+              descripcion: widget.product.descripcionProd,
+              precio: widget.product.precio,
+              imagen: widget.product.fotoProd,
+              stock: widget.product.stock,
+              categoria: widget.product.tipoCategoria,
+            ),
           ),
         );
       },
@@ -99,37 +97,11 @@ class _ProductListTileState extends State<ProductListTile> {
           children: [
             Stack(
               children: [
-                widget.product.fotoProd != null &&
-                        widget.product.fotoProd!.isNotEmpty
-                    ? Image.network(
-                      widget.product.fotoProd!,
-                      height: 250,
-                      fit: BoxFit.contain,
-                      errorBuilder: (context, error, stackTrace) {
-                        print(
-                          '🚨 ERROR home - No se pudo cargar imagen: ${widget.product.fotoProd}',
-                        );
-                        print('🚨 ERROR home - Error: $error');
-                        return Container(
-                          height: 250,
-                          color: Colors.grey[300],
-                          child: const Icon(
-                            Icons.image_not_supported,
-                            size: 50,
-                            color: Colors.grey,
-                          ),
-                        );
-                      },
-                    )
-                    : Container(
-                      height: 250,
-                      color: Colors.grey[300],
-                      child: const Icon(
-                        Icons.image,
-                        size: 50,
-                        color: Colors.grey,
-                      ),
-                    ),
+                Image.network(
+                  widget.product.fotoProd,
+                  height: 250,
+                  fit: BoxFit.contain,
+                ),
                 Positioned(
                   top: 8,
                   right: 8,

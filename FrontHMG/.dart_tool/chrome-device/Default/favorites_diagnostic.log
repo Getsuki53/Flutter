@@ -1,0 +1,28 @@
+2025-07-06 03:57:59.653: [INFO] VisibilityChanged: 0
+2025-07-06 03:57:59.706: [INFO] RecordSyncInitDuration has_sync_been_enabled: 0 state: 0
+2025-07-06 03:57:59.707: [INFO] RecordSyncInitDuration has_sync_been_enabled: 0 state: 0
+2025-07-06 03:57:59.709: [INFO] RecordSyncInitDuration has_sync_been_enabled: 0 state: 0
+2025-07-06 03:57:59.710: [INFO] RecordSyncInitDuration has_sync_been_enabled: 0 state: 0
+2025-07-06 03:57:59.711: [INFO] RecordSyncInitDuration has_sync_been_enabled: 0 state: 0
+2025-07-06 03:57:59.712: [INFO] RecordSyncInitDuration has_sync_been_enabled: 0 state: 0
+2025-07-06 03:57:59.713: [INFO] RecordSyncInitDuration has_sync_been_enabled: 0 state: 0
+2025-07-06 03:57:59.714: [INFO] RecordSyncInitDuration has_sync_been_enabled: 0 state: 0
+2025-07-06 03:57:59.715: [INFO] RecordSyncInitDuration has_sync_been_enabled: 0 state: 0
+2025-07-06 03:57:59.716: [INFO] RecordSyncInitDuration has_sync_been_enabled: 0 state: 0
+2025-07-06 03:57:59.717: [INFO] RecordSyncInitDuration has_sync_been_enabled: 0 state: 0
+2025-07-06 03:57:59.724: [INFO] BookmarkModelLoaded, ids_reassigned: 0
+2025-07-06 03:57:59.724: [INFO] OnDoneLoading sync enabled: 0
+2025-07-06 03:57:59.841: [INFO] RecordSyncInitDuration has_sync_been_enabled: 0 state: 0
+2025-07-06 03:58:01.431: [INFO] RecordSyncInitDuration has_sync_been_enabled: 0 state: 0
+2025-07-06 03:58:01.433: [INFO] Primary account changed.
+2025-07-06 03:58:01.433: [INFO] OnPrimaryAccountChanged PrimaryAccountChangeEvent::Type::kSet
+2025-07-06 03:58:01.436: [INFO] RecordSyncInitDuration has_sync_been_enabled: 0 state: 0
+2025-07-06 03:58:01.438: [INFO] RecordSyncInitDuration has_sync_been_enabled: 0 state: 0
+2025-07-06 03:59:11.260: [INFO] VisibilityChanged: 0
+2025-07-06 03:59:11.313: [INFO] BookmarkModelLoaded, ids_reassigned: 0
+2025-07-06 03:59:11.313: [INFO] OnDoneLoading sync enabled: 0
+2025-07-06 04:02:09.758: [INFO] VisibilityChanged: 0
+2025-07-06 04:02:09.810: [INFO] BookmarkModelLoaded, ids_reassigned: 0
+2025-07-06 04:02:09.810: [INFO] OnDoneLoading sync enabled: 0
+2025-07-06 04:02:20.266: [INFO] VisibilityChanged: 1
+2025-07-06 04:02:21.421: [INFO] VisibilityChanged: 0

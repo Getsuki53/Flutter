@@ -14,17 +14,47 @@ class ProductoDeseado {
   late Usuario usuario;
   late Producto producto;
 
-  ProductoDeseado({
-    this.id,
-    required this.usuario,
-    required this.producto,
-  });
+  ProductoDeseado({this.id, required this.usuario, required this.producto});
 
   factory ProductoDeseado.fromJson(Map<String, dynamic> json) {
+    // Manejar usuario como ID o como objeto
+    Usuario usuario;
+    if (json['usuario'] is int) {
+      // Si es un ID, crear un Usuario básico con solo el ID
+      usuario = Usuario(
+        id: json['usuario'],
+        correo: '',
+        contrasena: '',
+        nombre: '',
+        apellido: '',
+        foto: '',
+      );
+    } else {
+      // Si es un objeto, usar fromJson normal
+      usuario = Usuario.fromJson(json['usuario']);
+    }
+
+    // Manejar producto como ID o como objeto
+    Producto producto;
+    if (json['producto'] is int) {
+      // Si es un ID, crear un Producto básico con solo el ID
+      producto = Producto(
+        id: json['producto'],
+        nomprod: '',
+        descripcionProd: '',
+        stock: 0,
+        precio: 0.0,
+        tipoCategoria: '',
+      );
+    } else {
+      // Si es un objeto, usar fromJson normal
+      producto = Producto.fromJson(json['producto']);
+    }
+
     return ProductoDeseado(
       id: json['id'] as int?,
-      usuario: Usuario.fromJson(json['usuario']),
-      producto: Producto.fromJson(json['productoDeseado']),
+      usuario: usuario,
+      producto: producto,
     );
   }
 

@@ -3,16 +3,16 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:appflutter/models/producto_modelo.dart';
 import 'package:appflutter/pages/Producto/detalle_producto.dart';
 import 'package:appflutter/services/productos/api_productos.dart';
+import 'package:appflutter/services/deseados/api_agregar_producto_deseado.dart';
+import 'package:appflutter/services/deseados/api_eliminar_producto_deseado.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class HomeView extends ConsumerWidget {
   const HomeView({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    return Scaffold(
-      body: const ProductList(),
-      backgroundColor: Colors.white,
-    );
+    return Scaffold(body: const ProductList(), backgroundColor: Colors.white);
   }
 }
 
@@ -60,12 +60,78 @@ class ProductListTile extends StatefulWidget {
 
 class _ProductListTileState extends State<ProductListTile> {
   bool isFavorite = false;
+  bool isLoading = false;
+  int? usuarioId;
 
-  void toggleFavorite() {
+  @override
+  void initState() {
+    super.initState();
+    _loadUsuarioId();
+  }
+
+  Future<void> _loadUsuarioId() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
     setState(() {
-      isFavorite = !isFavorite;
-      // Aquí puedes guardar/eliminar el producto de una lista real
+      usuarioId = prefs.getInt('usuario_id');
     });
+  }
+
+  Future<void> toggleFavorite() async {
+    if (usuarioId == null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Error: Usuario no identificado')),
+      );
+      return;
+    }
+
+    setState(() {
+      isLoading = true;
+    });
+
+    try {
+      String? mensaje;
+
+      if (isFavorite) {
+        // Si está en favoritos, lo eliminamos
+        mensaje = await APIEliminarProductoDeseado.eliminarProductoDeseado(
+          usuarioId!,
+          widget.product.id!,
+        );
+      } else {
+        // Si no está en favoritos, lo agregamos
+        mensaje = await APIAgregarProductoDeseado.agregarProductoDeseado(
+          usuarioId!,
+          widget.product.id!,
+        );
+      }
+
+      if (mensaje != null) {
+        setState(() {
+          isFavorite = !isFavorite;
+        });
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text(mensaje)));
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(
+              isFavorite
+                  ? 'Error al quitar de favoritos'
+                  : 'Error al agregar a favoritos',
+            ),
+          ),
+        );
+      }
+    } catch (e) {
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text('Error: $e')));
+    } finally {
+      setState(() {
+        isLoading = false;
+      });
+    }
   }
 
   @override
@@ -77,15 +143,16 @@ class _ProductListTileState extends State<ProductListTile> {
         Navigator.push(
           context,
           MaterialPageRoute(
-            builder: (_) => DetalleProducto(
-              id: widget.product.id!,
-              nombre: widget.product.nomprod,
-              descripcion: widget.product.descripcionProd,
-              precio: widget.product.precio,
-              imagen: widget.product.fotoProd,
-              stock: widget.product.stock,
-              categoria: widget.product.tipoCategoria,
-            ),
+            builder:
+                (_) => DetalleProducto(
+                  id: widget.product.id!,
+                  nombre: widget.product.nomprod,
+                  descripcion: widget.product.descripcionProd,
+                  precio: widget.product.precio,
+                  imagen: widget.product.fotoProd ?? '', // ← Manejo de null
+                  stock: widget.product.stock,
+                  categoria: widget.product.tipoCategoria,
+                ),
           ),
         );
       },
@@ -97,16 +164,45 @@ class _ProductListTileState extends State<ProductListTile> {
           children: [
             Stack(
               children: [
-                Image.network(
-                  widget.product.fotoProd,
-                  height: 250,
-                  fit: BoxFit.contain,
-                ),
+                widget.product.fotoProd != null &&
+                        widget.product.fotoProd!.isNotEmpty
+                    ? Image.network(
+                      widget.product.fotoProd!,
+                      height: 250,
+                      fit: BoxFit.contain,
+                      errorBuilder: (context, error, stackTrace) {
+                        print(
+                          '🚨 ERROR home - No se pudo cargar imagen: ${widget.product.fotoProd}',
+                        );
+                        print('🚨 ERROR home - Error: $error');
+                        return Container(
+                          height: 250,
+                          color: Colors.grey[300],
+                          child: const Icon(
+                            Icons.image_not_supported,
+                            size: 50,
+                            color: Colors.grey,
+                          ),
+                        );
+                      },
+                    )
+                    : Container(
+                      height: 250,
+                      color: Colors.grey[300],
+                      child: const Icon(
+                        Icons.image,
+                        size: 50,
+                        color: Colors.grey,
+                      ),
+                    ),
                 Positioned(
                   top: 8,
                   right: 8,
                   child: GestureDetector(
-                    onTap: toggleFavorite,
+                    onTap:
+                        isLoading
+                            ? null
+                            : toggleFavorite, // ← Deshabilitar si está cargando
                     child: Container(
                       decoration: BoxDecoration(
                         shape: BoxShape.circle,
@@ -117,11 +213,25 @@ class _ProductListTileState extends State<ProductListTile> {
                         ),
                       ),
                       padding: const EdgeInsets.all(6),
-                      child: Icon(
-                        isFavorite ? Icons.favorite : Icons.favorite_border,
-                        color: isFavorite ? Colors.white : Colors.black,
-                        size: 24,
-                      ),
+                      child:
+                          isLoading
+                              ? const SizedBox(
+                                width: 16,
+                                height: 16,
+                                child: CircularProgressIndicator(
+                                  strokeWidth: 2,
+                                  valueColor: AlwaysStoppedAnimation<Color>(
+                                    Colors.black,
+                                  ),
+                                ),
+                              )
+                              : Icon(
+                                isFavorite
+                                    ? Icons.favorite
+                                    : Icons.favorite_border,
+                                color: isFavorite ? Colors.white : Colors.black,
+                                size: 24,
+                              ),
                     ),
                   ),
                 ),

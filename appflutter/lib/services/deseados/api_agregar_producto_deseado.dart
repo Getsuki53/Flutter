@@ -6,25 +6,33 @@ import '../../config.dart';
 class APIAgregarProductoDeseado {
   static var client = http.Client();
 
-  static Future<String?> agregarProductoDeseado(int usuario, int producto) async {
-    Map<String, String> headers = {
-      "Content-Type": "application/json",
-    };
+  static Future<String?> agregarProductoDeseado(
+    int usuario,
+    int producto,
+  ) async {
+    Map<String, String> headers = {"Content-Type": "application/json"};
 
-    var url = Uri.http(Config.apiURL, "${Config.productodeseadoAPI}/AgregarProductoDeseado/");
+    var url = Uri.http(
+      Config.apiURL,
+      "${Config.productodeseadoAPI}/AgregarProductoDeseado/",
+    );
 
-    var body = jsonEncode({
-      "usuario_id": usuario,
-      "producto_id": producto,
-    });
+    var body = jsonEncode({"usuario_id": usuario, "producto_id": producto});
+
+    print("🔍 DEBUG Deseados - URL: $url");
+    print("🔍 DEBUG Deseados - Body: $body");
 
     var response = await client.post(url, headers: headers, body: body);
 
-    if (response.statusCode == 200) {
+    print("🔍 DEBUG Deseados - Status: ${response.statusCode}");
+    print("🔍 DEBUG Deseados - Response: ${response.body}");
+
+    if (response.statusCode == 200 || response.statusCode == 201) {
       var data = jsonDecode(response.body);
       return data['message'] as String?;
     } else {
-      print("Error al agregar producto: ${response.body}");
+      print("🚨 ERROR Deseados - Status: ${response.statusCode}");
+      print("🚨 ERROR Deseados - Body: ${response.body}");
       return null;
     }
   }

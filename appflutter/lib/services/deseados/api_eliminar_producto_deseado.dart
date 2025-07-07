@@ -6,25 +6,42 @@ import '../../config.dart';
 class APIEliminarProductoDeseado {
   static var client = http.Client();
 
-  static Future<String?> eliminarProductoDeseado(int usuario, int producto) async {
-    Map<String, String> headers = {
-      "Content-Type": "application/json",
-    };
+  static Future<String?> eliminarProductoDeseado(
+    int usuario,
+    int producto,
+  ) async {
+    Map<String, String> headers = {"Content-Type": "application/json"};
 
-    var url = Uri.http(Config.apiURL, "${Config.productodeseadoAPI}/EliminarProductoDeseado/");
+    var url = Uri.http(
+      Config.apiURL,
+      "${Config.productodeseadoAPI}/EliminarProductoDeseado/",
+    );
 
-    var body = jsonEncode({
-      "usuario_id": usuario,
-      "producto_id": producto,
-    });
+    var body = jsonEncode({"usuario_id": usuario, "producto_id": producto});
 
-    var response = await client.delete(url, headers: headers, body: body);
+    print("🔍 DEBUG Eliminar Deseados - URL: $url");
+    print("🔍 DEBUG Eliminar Deseados - Body: $body");
 
-    if (response.statusCode == 200) {
-      var data = jsonDecode(response.body);
-      return data['message'] as String?;
-    } else {
-      print("Error al eliminar producto: ${response.body}");
+    try {
+      var response = await client.delete(url, headers: headers, body: body);
+
+      print("🔍 DEBUG Eliminar Deseados - Status: ${response.statusCode}");
+      print("🔍 DEBUG Eliminar Deseados - Response: ${response.body}");
+
+      if (response.statusCode == 200) {
+        var data = jsonDecode(response.body);
+        return data['message'] as String?;
+      } else if (response.statusCode == 404) {
+        // El producto no estaba en la lista de deseados
+        var data = jsonDecode(response.body);
+        return data['message'] as String?;
+      } else {
+        print("🚨 ERROR Eliminar Deseados - Status: ${response.statusCode}");
+        print("🚨 ERROR Eliminar Deseados - Body: ${response.body}");
+        return null;
+      }
+    } catch (e) {
+      print("🚨 ERROR Eliminar Deseados - Exception: $e");
       return null;
     }
   }

@@ -67,8 +67,8 @@ class _LoginPageState extends State<LoginPage> {
               alignment: Alignment.center,
               child: Image.asset(
                 'assets/images/logo.png',
-                width: 120,
-                height: 70,
+                width: 200,
+                height: 120,
               ),
             ),
             Container(

@@ -12,7 +12,7 @@ class APIIngreso {
       "Content-Type": "application/json",
     };
 
-    var url = Uri.http(Config.apiURL, "${Config.loginAPI}");
+    var url = Uri.parse(Config.buildUrl(Config.loginAPI)); // ✅ Cambiar de Uri.http a Uri.parse
 
     var body = jsonEncode({
       "correo": correo,
@@ -34,7 +34,7 @@ class APIIngreso {
       return data['mensaje'] as String? ?? data['message'] as String?;
     } else {
       // Intentar autenticación de administrador
-      var adminUrl = Uri.http(Config.apiURL, "${Config.administradorAPI}/AutenticacionarAdministrador/");
+      var adminUrl = Uri.parse(Config.buildUrl("${Config.administradorAPI}/AutenticacionarAdministrador/")); // ✅ También cambiar aquí
 
       var adminResponse = await client.post(adminUrl, headers: headers, body: body);
 

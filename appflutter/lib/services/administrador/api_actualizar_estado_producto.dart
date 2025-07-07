@@ -11,7 +11,7 @@ class APIActualizarEstadoProducto {
       "Content-Type": "application/json",
     };
 
-    var url = Uri.http(Config.apiURL, "${Config.productoadminAPI}/ActualizarEstadoProducto/");
+    var url = Uri.parse(Config.buildUrl("${Config.productoadminAPI}ActualizarEstadoProducto/")); // ✅ Cambiar Uri.http por Uri.parse
 
     var body = jsonEncode({
       "pk": producto,

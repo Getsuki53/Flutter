@@ -11,7 +11,7 @@ class APIRegistro {
       "Content-Type": "application/json",
     };
 
-    var url = Uri.http(Config.apiURL, "${Config.usuarioAPI}/CrearUsuario/");
+    var url = Uri.parse(Config.buildUrl("${Config.usuarioAPI}/CrearUsuario/")); // ✅ Cambiar Uri.http por Uri.parse
 
     var body = jsonEncode({
       "nombre": nombre,

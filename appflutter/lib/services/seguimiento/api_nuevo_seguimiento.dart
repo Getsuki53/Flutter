@@ -11,7 +11,7 @@ class APINuevoSeguimiento {
       "Content-Type": "application/json",
     };
 
-    var url = Uri.http(Config.apiURL, "${Config.seguimientotiendaAPI}/AgregarSeguimientoTienda/");
+    var url = Uri.parse(Config.buildUrl("${Config.seguimientotiendaAPI}/AgregarSeguimientoTienda/")); // ✅ Cambiar Uri.http por Uri.parse
 
     var body = jsonEncode({
       "usuario_id": usuario,

@@ -11,7 +11,7 @@ class ApiCambiarContrasena {
       "Content-Type": "application/json",
     };
 
-    var url = Uri.http(Config.apiURL, "${Config.usuarioAPI}/CambiarContrasena/");
+    var url = Uri.parse(Config.buildUrl("${Config.usuarioAPI}/CambiarContrasena/")); // ✅ Cambiar Uri.http por Uri.parse
 
     var body = jsonEncode({
       "usuario_id": usuario,

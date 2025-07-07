@@ -12,7 +12,7 @@ class APIObtenerListaUsuarioQueSiguenTienda {
       "Content-Type": "application/json",
     };
 
-    var url = Uri.http(Config.apiURL, "${Config.seguimientotiendaAPI}/ObtenerListaUsuarioQueSiguenTienda/?tienda_id=$tienda/");
+    var url = Uri.parse(Config.buildUrl("${Config.seguimientotiendaAPI}/ObtenerListaUsuarioQueSiguenTienda/?tienda_id=$tienda/")); // ✅ Cambiar Uri.http por Uri.parse
 
     var response = await client.get(url, headers: headers);
 

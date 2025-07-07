@@ -1,7 +1,11 @@
 class Config {
   static const String appName = "Handmade Geeks";
-  static const String apiURL =
-      '127.0.0.1:8000'; // ← Host y puerto para Uri.http()
+  static const String apiURL = '192.168.1.91'; // ✅ SIN :8000
+
+  // Función helper para construir URLs completas
+  static String buildUrl(String endpoint) {
+    return 'http://$apiURL/$endpoint';
+  }
 
   // Endpoints básicos de modelos
   static const obtenerProductoMainAPI = "api/producto/obtenerproductomain";

@@ -17,19 +17,21 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
   @override
   Widget build(BuildContext context) {
     return AppBar(
-      backgroundColor: Colors.white,
+      backgroundColor: Color(0xff383758),
       elevation: 2,
       title: TextField(
         controller: controller,
         decoration: InputDecoration(
           hintText: "Buscar productos...",
+          hintStyle: TextStyle(color: Colors.black),
+          prefixIconColor: Colors.black,
           prefixIcon: const Icon(Icons.search),
           border: OutlineInputBorder(
             borderRadius: BorderRadius.circular(12),
             borderSide: BorderSide.none,
           ),
           filled: true,
-          fillColor: Colors.grey.shade200,
+          fillColor: Colors.white,
           contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 0),
         ),
       ),

@@ -33,16 +33,19 @@ class _MainScaffoldState extends State<MainScaffold> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: const Color(0xff1f1e2a),
       appBar: CustomAppBar(
         controller: searchController,
         //onCartPressed: _onCartPressed,
       ),
       body: _pages[_selectedIndex],
       bottomNavigationBar: BottomNavigationBar(
+        backgroundColor: const Color(0xff383758), // Color de fondo
         currentIndex: _selectedIndex,
         onTap: _onItemTapped,
-        selectedItemColor: Colors.deepPurple,
-        unselectedItemColor: Colors.grey,
+        selectedItemColor: Color(0xffe8d0f8), // Iconos seleccionados en blanco
+        unselectedItemColor: Color(0xfffcf6ff), // Iconos no seleccionados en blanco tenue
+        type: BottomNavigationBarType.fixed, // Para que respete el color de fondo
         items: const [
           BottomNavigationBarItem(icon: Icon(Icons.home), label: 'Inicio'),
           BottomNavigationBarItem(icon: Icon(Icons.shopping_cart_checkout), label: 'Carrito'),

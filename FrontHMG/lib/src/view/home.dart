@@ -9,7 +9,7 @@ class HomeView extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     return Scaffold(
       body: const ProductList(),
-      backgroundColor: Colors.white,
+      backgroundColor: Color(0xff1f1e2a)
     );
   }
 }

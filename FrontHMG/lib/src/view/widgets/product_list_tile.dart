@@ -77,13 +77,13 @@ class _ProductListTileState extends State<ProductListTile> {
               const SizedBox(height: 20),
               Text(
                 widget.product.nomprod,
-                style: const TextStyle(fontSize: 28, fontWeight: FontWeight.bold),
+                style: const TextStyle(fontSize: 28, fontWeight: FontWeight.bold, color: Colors.white),
                 textAlign: TextAlign.center,
               ),
               const SizedBox(height: 10),
               Text(
                 '\$${widget.product.precio.toStringAsFixed(2)}',
-                style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+                style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold, color: Colors.white),
               ),
             ],
           ),

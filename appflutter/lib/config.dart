@@ -7,6 +7,17 @@ class Config {
     return 'http://$apiURL/$endpoint';
   }
 
+  // Función helper para construir URLs completas de imágenes
+  static String buildImageUrl(String imagePath) {
+    if (imagePath.startsWith('http')) {
+      return imagePath; // Ya es una URL completa
+    }
+    // Remover la barra inicial si existe
+    String cleanPath =
+        imagePath.startsWith('/') ? imagePath.substring(1) : imagePath;
+    return 'http://$apiURL/$cleanPath';
+  }
+
   // Endpoints básicos de modelos
   static const obtenerProductoMainAPI = "api/producto/obtenerproductomain";
   static const productoAPI = "api/producto";

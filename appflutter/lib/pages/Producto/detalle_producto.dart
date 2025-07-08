@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:appflutter/services/carrito/api_agregar_al_carrito.dart';
+import 'package:appflutter/services/tienda/api_imgnom_tienda_x_producto.dart';
+import 'package:appflutter/pages/Tienda/DetalleTienda.dart';
+import 'package:appflutter/config.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class DetalleProducto extends StatefulWidget {
@@ -28,6 +31,39 @@ class DetalleProducto extends StatefulWidget {
 
 class _DetalleProductoState extends State<DetalleProducto> {
   int cantidad = 1;
+  Map<String, dynamic>? tiendaInfo;
+  bool isLoadingTienda = true;
+
+  @override
+  void initState() {
+    super.initState();
+    _cargarInfoTienda();
+  }
+
+  Future<void> _cargarInfoTienda() async {
+    print(
+      '🔍 Iniciando carga de info de tienda para producto ID: ${widget.id}',
+    );
+    try {
+      final tiendaData =
+          await APIImgNomTiendaXProducto.obtenerImgNomTiendaPorProducto(
+            widget.id,
+          );
+      print('🔍 Datos de tienda obtenidos: $tiendaData');
+      setState(() {
+        tiendaInfo = tiendaData;
+        isLoadingTienda = false;
+      });
+      print(
+        '🔍 Estado actualizado - isLoadingTienda: $isLoadingTienda, tiendaInfo: $tiendaInfo',
+      );
+    } catch (e) {
+      print('❌ Error al cargar info de tienda: $e');
+      setState(() {
+        isLoadingTienda = false;
+      });
+    }
+  }
 
   void aumentarCantidad() {
     if (cantidad < widget.stock) {
@@ -74,7 +110,6 @@ class _DetalleProductoState extends State<DetalleProducto> {
     }
   }
 
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -103,10 +138,140 @@ class _DetalleProductoState extends State<DetalleProducto> {
               ),
             ),
             const SizedBox(height: 16),
-            const Text('Descripción:', style: TextStyle(fontWeight: FontWeight.bold)),
+            // Debug: Mostrar estado de carga
+            Container(
+              padding: const EdgeInsets.all(8),
+              color: Colors.yellow[100],
+              child: Text(style: const TextStyle(fontSize: 12)),
+            ),
+            const SizedBox(height: 8),
+            // Logo y nombre de la tienda
+            if (isLoadingTienda)
+              Container(
+                padding: const EdgeInsets.all(12),
+                decoration: BoxDecoration(
+                  color: Colors.blue[100],
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                child: const Row(
+                  children: [
+                    SizedBox(
+                      width: 20,
+                      height: 20,
+                      child: CircularProgressIndicator(strokeWidth: 2),
+                    ),
+                    SizedBox(width: 12),
+                    Text('Cargando información de la tienda...'),
+                  ],
+                ),
+              )
+            else if (tiendaInfo != null)
+              Container(
+                padding: const EdgeInsets.all(12),
+                decoration: BoxDecoration(
+                  color: Colors.grey[100],
+                  borderRadius: BorderRadius.circular(8),
+                  border: Border.all(color: Colors.grey[300]!),
+                ),
+                child: InkWell(
+                  onTap: () async {
+                    // Ya tenemos la tienda completa, podemos navegar directamente
+                    if (tiendaInfo?['tienda_id'] != null) {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder:
+                              (_) => DetalleTienda(
+                                tiendaId: tiendaInfo!['tienda_id'],
+                              ),
+                        ),
+                      );
+                    } else {
+                      showSnackbar(
+                        'Error: No se pudo obtener el ID de la tienda',
+                      );
+                    }
+                  },
+                  child: Row(
+                    children: [
+                      // Logo de la tienda
+                      Container(
+                        width: 40,
+                        height: 40,
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(20),
+                          border: Border.all(color: Colors.grey[400]!),
+                        ),
+                        child: ClipRRect(
+                          borderRadius: BorderRadius.circular(20),
+                          child: Image.network(
+                            Config.buildImageUrl(tiendaInfo!['imagen'] ?? ''),
+                            fit: BoxFit.cover,
+                            errorBuilder: (context, error, stackTrace) {
+                              return const Icon(
+                                Icons.store,
+                                size: 20,
+                                color: Colors.grey,
+                              );
+                            },
+                          ),
+                        ),
+                      ),
+                      const SizedBox(width: 12),
+                      // Información de la tienda
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              tiendaInfo!['nombre'] ?? 'Tienda',
+                              style: const TextStyle(
+                                fontSize: 16,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                            const Text(
+                              'Ver tienda',
+                              style: TextStyle(
+                                fontSize: 12,
+                                color: Colors.grey,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                      const Icon(
+                        Icons.arrow_forward_ios,
+                        size: 16,
+                        color: Colors.grey,
+                      ),
+                    ],
+                  ),
+                ),
+              )
+            else
+              Container(
+                padding: const EdgeInsets.all(12),
+                decoration: BoxDecoration(
+                  color: Colors.red[100],
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                child: const Text(
+                  'No se pudo cargar la información de la tienda',
+                  style: TextStyle(color: Colors.red),
+                ),
+              ),
+            const SizedBox(height: 16),
+            const Text(
+              'Descripción:',
+              style: TextStyle(fontWeight: FontWeight.bold),
+            ),
             Text(widget.descripcion),
             const SizedBox(height: 16),
-            Text('Precio: \$${widget.precio}', style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+            Text(
+              'Precio: \$${widget.precio}',
+              style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+            ),
             const SizedBox(height: 16),
             Text('Stock disponible: ${widget.stock}'),
             const SizedBox(height: 16),

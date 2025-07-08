@@ -8,14 +8,12 @@ class APIDetalleTienda {
   static var client = http.Client();
 
   static Future<Tienda?> detalleTienda(int tienda) async {
-    Map<String, String> headers = {
-      "Content-Type": "application/json",
-    };
+    Map<String, String> headers = {"Content-Type": "application/json"};
 
-    var url = Uri.http(
-      Config.apiURL, 
-      "${Config.tiendaAPI}/ObtenerDetallesTienda",
-      {"tienda_id": tienda.toString()},
+    var url = Uri.parse(
+      Config.buildUrl(
+        "${Config.tiendaAPI}/ObtenerDetallesTienda?tienda_id=${tienda.toString()}",
+      ),
     );
 
     var response = await client.get(url, headers: headers);

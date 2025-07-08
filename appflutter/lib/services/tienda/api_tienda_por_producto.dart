@@ -1,20 +1,19 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
-import 'package:appflutter/models/tienda_modelo.dart';
 import '../../config.dart';
 
-// Esta clase se encarga de obtener solo el nombre e imagen de una tienda que subió un producto.
-class APIImgNomTiendaXProducto {
+// Esta clase se encarga de obtener la imagen y nombre de la tienda por producto.
+class APITiendaPorProducto {
   static var client = http.Client();
 
   static Future<Map<String, dynamic>?> obtenerImgNomTiendaPorProducto(
-    int producto,
+    int productoId,
   ) async {
     Map<String, String> headers = {"Content-Type": "application/json"};
 
     var url = Uri.parse(
       Config.buildUrl(
-        "${Config.tiendaAPI}/ObtenerImgNomIdTiendaPorProducto/?producto_id=$producto",
+        "${Config.tiendaAPI}/ObtenerImgNomTiendaPorProducto/$productoId",
       ),
     );
 
@@ -27,7 +26,6 @@ class APIImgNomTiendaXProducto {
 
     if (response.statusCode == 200) {
       var data = jsonDecode(response.body);
-      print('🔍 Data recibida: $data');
       return data;
     } else {
       print("❌ Error al obtener info de tienda: ${response.body}");
@@ -35,11 +33,13 @@ class APIImgNomTiendaXProducto {
     }
   }
 
-  static Future<Tienda?> obtenerTiendaPorProducto(int producto) async {
+  static Future<Map<String, dynamic>?> obtenerTiendaPorProducto(
+    int productoId,
+  ) async {
     Map<String, String> headers = {"Content-Type": "application/json"};
 
     var url = Uri.parse(
-      Config.buildUrl("${Config.tiendaAPI}/ObtenerProducto/$producto"),
+      Config.buildUrl("${Config.tiendaAPI}/ObtenerProducto/$productoId"),
     );
 
     print('🔍 URL tienda completa por producto: $url');
@@ -51,7 +51,7 @@ class APIImgNomTiendaXProducto {
 
     if (response.statusCode == 200) {
       var data = jsonDecode(response.body);
-      return Tienda.fromJson(data);
+      return data;
     } else {
       print("❌ Error al obtener tienda completa: ${response.body}");
       return null;

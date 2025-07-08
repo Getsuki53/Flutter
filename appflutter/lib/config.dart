@@ -40,6 +40,8 @@ class Config {
   static const tiendaCrearTiendaAPI = "api/tienda/CrearTienda";
   static const tiendaObtenerDetallesTiendaAPI =
       "api/tienda/ObtenerDetallesTienda";
+  static const tiendaObtenerTiendaPorPropietarioAPI =
+      "api/tienda/ObtenerTiendaPorPropietario";
 
   // Endpoints específicos de SEGUIMIENTO TIENDA
   static const seguimientoObtenerListaTiendasSeguidasPorUsuarioAPI =

@@ -20,7 +20,7 @@ class CartView extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         title: const Text("Carrito"),
-        backgroundColor: Colors.blue,
+        backgroundColor: const Color(0xff383758),
         foregroundColor: Colors.white,
       ),
       body: FutureBuilder<int?>(
@@ -77,7 +77,7 @@ class CartView extends StatelessWidget {
                       style: const TextStyle(
                         fontSize: 16,
                         fontWeight: FontWeight.bold,
-                        color: Colors.blue,
+                        color: Color(0xffae92f2),
                       ),
                     ),
                   ),
@@ -133,7 +133,7 @@ class CartView extends StatelessWidget {
                                   "Total: \$${(producto?.precio ?? 0) * item.unidades}",
                                   style: const TextStyle(
                                     fontWeight: FontWeight.bold,
-                                    color: Colors.green,
+                                    color:  Color(0xff383758),
                                   ),
                                 ),
                               ],
@@ -196,7 +196,7 @@ class CartView extends StatelessWidget {
                                   style: const TextStyle(
                                     fontSize: 18,
                                     fontWeight: FontWeight.bold,
-                                    color: Colors.green,
+                                    color: Color(0xffae92f2),
                                   ),
                                 ),
                               ],
@@ -208,7 +208,7 @@ class CartView extends StatelessWidget {
                               print("Proceder al checkout");
                             },
                             style: ElevatedButton.styleFrom(
-                              backgroundColor: Colors.green,
+                              backgroundColor: Color(0xffae92f2),
                               foregroundColor: Colors.white,
                               padding: const EdgeInsets.symmetric(vertical: 16),
                             ),

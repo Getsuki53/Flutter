@@ -142,7 +142,10 @@ class _DetalleProductoState extends State<DetalleProducto> {
             Container(
               padding: const EdgeInsets.all(8),
               color: Colors.yellow[100],
-              child: Text(style: const TextStyle(fontSize: 12)),
+              child: Text(
+                'Debug - isLoadingTienda: $isLoadingTienda, tiendaInfo: ${tiendaInfo != null ? "tiene datos" : "null"}',
+                style: const TextStyle(fontSize: 12),
+              ),
             ),
             const SizedBox(height: 8),
             // Logo y nombre de la tienda

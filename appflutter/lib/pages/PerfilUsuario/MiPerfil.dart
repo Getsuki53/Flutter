@@ -6,6 +6,7 @@ import '../Seguidos/Seguidos.dart';
 import '../Deseados/Deseados.dart';
 import 'package:appflutter/services/usuario/api_perfil.dart';
 import 'package:appflutter/models/usuario_modelo.dart';
+import 'package:appflutter/config.dart';
 
 class MiPerfil extends StatefulWidget {
   const MiPerfil({super.key});
@@ -74,10 +75,22 @@ class _MiPerfilState extends State<MiPerfil> {
                               radius: 45,
                               backgroundImage:
                                   usuario.foto.isNotEmpty
-                                      ? NetworkImage(usuario.foto)
-                                      : const AssetImage(
-                                        'lib/imagenes/logo.png',
-                                      ),
+                                      ? NetworkImage(
+                                        usuario.foto.startsWith('http')
+                                            ? usuario.foto
+                                            : Config.buildImageUrl(
+                                              usuario.foto,
+                                            ),
+                                      )
+                                      : null,
+                              child:
+                                  usuario.foto.isEmpty
+                                      ? const Icon(
+                                        Icons.person,
+                                        size: 45,
+                                        color: Colors.grey,
+                                      )
+                                      : null,
                             ),
                             const SizedBox(width: 16),
                             Column(

@@ -138,15 +138,7 @@ class _DetalleProductoState extends State<DetalleProducto> {
               ),
             ),
             const SizedBox(height: 16),
-            // Debug: Mostrar estado de carga
-            Container(
-              padding: const EdgeInsets.all(8),
-              color: Colors.yellow[100],
-              child: Text(
-                'Debug - isLoadingTienda: $isLoadingTienda, tiendaInfo: ${tiendaInfo != null ? "tiene datos" : "null"}',
-                style: const TextStyle(fontSize: 12),
-              ),
-            ),
+           
             const SizedBox(height: 8),
             // Logo y nombre de la tienda
             if (isLoadingTienda)

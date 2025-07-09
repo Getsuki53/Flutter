@@ -12,7 +12,20 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'barra_superior.dart';
 
 class HomeView extends ConsumerStatefulWidget {
-  const HomeView({super.key});
+  const HomeView({
+    super.key,
+    required this.onVerDetalle,
+  });
+
+  final void Function({
+    required int id,
+    required String nombre,
+    required String descripcion,
+    required double precio,
+    required String imagen,
+    required int stock,
+    required String? categoria,
+  }) onVerDetalle;
 
   @override
   ConsumerState<HomeView> createState() => _HomeViewState();
@@ -31,17 +44,28 @@ class _HomeViewState extends ConsumerState<HomeView> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: CustomAppBar(
-         controller: searchController,
-        //onCartPressed: _onCartPressed,
+        controller: searchController,
       ),
-      body: ProductList(),
-      backgroundColor: Colors.white,
+      body: ProductList(
+        onVerDetalle: widget.onVerDetalle, // <-- Cambia esto
+      ),
+      backgroundColor: Color(0xff1f1e2a),
     );
   }
 }
 
 class ProductList extends StatelessWidget {
-  const ProductList({super.key});
+  const ProductList({super.key, required this.onVerDetalle});
+
+  final void Function({
+    required int id,
+    required String nombre,
+    required String descripcion,
+    required double precio,
+    required String imagen,
+    required int stock,
+    required String? categoria,
+  }) onVerDetalle;
 
   @override
   Widget build(BuildContext context) {
@@ -62,7 +86,10 @@ class ProductList extends StatelessWidget {
           scrollDirection: Axis.vertical,
           itemCount: products.length,
           itemBuilder: (context, index) {
-            return ProductListTile(product: products[index]);
+            return ProductListTile(
+              product: products[index],
+              onVerDetalle: onVerDetalle,
+            );
           },
         );
       },
@@ -71,8 +98,17 @@ class ProductList extends StatelessWidget {
 }
 
 class ProductListTile extends StatefulWidget {
-  const ProductListTile({super.key, required this.product});
+  const ProductListTile({super.key, required this.product, required this.onVerDetalle});
   final Producto product;
+  final void Function({
+    required int id,
+    required String nombre,
+    required String descripcion,
+    required double precio,
+    required String imagen,
+    required int stock,
+    required String? categoria,
+  }) onVerDetalle;
 
   @override
   State<ProductListTile> createState() => _ProductListTileState();
@@ -274,7 +310,17 @@ class _ProductListTileState extends State<ProductListTile> {
     final size = MediaQuery.of(context).size;
 
     return GestureDetector(
-      onTap: _navegarADetalleProducto,
+      onTap: () {
+        widget.onVerDetalle(
+          id: widget.product.id!,
+          nombre: widget.product.nomprod,
+          descripcion: widget.product.descripcionProd,
+          precio: widget.product.precio,
+          imagen: widget.product.fotoProd,
+          stock: widget.product.stock,
+          categoria: widget.product.tipoCategoria,
+        );
+      },
       child: Container(
         height: size.height,
         padding: const EdgeInsets.all(30),
@@ -287,7 +333,7 @@ class _ProductListTileState extends State<ProductListTile> {
                 (widget.product.fotoProd).isNotEmpty
                     ? Image.network(
                         widget.product.fotoProd,
-                        height: 250,
+                        height: 450,
                         fit: BoxFit.contain,
                         errorBuilder: (context, error, stackTrace) {
                           return Container(
@@ -318,10 +364,10 @@ class _ProductListTileState extends State<ProductListTile> {
                     child: Container(
                       decoration: BoxDecoration(
                         shape: BoxShape.circle,
-                        color: isFavorite ? Colors.red : Colors.white,
+                        color: isFavorite ? Color(0xffe8d0f8) : Colors.white,
                         border: Border.all(
-                          color: isFavorite ? Colors.red : Colors.black,
-                          width: 1.5,
+                          color: isFavorite ? Colors.black : Colors.black,
+                          width: 2.0,
                         ),
                       ),
                       padding: const EdgeInsets.all(6),
@@ -351,13 +397,13 @@ class _ProductListTileState extends State<ProductListTile> {
             const SizedBox(height: 20),
             Text(
               widget.product.nomprod,
-              style: const TextStyle(fontSize: 28, fontWeight: FontWeight.bold),
+              style: const TextStyle(fontSize: 28, fontWeight: FontWeight.bold, color: Colors.white),
               textAlign: TextAlign.center,
             ),
             const SizedBox(height: 10),
             Text(
               "\$${widget.product.precio}",
-              style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+              style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold, color: Colors.white),
             ),
           ],
         ),

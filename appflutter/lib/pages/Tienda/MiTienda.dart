@@ -51,14 +51,18 @@ class _MiTiendaState extends State<MiTienda> {
   Widget build(BuildContext context) {
     if (tiendaId == null) {
       return Scaffold(
-        appBar: AppBar(title: const Text('Mi Tienda'),),
+        appBar: AppBar(title: const Text('Mi Tienda'),
+        ),
         body: Center(child: CircularProgressIndicator()),
       );
     }
 
     return Scaffold(
+      backgroundColor: Color(0xff1f1e2a),
       appBar: AppBar(
-        title: const Text('Mi Tienda'),
+        backgroundColor: Color(0xff383758),
+        title: const Text('Mi Tienda',
+          style: TextStyle(color: Colors.white,),)
       ),
       body: FutureBuilder<Tienda?>(
         future: APIDetalleTienda.detalleTienda(tiendaId!),
@@ -103,27 +107,58 @@ class _MiTiendaState extends State<MiTienda> {
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              Text(tienda.nomTienda ?? '', style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
-                              Text(tienda.descripcionTienda ?? ''),
-                              Text("Productos: ${tienda.cantProductos ?? 0}"),
-                              Text("Seguidores: ${tienda.cantSeguidores ?? 0}"),
+                              Text(tienda.nomTienda ?? '', style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: Colors.white)),
+                              Text(tienda.descripcionTienda ?? '', style: const TextStyle(fontSize: 14, color: Colors.white)),
+                              Text("Productos: ${tienda.cantProductos ?? 0}", style: const TextStyle(fontSize: 14, color: Colors.white)),
+                              Text("Seguidores: ${tienda.cantSeguidores ?? 0}", style: const TextStyle(fontSize: 14, color: Colors.white)),
                             ],
                           ),
                         ),
                       ],
                     ),
-                    const SizedBox(height: 24),
-                    ElevatedButton(
-                      onPressed: () {
+                    const SizedBox(height: 12),
+                    Container(
+                      height: 50,
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 10,
+                        vertical: 10,
+                      ),
+                      decoration: BoxDecoration(
+                        gradient: const LinearGradient(
+                          colors: [
+                            Color(0xffe8d0f8),
+                            Color(0xffae92f2),
+                            Color(0xff9dd5f3),
+                          ],
+                          begin: Alignment.centerLeft,
+                          end: Alignment.centerRight,
+                        ),
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                      child: Material(
+                        color: Colors.transparent,
+                        child: InkWell(
+                          borderRadius: BorderRadius.circular(8),
+                          onTap: () {
                         Navigator.push(
                           context,
                           MaterialPageRoute(builder: (_) => const PublicarProducto()),
                         );
                       },
-                      child: const Text('Publicar producto'),
+                          child: Center(
+                            child: Text(
+                              'Publicar producto',
+                              style: const TextStyle(
+                                color: Colors.white,
+                                fontSize: 18,
+                              ),
+                            ),
+                          ),
+                        ),
+                      ),
                     ),
                     const SizedBox(height: 24),
-                    const Text('Productos publicados:', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+                    const Text('Productos publicados:', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.white)),
                     const SizedBox(height: 8),
                     Expanded(
                       child: productos.isEmpty
@@ -168,7 +203,7 @@ class _MiTiendaState extends State<MiTienda> {
                                         textAlign: TextAlign.center,
                                         overflow: TextOverflow.ellipsis,
                                         maxLines: 2,
-                                        style: const TextStyle(fontSize: 12),
+                                        style: const TextStyle(fontSize: 12, color: Colors.white),
                                       ),
                                     ],
                                   ),

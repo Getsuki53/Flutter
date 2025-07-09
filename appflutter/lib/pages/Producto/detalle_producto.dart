@@ -13,6 +13,7 @@ class DetalleProducto extends StatefulWidget {
   final String imagen;
   final int stock;
   final String? categoria;
+  final VoidCallback? onCerrar; // <-- Agrega esto
 
   const DetalleProducto({
     super.key,
@@ -23,6 +24,7 @@ class DetalleProducto extends StatefulWidget {
     required this.imagen,
     required this.stock,
     required this.categoria,
+    this.onCerrar, // <-- Agrega esto
   });
 
   @override
@@ -114,7 +116,14 @@ class _DetalleProductoState extends State<DetalleProducto> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Color(0xff1f1e2a),
-      appBar: AppBar(title: Text(widget.nombre, style: const TextStyle(color: Colors.white)),
+      appBar: AppBar(
+        leading: widget.onCerrar != null
+            ? IconButton(
+                icon: const Icon(Icons.arrow_back, color: Colors.white),
+                onPressed: widget.onCerrar,
+              )
+            : null,
+        title: Text(widget.nombre, style: const TextStyle(color: Colors.white)),
         backgroundColor: Color(0xff383758),
         iconTheme: const IconThemeData(color: Colors.white),
       ),
@@ -126,7 +135,7 @@ class _DetalleProductoState extends State<DetalleProducto> {
             Center(
               child: Image.network(
                 widget.imagen,
-                height: 350,
+                height: 280,
                 fit: BoxFit.contain,
                 errorBuilder: (context, error, stackTrace) {
                   return Container(
@@ -168,9 +177,9 @@ class _DetalleProductoState extends State<DetalleProducto> {
               Container(
                 padding: const EdgeInsets.all(12),
                 decoration: BoxDecoration(
-                  color: Colors.grey[100],
+                  color: Color(0xff383758),
                   borderRadius: BorderRadius.circular(8),
-                  border: Border.all(color: Colors.grey[300]!),
+                  border: Border.all(color: Color(0xff9dd5f3)),
                 ),
                 child: InkWell(
                   onTap: () async {
@@ -195,8 +204,8 @@ class _DetalleProductoState extends State<DetalleProducto> {
                     children: [
                       // Logo de la tienda
                       Container(
-                        width: 40,
-                        height: 40,
+                        width: 50,
+                        height: 50,
                         decoration: BoxDecoration(
                           borderRadius: BorderRadius.circular(20),
                           border: Border.all(color: Colors.grey[400]!),
@@ -227,13 +236,14 @@ class _DetalleProductoState extends State<DetalleProducto> {
                               style: const TextStyle(
                                 fontSize: 16,
                                 fontWeight: FontWeight.bold,
+                                color: Colors.white
                               ),
                             ),
                             const Text(
                               'Ver tienda',
                               style: TextStyle(
                                 fontSize: 12,
-                                color: Colors.black,
+                                color: Colors.white70,
                               ),
                             ),
                           ],

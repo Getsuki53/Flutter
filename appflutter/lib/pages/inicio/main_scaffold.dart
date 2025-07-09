@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:appflutter/pages/Carrito/miCarrito.dart';
 import 'package:appflutter/pages/PerfilUsuario/MiPerfil.dart';
-import 'package:appflutter/pages/seguidos/Seguidos.dart';
+import 'package:appflutter/pages/Deseados/Deseados.dart';
 import 'package:appflutter/pages/Inicio/home.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -39,7 +39,9 @@ class _MainScaffoldState extends State<MainScaffold> {
           ? const Center(child: CircularProgressIndicator())
           : CartView(usuarioId: usuarioId!),
       const MiPerfil(),
-      const FollowedPage(),
+      usuarioId == null
+          ? const Center(child: CircularProgressIndicator())
+          : WishedPage(usuario_id: usuarioId!),
     ];
 
     return Scaffold(

@@ -84,8 +84,10 @@ class _WishedPageState extends State<WishedPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Color(0xff1f1e2a),
       appBar: AppBar(
-        title: const Text("Lista de deseados"),
+        backgroundColor: const Color(0xff383758),
+        title: const Text("Lista de deseados", style: TextStyle(color: Colors.white),),
         actions: [
           IconButton(
             icon: const Icon(Icons.refresh),
@@ -107,7 +109,8 @@ class _WishedPageState extends State<WishedPage> {
                       color: Colors.grey,
                     ),
                     const SizedBox(height: 16),
-                    const Text("No tienes productos deseados"),
+                    const Text("No tienes productos deseados",
+                      style: TextStyle(fontSize: 16, color: Colors.white),),
                     const SizedBox(height: 16),
                     ElevatedButton(
                       onPressed: _cargarDeseados,

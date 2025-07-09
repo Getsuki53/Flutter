@@ -15,7 +15,7 @@ class HomeView extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     return const Scaffold(
       body: ProductList(),
-      backgroundColor: Colors.white,
+      backgroundColor: Color(0xff1f1e2a),
     );
   }
 }
@@ -36,7 +36,9 @@ class ProductList extends StatelessWidget {
         }
         final products = snapshot.data;
         if (products == null || products.isEmpty) {
-          return const Center(child: Text("No hay productos disponibles."));
+          return const Center(child: Text("No hay productos disponibles.", 
+            style: TextStyle(color: Colors.white, fontSize: 16),
+          ));
         }
         return PageView.builder(
           scrollDirection: Axis.vertical,
@@ -186,7 +188,7 @@ class _ProductListTileState extends State<ProductListTile> {
                 (widget.product.fotoProd).isNotEmpty
                     ? Image.network(
                         widget.product.fotoProd,
-                        height: 250,
+                        height: 450,
                         fit: BoxFit.contain,
                         errorBuilder: (context, error, stackTrace) {
                           print(
@@ -221,9 +223,9 @@ class _ProductListTileState extends State<ProductListTile> {
                     child: Container(
                       decoration: BoxDecoration(
                         shape: BoxShape.circle,
-                        color: isFavorite ? Colors.red : Colors.white,
+                        color: isFavorite ? Color(0xffae92f2) : Colors.white,
                         border: Border.all(
-                          color: isFavorite ? Colors.red : Colors.black,
+                          color: isFavorite ? Color(0xffae92f2) : Colors.black,
                           width: 1.5,
                         ),
                       ),
@@ -254,13 +256,13 @@ class _ProductListTileState extends State<ProductListTile> {
             const SizedBox(height: 20),
             Text(
               widget.product.nomprod,
-              style: const TextStyle(fontSize: 28, fontWeight: FontWeight.bold),
+              style: const TextStyle(fontSize: 28, fontWeight: FontWeight.bold, color: Colors.white),
               textAlign: TextAlign.center,
             ),
             const SizedBox(height: 10),
             Text(
               "\$${widget.product.precio}",
-              style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+              style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold, color: Colors.white),
             ),
           ],
         ),

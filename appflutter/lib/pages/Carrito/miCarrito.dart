@@ -18,6 +18,7 @@ class CartView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Color(0xff1f1e2a),
       appBar: AppBar(
         title: const Text("Carrito"),
         backgroundColor: const Color(0xff383758),
@@ -59,7 +60,7 @@ class CartView extends StatelessWidget {
                     children: [
                       Icon(Icons.shopping_cart_outlined, size: 64, color: Colors.grey),
                       SizedBox(height: 16),
-                      Text("Tu carrito está vacío", style: TextStyle(fontSize: 18)),
+                      Text("Tu carrito está vacío", style: TextStyle(fontSize: 18, color: Colors.white)),
                     ],
                   ),
                 );
@@ -71,13 +72,20 @@ class CartView extends StatelessWidget {
                   Container(
                     width: double.infinity,
                     padding: const EdgeInsets.all(16),
-                    color: Colors.blue.shade50,
-                    child: Text(
-                      "${cartItems.length} item(s) en tu carrito",
-                      style: const TextStyle(
-                        fontSize: 16,
-                        fontWeight: FontWeight.bold,
-                        color: Color(0xffae92f2),
+                    color: Color(0xff383758),
+                    child: ShaderMask(
+                      shaderCallback: (bounds) => const LinearGradient(
+                        colors: [Color(0xffe8d0f8), Color(0xffae92f2), Color(0xff9dd5f3),Color(0xffe8d0f8)],
+                        begin: Alignment.centerLeft,
+                        end: Alignment.centerRight,
+                      ).createShader(Rect.fromLTWH(0, 0, bounds.width, bounds.height)),
+                      child: Text(
+                        "${cartItems.length} item(s) en tu carrito",
+                        style: const TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.white,
+                        ),
                       ),
                     ),
                   ),
@@ -196,25 +204,39 @@ class CartView extends StatelessWidget {
                                   style: const TextStyle(
                                     fontSize: 18,
                                     fontWeight: FontWeight.bold,
-                                    color: Color(0xffae92f2),
+                                    color: Colors.black,
                                   ),
                                 ),
                               ],
                             ),
                           ),
                           const SizedBox(height: 12),
-                          ElevatedButton(
-                            onPressed: () {
-                              print("Proceder al checkout");
-                            },
-                            style: ElevatedButton.styleFrom(
-                              backgroundColor: Color(0xffae92f2),
-                              foregroundColor: Colors.white,
-                              padding: const EdgeInsets.symmetric(vertical: 16),
+                          // Nuevo diseño de botón tipo login
+                          Container(
+                            height: 50,
+                            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
+                            decoration: BoxDecoration(
+                              gradient: const LinearGradient(
+                                colors: [Color(0xffe8d0f8), Color(0xffae92f2), Color(0xff9dd5f3)],
+                                begin: Alignment.centerLeft,
+                                end: Alignment.centerRight,
+                              ),
+                              borderRadius: BorderRadius.circular(8),
                             ),
-                            child: Text(
-                              "Proceder al Pago (${cartItems.length} items)",
-                              style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                            child: Material(
+                              color: Colors.transparent,
+                              child: InkWell(
+                                borderRadius: BorderRadius.circular(8),
+                                onTap: () {
+                                  print("Proceder al checkout");
+                                },
+                                child: Center(
+                                  child: Text(
+                                    "Proceder al Pago (${cartItems.length} items)",
+                                    style: const TextStyle(color: Colors.white, fontSize: 18),
+                                  ),
+                                ),
+                              ),
                             ),
                           ),
                         ],

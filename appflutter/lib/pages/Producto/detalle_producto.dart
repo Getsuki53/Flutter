@@ -113,7 +113,11 @@ class _DetalleProductoState extends State<DetalleProducto> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text(widget.nombre)),
+      backgroundColor: Color(0xff1f1e2a),
+      appBar: AppBar(title: Text(widget.nombre, style: const TextStyle(color: Colors.white)),
+        backgroundColor: Color(0xff383758),
+        iconTheme: const IconThemeData(color: Colors.white),
+      ),
       body: Padding(
         padding: const EdgeInsets.all(16),
         child: Column(
@@ -122,7 +126,7 @@ class _DetalleProductoState extends State<DetalleProducto> {
             Center(
               child: Image.network(
                 widget.imagen,
-                height: 250,
+                height: 350,
                 fit: BoxFit.contain,
                 errorBuilder: (context, error, stackTrace) {
                   return Container(
@@ -229,7 +233,7 @@ class _DetalleProductoState extends State<DetalleProducto> {
                               'Ver tienda',
                               style: TextStyle(
                                 fontSize: 12,
-                                color: Colors.grey,
+                                color: Colors.black,
                               ),
                             ),
                           ],
@@ -259,41 +263,63 @@ class _DetalleProductoState extends State<DetalleProducto> {
             const SizedBox(height: 16),
             const Text(
               'Descripción:',
-              style: TextStyle(fontWeight: FontWeight.bold),
+              style: TextStyle(fontWeight: FontWeight.bold, color: Colors.white),
             ),
-            Text(widget.descripcion),
+            Text(widget.descripcion, style: const TextStyle(color: Colors.white)),
             const SizedBox(height: 16),
             Text(
               'Precio: \$${widget.precio}',
-              style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+              style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.white),
             ),
             const SizedBox(height: 16),
-            Text('Stock disponible: ${widget.stock}'),
+            Text('Stock disponible: ${widget.stock}', 
+              style: const TextStyle(fontSize: 16, color: Colors.white),
+            ),
             const SizedBox(height: 16),
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 IconButton(
                   onPressed: disminuirCantidad,
-                  icon: const Icon(Icons.remove),
+                  icon: const Icon(Icons.remove, color: Colors.white,),
                 ),
                 Text('$cantidad', style: const TextStyle(fontSize: 18)),
                 IconButton(
                   onPressed: aumentarCantidad,
-                  icon: const Icon(Icons.add),
+                  icon: const Icon(Icons.add, color: Colors.white),
                 ),
               ],
             ),
             const SizedBox(height: 16),
-            Center(
-              child: ElevatedButton(
-                onPressed: () {
-                  // Acción para agregar al carrito
-                  agregarAlCarrito();
-                },
-                child: const Text('Agregar al carrito'),
+              Container(
+                height: 50,
+                width: double.infinity,
+                padding: const EdgeInsets.symmetric(horizontal: 0, vertical: 0),
+                margin: const EdgeInsets.only(bottom: 24),
+                decoration: BoxDecoration(
+                  gradient: const LinearGradient(
+                    colors: [Color(0xffe8d0f8), Color(0xffae92f2), Color(0xff9dd5f3)],
+                    begin: Alignment.centerLeft,
+                    end: Alignment.centerRight,
+                  ),
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                child: Material(
+                  color: Colors.transparent,
+                  child: InkWell(
+                    borderRadius: BorderRadius.circular(8),
+                    onTap: () {
+                      agregarAlCarrito();
+                    },
+                    child: const Center(
+                      child: Text(
+                        'Agregar al carrito',
+                        style: TextStyle(color: Colors.white, fontSize: 18),
+                      ),
+                    ),
+                  ),
+                ),
               ),
-            ),
           ],
         ),
       ),

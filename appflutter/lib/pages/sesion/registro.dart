@@ -105,6 +105,7 @@ class _SigninPageState extends State<SigninPage> {
               Container(
                 padding: const EdgeInsets.all(10),
                 child: TextField(
+                  style: TextStyle(color: Colors.white),
                   cursorColor: Colors.white,
                   controller: nameController,
                   decoration: const InputDecoration(
@@ -124,6 +125,7 @@ class _SigninPageState extends State<SigninPage> {
               Container(
                 padding: const EdgeInsets.all(10),
                 child: TextField(
+                  style: TextStyle(color: Colors.white),
                   cursorColor: Colors.white,
                   controller: apellidoController,
                   decoration: const InputDecoration(
@@ -143,6 +145,7 @@ class _SigninPageState extends State<SigninPage> {
               Container(
                 padding: const EdgeInsets.all(10),
                 child: TextField(
+                  style: TextStyle(color: Colors.white),
                   cursorColor: Colors.white,
                   controller: emailController,
                   decoration: const InputDecoration(
@@ -163,6 +166,7 @@ class _SigninPageState extends State<SigninPage> {
               Container(
                 padding: const EdgeInsets.all(10),
                 child: TextField(
+                  style: TextStyle(color: Colors.white),
                   cursorColor: Colors.white,
                   controller: passwordController,
                   obscureText: true,

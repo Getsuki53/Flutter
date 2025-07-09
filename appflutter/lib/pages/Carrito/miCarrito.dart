@@ -453,7 +453,7 @@ class _CartViewState extends State<CartView> {
                               // Espera 7 segundos y luego registra la venta
                               Future.delayed(const Duration(seconds: 7), () async {
                                 final registrarResponse = await http.post(
-                                  Uri.parse(Config.buildUrl('/api/venta/registrar/')),
+                                  Uri.parse(Config.buildUrl('api/venta/registrar/')),
                                   headers: {'Content-Type': 'application/json'},
                                   body: jsonEncode({'usuario_id': userId}),
                                 );

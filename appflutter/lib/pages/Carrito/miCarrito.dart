@@ -396,44 +396,86 @@ class _CartViewState extends State<CartView> {
                   ),
                 ),
                 const SizedBox(height: 12),
-                // Nuevo diseño de botón tipo login
-                Container(
-                  height: 50,
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 10,
-                    vertical: 10,
+
+                ElevatedButton(
+                  onPressed: () async {
+                    final scaffoldMessenger = ScaffoldMessenger.of(context);
+                    final userId = await _getUserId();
+                    if (userId == null) {
+                      scaffoldMessenger.showSnackBar(
+                        const SnackBar(content: Text('No se encontró el usuario.')),
+                      );
+                      return;
+                    }
+                    try {
+                      // Muestra un indicador de carga
+                      showDialog(
+                        context: context,
+                        barrierDismissible: false,
+                        builder: (_) => const Center(child: CircularProgressIndicator()),
+                      );
+
+                      // Llama al endpoint del backend para obtener el init_point
+                      final response = await http.post(
+                        Uri.parse(Config.buildUrl(Config.iniciarMercadoPagoAPI)),
+                        headers: {'Content-Type': 'application/json'},
+                        body: jsonEncode({'usuario_id': userId}),
+                      );
+
+                      Navigator.of(context).pop(); // Quita el indicador de carga
+
+                      if (response.statusCode == 200) {
+                        final data = jsonDecode(response.body);
+                        final url = data['init_point'];
+                        if (url != null && await canLaunchUrl(Uri.parse(url))) {
+                          await launchUrl(Uri.parse(url), mode: LaunchMode.externalApplication);
+                          // Espera 7 segundos y luego registra la venta
+                          Future.delayed(const Duration(seconds: 7), () async {
+                            final registrarResponse = await http.post(
+                              Uri.parse(Config.buildUrl('/api/venta/registrar/')),
+                              headers: {'Content-Type': 'application/json'},
+                              body: jsonEncode({'usuario_id': userId}),
+                            );
+                            if (registrarResponse.statusCode == 200) {
+                              scaffoldMessenger.showSnackBar(
+                                const SnackBar(content: Text('¡Venta registrada!')),
+                              );
+                              // Recargar el carrito después de registrar la venta
+                              await _loadCartItems();
+                            } else {
+                              scaffoldMessenger.showSnackBar(
+                                SnackBar(content: Text('Error al registrar la venta: ${registrarResponse.body}')),
+                              );
+                            }
+                          });
+                        } else {
+                          scaffoldMessenger.showSnackBar(
+                            const SnackBar(content: Text('No se pudo abrir el enlace de pago.')),
+                          );
+                        }
+                      } else {
+                        scaffoldMessenger.showSnackBar(
+                          SnackBar(content: Text('Error al generar el pago: \n${response.body}')),
+                        );
+                      }
+                    } catch (e) {
+                      Navigator.of(context).pop(); // Quita el indicador de carga si hay error
+                      scaffoldMessenger.showSnackBar(
+                        SnackBar(content: Text('Error de conexión: $e')),
+                      );
+                    }
+                  },
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Color(0xffae92f2),
+                    foregroundColor: Colors.white,
+                    padding: const EdgeInsets.symmetric(vertical: 16),
                   ),
-                  decoration: BoxDecoration(
-                    gradient: const LinearGradient(
-                      colors: [
-                        Color(0xffe8d0f8),
-                        Color(0xffae92f2),
-                        Color(0xff9dd5f3),
-                      ],
-                      begin: Alignment.centerLeft,
-                      end: Alignment.centerRight,
-                    ),
-                    borderRadius: BorderRadius.circular(8),
-                  ),
-                  child: Material(
-                    color: Colors.transparent,
-                    child: InkWell(
-                      borderRadius: BorderRadius.circular(8),
-                      onTap: () {
-                        print("Proceder al checkout");
-                      },
-                      child: Center(
-                        child: Text(
-                          "Proceder al Pago (${cartItems.length} items)",
-                          style: const TextStyle(
-                            color: Colors.white,
-                            fontSize: 18,
-                          ),
-                        ),
-                      ),
-                    ),
+                  child: Text(
+                    "PAGAR",
+                    style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
                   ),
                 ),
+                 
               ],
             ),
           ),

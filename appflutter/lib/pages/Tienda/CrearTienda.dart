@@ -80,21 +80,40 @@ class _CrearTiendaState extends State<CrearTienda> {
 
   Widget _construirImagen() {
     if (kIsWeb && _imagenBytes != null) {
-      return Image.memory(
-        _imagenBytes!,
-        fit: BoxFit.cover,
-        width: double.infinity,
-        height: double.infinity,
+      return ClipRRect(
+        borderRadius: BorderRadius.circular(60),
+        child: Image.memory(
+          _imagenBytes!,
+          fit: BoxFit.cover,
+          width: 120,
+          height: 120,
+        ),
       );
     } else if (!kIsWeb && _imagenSeleccionada != null) {
-      return Image.file(
-        _imagenSeleccionada!,
-        fit: BoxFit.cover,
-        width: double.infinity,
-        height: double.infinity,
+      return ClipRRect(
+        borderRadius: BorderRadius.circular(60),
+        child: Image.file(
+          _imagenSeleccionada!,
+          fit: BoxFit.cover,
+          width: 120,
+          height: 120,
+        ),
       );
     }
-    return const SizedBox.shrink();
+    return Container(
+      width: 120,
+      height: 120,
+      decoration: BoxDecoration(
+        color: Colors.grey[300],
+        borderRadius: BorderRadius.circular(60),
+        border: Border.all(color: Colors.grey, width: 2),
+      ),
+      child: const Icon(
+        Icons.store,
+        size: 60,
+        color: Colors.grey,
+      ),
+    );
   }
 
   Future<void> _crearTienda() async {
@@ -111,32 +130,45 @@ class _CrearTiendaState extends State<CrearTienda> {
       });
 
       try {
-        String? imagePath;
-        if (!kIsWeb && _imagenSeleccionada != null) {
-          imagePath = _imagenSeleccionada!.path;
-        }
-        // Para web necesitaríamos modificar la API para manejar bytes
-
         final resultado = await APICrearTienda.crearTienda(
           propietario: _usuarioId.toString(),
           nombreTienda: _nombreTiendaController.text.trim(),
           descripcionTienda: _descripcionController.text.trim(),
-          imagenPath: imagePath,
+          imagenPath: _imagenSeleccionada?.path,
+          imagenBytes: _imagenBytes,
+          nombreImagen: _nombreImagen,
         );
 
         if (resultado != null) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text('¡Tienda creada exitosamente! $resultado')),
-          );
-          
-          // Navegar a MiTienda después de crear la tienda
-          Navigator.pushReplacement(
-            context,
-            MaterialPageRoute(builder: (_) => const MiTienda()),
-          );
+          // La API ahora retorna el mensaje directamente
+          if (resultado.contains('exitosamente')) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(
+                content: Text('✅ $resultado'),
+                backgroundColor: Colors.green,
+              ),
+            );
+            
+            // Navegar a MiTienda después de crear la tienda
+            Navigator.pushReplacement(
+              context,
+              MaterialPageRoute(builder: (_) => const MiTienda()),
+            );
+          } else {
+            // Mostrar mensaje de error
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(
+                content: Text('❌ $resultado'),
+                backgroundColor: Colors.red,
+              ),
+            );
+          }
         } else {
           ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text('Error al crear la tienda. Inténtalo de nuevo.')),
+            const SnackBar(
+              content: Text('❌ Error desconocido al crear la tienda'),
+              backgroundColor: Colors.red,
+            ),
           );
         }
       } catch (e) {
@@ -182,6 +214,29 @@ class _CrearTiendaState extends State<CrearTienda> {
                 textAlign: TextAlign.center,
               ),
               const SizedBox(height: 24),
+              
+              // Logo de la tienda
+              Container(
+                alignment: Alignment.center,
+                child: Column(
+                  children: [
+                    GestureDetector(
+                      onTap: _seleccionarImagen,
+                      child: _construirImagen(),
+                    ),
+                    const SizedBox(height: 10),
+                    TextButton.icon(
+                      onPressed: _seleccionarImagen,
+                      icon: const Icon(Icons.store, color: Colors.blue),
+                      label: Text(
+                        _tieneImagen() ? 'Cambiar logo' : 'Agregar logo de tienda (opcional)',
+                        style: const TextStyle(color: Colors.blue),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              const SizedBox(height: 16),
 
               // Nombre de la tienda
               TextFormField(
@@ -200,43 +255,6 @@ class _CrearTiendaState extends State<CrearTienda> {
                   }
                   return null;
                 },
-              ),
-              const SizedBox(height: 16),
-
-              // Logo de la tienda
-              const Text(
-                'Logo de la tienda (opcional)',
-                style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
-              ),
-              const SizedBox(height: 8),
-              GestureDetector(
-                onTap: _seleccionarImagen,
-                child: Container(
-                  height: 120,
-                  decoration: BoxDecoration(
-                    color: Colors.grey[200],
-                    borderRadius: BorderRadius.circular(8),
-                    border: Border.all(color: Colors.grey),
-                  ),
-                  child: _tieneImagen()
-                      ? ClipRRect(
-                          borderRadius: BorderRadius.circular(8),
-                          child: _construirImagen(),
-                        )
-                      : const Center(
-                          child: Column(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              Icon(Icons.add_photo_alternate, size: 40, color: Colors.grey),
-                              SizedBox(height: 8),
-                              Text(
-                                'Toca para seleccionar logo',
-                                style: TextStyle(color: Colors.grey),
-                              ),
-                            ],
-                          ),
-                        ),
-                ),
               ),
               const SizedBox(height: 16),
 
@@ -309,7 +327,7 @@ class _CrearTiendaState extends State<CrearTienda> {
                       ),
                       SizedBox(height: 8),
                       Text('• Tu tienda será revisada antes de aparecer públicamente'),
-                      Text('• Podrás agregar productos una vez creada la tienda'),
+                      Text('• Podrás agregar productos una vez aprobada la tienda'),
                       Text('• El logo ayuda a que los clientes reconozcan tu marca'),
                     ],
                   ),

@@ -5,24 +5,27 @@ import '../../config.dart';
 
 // Esta clase se encarga de obtener el perfil de la tienda.
 class APIDetalleTienda {
-  static var client = http.Client();
+  static Future<Tienda?> detalleTienda(int tiendaId) async {
+    try {
+      var url = Uri.parse(Config.buildUrl("${Config.tiendaAPI}/ObtenerDetallesTienda/"));
 
-  static Future<Tienda?> detalleTienda(int tienda) async {
-    Map<String, String> headers = {"Content-Type": "application/json"};
+      var response = await http.get(
+        url.replace(queryParameters: {'tienda_id': tiendaId.toString()}),
+        headers: {
+          'Accept': 'application/json; charset=utf-8',
+          'Content-Type': 'application/json; charset=utf-8',
+        },
+      );
 
-    var url = Uri.parse(
-      Config.buildUrl(
-        "${Config.tiendaAPI}/ObtenerDetallesTienda?tienda_id=${tienda.toString()}",
-      ),
-    );
-
-    var response = await client.get(url, headers: headers);
-
-    if (response.statusCode == 200) {
-      var data = jsonDecode(response.body);
-      return Tienda.fromJson(data);
-    } else {
-      print("Error al obtener tienda: ${response.body}");
+      if (response.statusCode == 200) {
+        // Asegurar decodificación UTF-8
+        String responseBody = utf8.decode(response.bodyBytes);
+        var jsonData = json.decode(responseBody);
+        return Tienda.fromJson(jsonData);
+      }
+      return null;
+    } catch (e) {
+      print('Error al obtener detalles de tienda: $e');
       return null;
     }
   }

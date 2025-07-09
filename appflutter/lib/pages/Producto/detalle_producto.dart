@@ -283,7 +283,7 @@ class _DetalleProductoState extends State<DetalleProducto> {
                   onPressed: disminuirCantidad,
                   icon: const Icon(Icons.remove, color: Colors.white,),
                 ),
-                Text('$cantidad', style: const TextStyle(fontSize: 18)),
+                Text('$cantidad', style: const TextStyle(fontSize: 18, color: Colors.white)),
                 IconButton(
                   onPressed: aumentarCantidad,
                   icon: const Icon(Icons.add, color: Colors.white),

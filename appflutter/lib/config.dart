@@ -1,6 +1,6 @@
 class Config {
   static const String appName = "Handmade Geeks";
-  static const String apiURL = '192.168.1.91'; // ✅ SIN :8000
+  static const String apiURL = '127.0.0.1:8000'; // ✅ SIN :8000
 
   // Función helper para construir URLs completas
   static String buildUrl(String endpoint) {
@@ -30,6 +30,7 @@ class Config {
   static const productodeseadoAPI = "api/productodeseado";
   static const tipocategoriaAPI = "api/tipocategoria";
   static const carritoAPI = "api/carrito";
+  static const iniciarMercadoPagoAPI = "api/mercadopago/iniciar/";
   static const seguimientotiendaAPI = "api/seguimientotienda";
 
   // Endpoints específicos de TIENDA
@@ -82,10 +83,4 @@ class Config {
   static const registroUsuarioAPI = "api/RegistroUsuario";
   static const logoutAPI = "api/Logout/logout-usuario";
   static const cambiarcontrasenaAPI = "api/usuario/CambiarContrasena/";
-  static const itemCarritoAPI =
-      "api/itemcarrito"; // Para agregar, actualizar o eliminar ítems del carrito
-  static const checkoutAPI = "api/checkout/"; // Para iniciar el pago
-  static const pagoAPI = "api/pago"; // Para consultar pagos
-  static const actualizarEstadoPagoAPI =
-      "api/actualizar_estado_pago/"; // Para actualizar el estado del pago y vaciar carrito
 }

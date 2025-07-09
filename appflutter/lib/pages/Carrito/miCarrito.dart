@@ -2,6 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:appflutter/services/productos/api_productos_x_carrito.dart';
 import 'package:appflutter/models/carrito_item_detallado.dart';
+import 'package:http/http.dart' as http;
+import 'dart:convert';
+import 'package:url_launcher/url_launcher.dart';
+import 'package:appflutter/config.dart';
 
 class CartView extends StatelessWidget {
   final int? usuarioId;
@@ -204,8 +208,63 @@ class CartView extends StatelessWidget {
                           ),
                           const SizedBox(height: 12),
                           ElevatedButton(
-                            onPressed: () {
-                              print("Proceder al checkout");
+                            onPressed: () async {
+                              final scaffoldMessenger = ScaffoldMessenger.of(context);
+                              try {
+                                // Muestra un indicador de carga
+                                showDialog(
+                                  context: context,
+                                  barrierDismissible: false,
+                                  builder: (_) => const Center(child: CircularProgressIndicator()),
+                                );
+
+                                // Llama al endpoint del backend para obtener el init_point
+                                final response = await http.post(
+                                  Uri.parse(Config.buildUrl(Config.iniciarMercadoPagoAPI)),
+                                  headers: {'Content-Type': 'application/json'},
+                                  body: jsonEncode({'usuario_id': userId}),
+                                );
+
+                                Navigator.of(context).pop(); // Quita el indicador de carga
+
+                                if (response.statusCode == 200) {
+                                  final data = jsonDecode(response.body);
+                                  final url = data['init_point'];
+                                  if (url != null && await canLaunchUrl(Uri.parse(url))) {
+                                    await launchUrl(Uri.parse(url), mode: LaunchMode.externalApplication);
+                                    // Espera 7 segundos y luego registra la venta
+                                    Future.delayed(const Duration(seconds: 7), () async {
+                                      final registrarResponse = await http.post(
+                                        Uri.parse(Config.buildUrl('/api/venta/registrar/')),
+                                        headers: {'Content-Type': 'application/json'},
+                                        body: jsonEncode({'usuario_id': userId}),
+                                      );
+                                      if (registrarResponse.statusCode == 200) {
+                                        scaffoldMessenger.showSnackBar(
+                                          const SnackBar(content: Text('¡Venta registrada!')),
+                                        );
+                                      } else {
+                                        scaffoldMessenger.showSnackBar(
+                                          SnackBar(content: Text('Error al registrar la venta: ${registrarResponse.body}')),
+                                        );
+                                      }
+                                    });
+                                  } else {
+                                    scaffoldMessenger.showSnackBar(
+                                      const SnackBar(content: Text('No se pudo abrir el enlace de pago.')),
+                                    );
+                                  }
+                                } else {
+                                  scaffoldMessenger.showSnackBar(
+                                    SnackBar(content: Text('Error al generar el pago: \n${response.body}')),
+                                  );
+                                }
+                              } catch (e) {
+                                Navigator.of(context).pop(); // Quita el indicador de carga si hay error
+                                scaffoldMessenger.showSnackBar(
+                                  SnackBar(content: Text('Error de conexión: $e')),
+                                );
+                              }
                             },
                             style: ElevatedButton.styleFrom(
                               backgroundColor: Color(0xffae92f2),
@@ -213,10 +272,11 @@ class CartView extends StatelessWidget {
                               padding: const EdgeInsets.symmetric(vertical: 16),
                             ),
                             child: Text(
-                              "Proceder al Pago (${cartItems.length} items)",
+                              "PAGAR",
                               style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
                             ),
                           ),
+                          // ...
                         ],
                       ),
                     ),

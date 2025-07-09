@@ -117,8 +117,14 @@ class _FollowedPageState extends State<FollowedPage> {
     }
 
     return Scaffold(
+      backgroundColor: Color(0xff1f1e2a),
       appBar: AppBar(
-        title: const Text("Tiendas seguidas"),
+        backgroundColor: const Color(0xff383758),
+        title: const Text("Tiendas seguidas",
+          style: TextStyle(
+            color: Colors.white,
+            ),
+        ),
         actions: [
           IconButton(
             icon: const Icon(Icons.refresh),
@@ -140,11 +146,11 @@ class _FollowedPageState extends State<FollowedPage> {
                       color: Colors.grey,
                     ),
                     const SizedBox(height: 16),
-                    const Text("No sigues ninguna tienda"),
+                    const Text("No sigues ninguna tienda", style: TextStyle(color: Colors.white),),
                     const SizedBox(height: 16),
                     ElevatedButton(
                       onPressed: _cargarTiendasSeguidas,
-                      child: const Text("Recargar"),
+                      child: const Text("Recargar", style: TextStyle(color: Colors.black),),
                     ),
                   ],
                 ),
@@ -160,7 +166,7 @@ class _FollowedPageState extends State<FollowedPage> {
                       margin: const EdgeInsets.symmetric(vertical: 6),
                       padding: const EdgeInsets.all(12),
                       decoration: BoxDecoration(
-                        color: const Color.fromARGB(255, 241, 249, 255),
+                        color: const Color(0xfffcf6ff),
                         borderRadius: BorderRadius.circular(8),
                       ),
                       child: Row(
@@ -225,7 +231,7 @@ class _FollowedPageState extends State<FollowedPage> {
                                       tienda.descripcionTienda!,
                                       style: const TextStyle(
                                         fontSize: 12,
-                                        color: Colors.grey,
+                                        color: Colors.black,
                                       ),
                                       maxLines: 2,
                                       overflow: TextOverflow.ellipsis,
@@ -241,9 +247,9 @@ class _FollowedPageState extends State<FollowedPage> {
                                 _dejarDeSeguirTienda(tienda, index);
                               },
                               style: OutlinedButton.styleFrom(
-                                backgroundColor: Colors.red,
+                                backgroundColor: Color(0xffae92f2),
                                 foregroundColor: Colors.white,
-                                side: const BorderSide(color: Colors.red),
+                                side: const BorderSide(color: Color(0xffae92f2)),
                                 alignment: Alignment.center,
                                 padding: const EdgeInsets.symmetric(
                                   vertical: 12,

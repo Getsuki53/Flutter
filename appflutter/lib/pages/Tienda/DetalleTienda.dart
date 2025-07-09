@@ -124,7 +124,10 @@ class _DetalleTiendaState extends State<DetalleTienda> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Perfil de la Tienda')),
+      backgroundColor: Color(0xff1f1e2a),
+      appBar: AppBar(title: const Text('Perfil de la Tienda',
+        style: TextStyle(color: Colors.white),),
+      backgroundColor: const Color(0xff383758)),
       body: FutureBuilder<Tienda?>(
         future: APIDetalleTienda.detalleTienda(widget.tiendaId),
         builder: (context, tiendaSnapshot) {
@@ -190,11 +193,12 @@ class _DetalleTiendaState extends State<DetalleTienda> {
                                 style: const TextStyle(
                                   fontSize: 20,
                                   fontWeight: FontWeight.bold,
+                                  color: Colors.white,
                                 ),
                               ),
-                              Text(tienda.descripcionTienda ?? ''),
-                              Text("Productos: ${tienda.cantProductos ?? 0}"),
-                              Text("Seguidores: ${tienda.cantSeguidores ?? 0}"),
+                              Text(tienda.descripcionTienda ?? '', style: TextStyle(color: Colors.white),),
+                              Text("Productos: ${tienda.cantProductos ?? 0}", style: TextStyle(color: Colors.white)),
+                              Text("Seguidores: ${tienda.cantSeguidores ?? 0}", style: TextStyle(color: Colors.white)),
                             ],
                           ),
                         ),
@@ -204,31 +208,51 @@ class _DetalleTiendaState extends State<DetalleTienda> {
                     // Botón de seguir/dejar de seguir
                     if (usuarioId != null)
                       Center(
-                        child: ElevatedButton.icon(
-                          onPressed:
-                              isLoadingSeguimiento ? null : _toggleSeguimiento,
-                          icon:
-                              isLoadingSeguimiento
-                                  ? const SizedBox(
-                                    width: 16,
-                                    height: 16,
-                                    child: CircularProgressIndicator(
-                                      strokeWidth: 2,
-                                    ),
-                                  )
-                                  : Icon(
-                                    esSeguida
-                                        ? Icons.favorite
-                                        : Icons.favorite_border,
-                                  ),
-                          label: Text(esSeguida ? 'Siguiendo' : 'Seguir'),
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor:
-                                esSeguida ? Colors.red : Colors.blue,
-                            foregroundColor: Colors.white,
-                            padding: const EdgeInsets.symmetric(
-                              horizontal: 24,
-                              vertical: 12,
+                        child: Container(
+                          height: 48,
+                          decoration: BoxDecoration(
+                            gradient: LinearGradient(
+                              colors: esSeguida
+                                  ? [Color(0xffe8d0f8), Color(0xffae92f2), Color(0xff9dd5f3)]
+                                  : [Color(0xff3344aa), Color(0xff9dd5f3), Color(0xff3344aa)], 
+                              begin: Alignment.centerLeft,
+                              end: Alignment.centerRight,
+                            ),
+                            borderRadius: BorderRadius.circular(8),
+                          ),
+                          child: Material(
+                            color: Colors.transparent,
+                            child: InkWell(
+                              borderRadius: BorderRadius.circular(8),
+                              onTap: isLoadingSeguimiento ? null : _toggleSeguimiento,
+                              child: Center(
+                                child: isLoadingSeguimiento
+                                    ? const SizedBox(
+                                        width: 20,
+                                        height: 20,
+                                        child: CircularProgressIndicator(
+                                          color: Colors.white,
+                                          strokeWidth: 2,
+                                        ),
+                                      )
+                                    : Row(
+                                        mainAxisSize: MainAxisSize.min,
+                                        children: [
+                                          Icon(
+                                            esSeguida ? Icons.favorite : Icons.favorite_border,
+                                            color: Colors.white,
+                                          ),
+                                          const SizedBox(width: 8),
+                                          Text(
+                                            esSeguida ? 'Siguiendo' : 'Seguir',
+                                            style: const TextStyle(
+                                              color: Colors.white,
+                                              fontSize: 18,
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                              ),
                             ),
                           ),
                         ),
@@ -239,6 +263,7 @@ class _DetalleTiendaState extends State<DetalleTienda> {
                       style: TextStyle(
                         fontSize: 18,
                         fontWeight: FontWeight.bold,
+                        color: Colors.white,
                       ),
                     ),
                     const SizedBox(height: 8),
@@ -246,7 +271,8 @@ class _DetalleTiendaState extends State<DetalleTienda> {
                       child:
                           productos.isEmpty
                               ? const Center(
-                                child: Text('No hay productos publicados.'),
+                                child: Text('No hay productos publicados.', 
+                                  style: TextStyle(color: Colors.white)),
                               )
                               : GridView.builder(
                                 gridDelegate:
@@ -316,7 +342,7 @@ class _DetalleTiendaState extends State<DetalleTienda> {
                                           textAlign: TextAlign.center,
                                           overflow: TextOverflow.ellipsis,
                                           maxLines: 2,
-                                          style: const TextStyle(fontSize: 12),
+                                          style: const TextStyle(fontSize: 12, color: Colors.white),
                                         ),
                                       ],
                                     ),

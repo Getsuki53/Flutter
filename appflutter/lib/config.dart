@@ -1,6 +1,6 @@
 class Config {
   static const String appName = "Handmade Geeks";
-  static const String apiURL = '192.168.1.91:8000'; // ✅ SIN :8000
+  static const String apiURL = '127.0.0.1:8000'; // ✅ SIN :8000
 
   // Función helper para construir URLs completas
   static String buildUrl(String endpoint) {
@@ -43,7 +43,8 @@ class Config {
   static const tiendaObtenerTiendaPorPropietarioAPI =
       "api/tienda/ObtenerTiendaPorPropietario";
 
-  static const tiendaVerificarPropietarioProdAPI = "api/tienda/VerificarPropietarioPorProducto";
+  static const tiendaVerificarPropietarioProdAPI =
+      "api/tienda/VerificarPropietarioPorProducto";
 
   // Endpoints específicos de SEGUIMIENTO TIENDA
   static const seguimientoObtenerListaTiendasSeguidasPorUsuarioAPI =
@@ -79,6 +80,11 @@ class Config {
   // Endpoints específicos de Carrito
   static const ObtenerProductoCarritoAPI =
       "api/producto/ObtenerProductosCarrito";
+
+  static const ActualizarCantidadCarritoAPI =
+      "api/carrito/ActualizarCantidadCarrito/";
+
+  //
 
   // Endpoints específicos de USUARIO Y REGISTRO
   static const registroUsuarioAPI = "api/RegistroUsuario";

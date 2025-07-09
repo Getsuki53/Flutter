@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'package:flutter/foundation.dart';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 import '../../config.dart';
@@ -7,51 +8,75 @@ import '../../config.dart';
 class APIIngreso {
   static var client = http.Client();
 
-  static Future<String?> ingresoUsuario(String correo, String contrasena) async {
-    Map<String, String> headers = {
-      "Content-Type": "application/json",
-    };
+  static Future<Map<String, dynamic>?> ingresoUsuario(
+    String correo,
+    String contrasena,
+  ) async {
+    Map<String, String> headers = {"Content-Type": "application/json"};
 
-    var url = Uri.parse(Config.buildUrl(Config.loginAPI)); // ✅ Cambiar de Uri.http a Uri.parse
+    var url = Uri.parse(Config.buildUrl(Config.loginAPI));
 
-    var body = jsonEncode({
-      "correo": correo,
-      "contrasena": contrasena,
-    });
+    var body = jsonEncode({"correo": correo, "contrasena": contrasena});
 
     var response = await client.post(url, headers: headers, body: body);
 
     if (response.statusCode == 200) {
       var data = jsonDecode(response.body);
 
-      // ✅ GUARDAR usuario_id si existe
+      // Guardar usuario_id si existe
       if (data.containsKey('usuario_id')) {
         final prefs = await SharedPreferences.getInstance();
+        await prefs.setBool('isLoggedIn', true);
         await prefs.setInt('usuario_id', data['usuario_id']);
-        print('usuario_id guardado: ${data['usuario_id']}');
+        await prefs.setString(
+          'tipo_usuario',
+          data['tipo_usuario'] ?? 'usuario',
+        );
+        debugPrint('usuario_id guardado: ${data['usuario_id']}');
       }
 
-      return data['mensaje'] as String? ?? data['message'] as String?;
+      return {
+        'mensaje': data['mensaje'] ?? data['message'],
+        'tipo_usuario': data['tipo_usuario'] ?? 'usuario',
+        'usuario_id': data['usuario_id'],
+      };
     } else {
       // Intentar autenticación de administrador
-      var adminUrl = Uri.parse(Config.buildUrl("${Config.administradorAPI}/AutenticacionarAdministrador/")); // ✅ También cambiar aquí
+      var adminUrl = Uri.parse(
+        Config.buildUrl(
+          "${Config.administradorAPI}/AutenticacionarAdministrador/",
+        ),
+      );
 
-      var adminResponse = await client.post(adminUrl, headers: headers, body: body);
+      var adminResponse = await client.post(
+        adminUrl,
+        headers: headers,
+        body: body,
+      );
 
       if (adminResponse.statusCode == 200) {
         var data = jsonDecode(adminResponse.body);
 
-        // ✅ Si admin también tiene un ID, puedes guardarlo con otra clave
+        // Guardar admin_id si existe
         if (data.containsKey('admin_id')) {
           final prefs = await SharedPreferences.getInstance();
+          await prefs.setBool('isLoggedIn', true);
           await prefs.setInt('admin_id', data['admin_id']);
-          print('admin_id guardado: ${data['admin_id']}');
+          await prefs.setString(
+            'tipo_usuario',
+            data['tipo_usuario'] ?? 'administrador',
+          );
+          debugPrint('admin_id guardado: ${data['admin_id']}');
         }
 
-        return data['mensaje'] as String? ?? data['message'] as String?;
+        return {
+          'mensaje': data['mensaje'] ?? data['message'],
+          'tipo_usuario': data['tipo_usuario'] ?? 'administrador',
+          'admin_id': data['admin_id'],
+        };
       } else {
-        print("Ingreso fallido: ${response.body}");
-        print("Ingreso administrador fallido: ${adminResponse.body}");
+        debugPrint("Ingreso fallido: ${response.body}");
+        debugPrint("Ingreso administrador fallido: ${adminResponse.body}");
         return null;
       }
     }

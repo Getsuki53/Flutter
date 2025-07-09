@@ -1,6 +1,7 @@
 import 'registro.dart';
 import 'package:flutter/material.dart';
 import 'package:appflutter/pages/inicio/main_scaffold.dart';
+import 'package:appflutter/pages/Administrador/main_admin.dart';
 import 'package:appflutter/services/usuario/api_ingreso.dart';
 
 class LoginPage extends StatefulWidget {
@@ -31,18 +32,28 @@ class _LoginPageState extends State<LoginPage> {
     });
 
     try {
-      final mensaje = await APIIngreso.ingresoUsuario(
+      final respuesta = await APIIngreso.ingresoUsuario(
         nameController.text,
         passwordController.text,
       );
 
-      if (mensaje != null) {
+      if (respuesta != null) {
         showSnackbar("Login exitoso!");
-        Navigator.pushAndRemoveUntil(
-          context,
-          MaterialPageRoute(builder: (_) => const MainScaffold()),
-          (route) => false,
-        );
+
+        // Redireccionar basado en el tipo de usuario
+        if (respuesta['tipo_usuario'] == 'administrador') {
+          Navigator.pushAndRemoveUntil(
+            context,
+            MaterialPageRoute(builder: (_) => const MainAdminView()),
+            (route) => false,
+          );
+        } else {
+          Navigator.pushAndRemoveUntil(
+            context,
+            MaterialPageRoute(builder: (_) => const MainScaffold()),
+            (route) => false,
+          );
+        }
       } else {
         showSnackbar("Usuario o contraseña incorrectos");
       }
@@ -87,7 +98,10 @@ class _LoginPageState extends State<LoginPage> {
             Container(
               alignment: Alignment.topLeft,
               padding: const EdgeInsets.all(10),
-              child: const Text('Ingresar', style: TextStyle(fontSize: 20, color: Colors.white),),
+              child: const Text(
+                'Ingresar',
+                style: TextStyle(fontSize: 20, color: Colors.white),
+              ),
             ),
             Container(
               padding: const EdgeInsets.all(10),
@@ -97,17 +111,20 @@ class _LoginPageState extends State<LoginPage> {
                 style: TextStyle(color: Colors.white),
                 decoration: const InputDecoration(
                   prefixIcon: Icon(Icons.email, color: Colors.white),
-                    filled: false,
-                    fillColor: Color(0xff2c2b3a),
-                    enabledBorder: OutlineInputBorder(
-                      borderSide: BorderSide(color: Colors.white, width: 1.0),
+                  filled: false,
+                  fillColor: Color(0xff2c2b3a),
+                  enabledBorder: OutlineInputBorder(
+                    borderSide: BorderSide(color: Colors.white, width: 1.0),
+                  ),
+                  focusedBorder: OutlineInputBorder(
+                    borderSide: BorderSide(
+                      color: Color(0xffae92f2),
+                      width: 1.5,
                     ),
-                    focusedBorder: OutlineInputBorder(
-                      borderSide: BorderSide(color: Color(0xffae92f2), width: 1.5),
-                    ),
+                  ),
                   border: OutlineInputBorder(),
-                    labelText: 'Correo electrónico',
-                    labelStyle: TextStyle(color: Colors.white) 
+                  labelText: 'Correo electrónico',
+                  labelStyle: TextStyle(color: Colors.white),
                 ),
               ),
             ),
@@ -121,15 +138,17 @@ class _LoginPageState extends State<LoginPage> {
                 decoration: const InputDecoration(
                   prefixIcon: Icon(Icons.lock, color: Colors.white),
                   enabledBorder: OutlineInputBorder(
-                      borderSide: BorderSide(color: Colors.white, width: 1.0),
+                    borderSide: BorderSide(color: Colors.white, width: 1.0),
+                  ),
+                  focusedBorder: OutlineInputBorder(
+                    borderSide: BorderSide(
+                      color: Color(0xffae92f2),
+                      width: 1.5,
                     ),
-                    focusedBorder: OutlineInputBorder(
-                      borderSide: BorderSide(color: Color(0xffae92f2), width: 1.5),
-                    ),
+                  ),
                   border: OutlineInputBorder(),
                   labelText: 'Contraseña',
-                  labelStyle: TextStyle(color: Colors.white)
-                  
+                  labelStyle: TextStyle(color: Colors.white),
                 ),
               ),
             ),
@@ -148,7 +167,11 @@ class _LoginPageState extends State<LoginPage> {
               padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
               decoration: BoxDecoration(
                 gradient: const LinearGradient(
-                  colors: [Color(0xffe8d0f8), Color(0xffae92f2), Color(0xff9dd5f3)], // Aquí defines los colores del gradiente
+                  colors: [
+                    Color(0xffe8d0f8),
+                    Color(0xffae92f2),
+                    Color(0xff9dd5f3),
+                  ], // Aquí defines los colores del gradiente
                   begin: Alignment.centerLeft,
                   end: Alignment.centerRight,
                 ),
@@ -160,12 +183,18 @@ class _LoginPageState extends State<LoginPage> {
                   borderRadius: BorderRadius.circular(8),
                   onTap: _isLoading ? null : loginWithBackend,
                   child: Center(
-                    child: _isLoading
-                        ? const CircularProgressIndicator(color: Colors.white)
-                        : const Text(
-                            'Acceder como Usuario',
-                            style: TextStyle(color: Colors.white, fontSize: 18),
-                          ),
+                    child:
+                        _isLoading
+                            ? const CircularProgressIndicator(
+                              color: Colors.white,
+                            )
+                            : const Text(
+                              'Acceder como Usuario',
+                              style: TextStyle(
+                                color: Colors.white,
+                                fontSize: 18,
+                              ),
+                            ),
                   ),
                 ),
               ),
@@ -178,7 +207,8 @@ class _LoginPageState extends State<LoginPage> {
               children: <Widget>[
                 const Text(
                   '¿No tiene cuenta?',
-                  style: const TextStyle(color: Colors.white),),
+                  style: const TextStyle(color: Colors.white),
+                ),
                 TextButton(
                   child: const Text(
                     'Registrarse',

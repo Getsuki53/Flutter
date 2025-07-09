@@ -9,13 +9,31 @@ import 'package:appflutter/services/deseados/api_eliminar_producto_deseado.dart'
 import 'package:appflutter/services/deseados/api_verificar_producto_deseado.dart';
 import 'package:appflutter/services/tienda/api_verificar_propietario_producto.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'barra_superior.dart';
 
-class HomeView extends ConsumerWidget {
+class HomeView extends ConsumerStatefulWidget {
   const HomeView({super.key});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    return const Scaffold(
+  ConsumerState<HomeView> createState() => _HomeViewState();
+}
+
+class _HomeViewState extends ConsumerState<HomeView> {
+  final searchController = TextEditingController();
+
+  @override
+  void dispose() {
+    searchController.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: CustomAppBar(
+         controller: searchController,
+        //onCartPressed: _onCartPressed,
+      ),
       body: ProductList(),
       backgroundColor: Colors.white,
     );
@@ -272,10 +290,6 @@ class _ProductListTileState extends State<ProductListTile> {
                         height: 250,
                         fit: BoxFit.contain,
                         errorBuilder: (context, error, stackTrace) {
-                          print(
-                            '🚨 ERROR home - No se pudo cargar imagen: ${widget.product.fotoProd}',
-                          );
-                          print('🚨 ERROR home - Error: $error');
                           return Container(
                             height: 250,
                             color: Colors.grey[300],

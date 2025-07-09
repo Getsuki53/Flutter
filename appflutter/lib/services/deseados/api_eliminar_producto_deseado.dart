@@ -12,10 +12,10 @@ class APIEliminarProductoDeseado {
   ) async {
     Map<String, String> headers = {"Content-Type": "application/json"};
 
-    var url = Uri.http(
-      Config.apiURL,
+    var url = Uri.parse(
+      Config.buildUrl(
       "${Config.productodeseadoAPI}/EliminarProductoDeseado/",
-    );
+    ));
 
     var body = jsonEncode({"usuario_id": usuario, "producto_id": producto});
 

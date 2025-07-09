@@ -1,21 +1,22 @@
 class Config {
   static const String appName = "Handmade Geeks";
-  static const String apiURL = '192.168.1.91:8000'; // ✅ SIN :8000
+  static const String apiURL = 'hgeeks-backend.onrender.com';
 
-  // Función helper para construir URLs completas
+  // Función helper para construir URLs completas con debugging
   static String buildUrl(String endpoint) {
-    return 'http://$apiURL/$endpoint';
+    final url = 'https://$apiURL/$endpoint';
+    return url;
   }
 
   // Función helper para construir URLs completas de imágenes
   static String buildImageUrl(String imagePath) {
     if (imagePath.startsWith('http')) {
-      return imagePath; // Ya es una URL completa
+      return imagePath;
     }
-    // Remover la barra inicial si existe
-    String cleanPath =
-        imagePath.startsWith('/') ? imagePath.substring(1) : imagePath;
-    return 'http://$apiURL/$cleanPath';
+    String cleanPath = imagePath.startsWith('/') ? imagePath.substring(1) : imagePath;
+    final url = 'https://$apiURL/$cleanPath';
+    print('🖼️ [CONFIG] URL de imagen construida: $url');
+    return url;
   }
 
   // Endpoints básicos de modelos

@@ -13,7 +13,7 @@ class APIObtenerProductosCarrito {
       "Content-Type": "application/json",
     };
 
-    var url = Uri.parse(Config.buildUrl("${Config.productoAPI}/ObtenerProductosCarrito/?usuario_id=$usuario"));
+    var url = Uri.parse(Config.buildUrl("${Config.productoAPI}/ObtenerProductosCarrito/?usuario_id=$usuario")); 
 
     print('🔍 URL carrito: $url');
 

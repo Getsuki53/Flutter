@@ -12,10 +12,10 @@ class APIObtenerListaProductosPorNombre {
       "Content-Type": "application/json",
     };
 
-    var url = Uri.http(
-      Config.apiURL, 
+    var url = Uri.parse(
+      Config.buildUrl(
       "${Config.productoAPI}/ObtenerProductoPorNombre/",
-    );
+    ));
 
     var body = jsonEncode({
       "Nomprod": nombreProd,

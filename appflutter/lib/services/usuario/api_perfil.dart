@@ -11,7 +11,7 @@ class APIPerfil {
       "Content-Type": "application/json",
     };
 
-    var url = Uri.http(Config.apiURL, "${Config.usuarioAPI}/$usuario/");
+    var url = Uri.parse(Config.buildUrl("${Config.usuarioAPI}/$usuario/"));
 
     var response = await client.get(url, headers: headers);
 

@@ -12,7 +12,7 @@ class APIAgregarAlCarrito {
     };
 
     // ✅ CORREGIR: Usar Uri.parse con buildUrl
-    var url = Uri.parse(Config.buildUrl("${Config.carritoAPI}/AgAlCarrito/"));
+    var url = Uri.parse(Config.buildUrl("${Config.carritoAPI}/AgAlCarrito/")); // ✅ Ya corregido
 
     var body = jsonEncode({
       "usuario_id": usuario,

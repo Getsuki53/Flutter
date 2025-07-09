@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:appflutter/services/productos/api_productos_x_carrito.dart';
 import 'package:appflutter/services/carrito/api_actualizar_cantidad_carrito.dart';
+import 'package:appflutter/services/carrito/api_eliminar_producto_carrito.dart';
 import 'package:appflutter/models/carrito_item_detallado.dart';
 
 class CartView extends StatefulWidget {
@@ -123,6 +124,71 @@ class _CartViewState extends State<CartView> {
   void _decreaseQuantity(CarritoItemDetallado item) {
     // Permitir que la cantidad llegue a 0 para eliminar el producto automáticamente
     _updateQuantity(item.productoId, item.unidades - 1);
+  }
+
+  Future<void> _deleteFromCart(CarritoItemDetallado item) async {
+    final userId = await _getUserId();
+    if (userId == null) return;
+
+    // Mostrar dialog de confirmación
+    final bool? shouldDelete = await showDialog<bool>(
+      context: context,
+      builder:
+          (context) => AlertDialog(
+            title: const Text('Eliminar producto'),
+            content: Text(
+              '¿Estás seguro de que quieres eliminar "${item.producto?.nomprod ?? 'este producto'}" del carrito?',
+            ),
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.of(context).pop(false),
+                child: const Text('Cancelar'),
+              ),
+              TextButton(
+                onPressed: () => Navigator.of(context).pop(true),
+                style: TextButton.styleFrom(foregroundColor: Colors.red),
+                child: const Text('Eliminar'),
+              ),
+            ],
+          ),
+    );
+
+    if (shouldDelete != true) return;
+
+    try {
+      final result = await APIEliminarProductoCarrito.eliminarProducto(
+        userId,
+        item.productoId,
+      );
+
+      if (result?['success'] == true) {
+        // Recargar el carrito
+        await _loadCartItems();
+
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(
+              result?['message'] ?? 'Producto eliminado del carrito',
+            ),
+            backgroundColor: Colors.green,
+          ),
+        );
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(result?['error'] ?? 'Error al eliminar producto'),
+            backgroundColor: Colors.red,
+          ),
+        );
+      }
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Error de conexión: $e'),
+          backgroundColor: Colors.red,
+        ),
+      );
+    }
   }
 
   @override
@@ -269,6 +335,13 @@ class _CartViewState extends State<CartView> {
                       IconButton(
                         icon: const Icon(Icons.add_circle_outline),
                         onPressed: () => _increaseQuantity(item),
+                      ),
+                      // Botón de eliminar (papelera)
+                      IconButton(
+                        icon: const Icon(Icons.delete_outline),
+                        color: Colors.red,
+                        onPressed: () => _deleteFromCart(item),
+                        tooltip: 'Eliminar del carrito',
                       ),
                     ],
                   ),

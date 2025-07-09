@@ -83,6 +83,8 @@ class Config {
 
   static const ActualizarCantidadCarritoAPI =
       "api/carrito/ActualizarCantidadCarrito/";
+  static const EliminarProductoCarritoAPI =
+      "api/carrito/EliminarProductodelCarrito/";
 
   //
 

@@ -2,10 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:appflutter/models/producto_modelo.dart';
 import 'package:appflutter/pages/Producto/detalle_producto.dart';
+import 'package:appflutter/pages/Producto/producto_propietario.dart';
 import 'package:appflutter/services/productos/api_productos.dart';
 import 'package:appflutter/services/deseados/api_agregar_producto_deseado.dart';
 import 'package:appflutter/services/deseados/api_eliminar_producto_deseado.dart';
 import 'package:appflutter/services/deseados/api_verificar_producto_deseado.dart';
+import 'package:appflutter/services/tienda/api_verificar_propietario_producto.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class HomeView extends ConsumerWidget {
@@ -15,7 +17,7 @@ class HomeView extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     return const Scaffold(
       body: ProductList(),
-      backgroundColor: Color(0xff1f1e2a),
+      backgroundColor: Colors.white,
     );
   }
 }
@@ -36,9 +38,7 @@ class ProductList extends StatelessWidget {
         }
         final products = snapshot.data;
         if (products == null || products.isEmpty) {
-          return const Center(child: Text("No hay productos disponibles.", 
-            style: TextStyle(color: Colors.white, fontSize: 16),
-          ));
+          return const Center(child: Text("No hay productos disponibles."));
         }
         return PageView.builder(
           scrollDirection: Axis.vertical,
@@ -155,12 +155,63 @@ class _ProductListTileState extends State<ProductListTile> {
     }
   }
 
-  @override
-  Widget build(BuildContext context) {
-    final size = MediaQuery.of(context).size;
+  Future<void> _navegarADetalleProducto() async {
+    if (usuarioId == null || widget.product.id == null) {
+      // Si no hay usuario logueado, ir a detalle normal
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (_) => DetalleProducto(
+            id: widget.product.id!,
+            nombre: widget.product.nomprod,
+            descripcion: widget.product.descripcionProd,
+            precio: widget.product.precio,
+            imagen: widget.product.fotoProd,
+            stock: widget.product.stock,
+            categoria: widget.product.tipoCategoria,
+          ),
+        ),
+      );
+      return;
+    }
 
-    return GestureDetector(
-      onTap: () {
+    // Mostrar indicador de carga
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (context) => const Center(
+        child: CircularProgressIndicator(),
+      ),
+    );
+
+    try {
+      // Verificar si el usuario es propietario del producto
+      bool esPropietario = await APIVerificarPropietarioProducto.verificarPropietario(
+        widget.product.id!,
+        usuarioId!,
+      );
+
+      // Cerrar indicador de carga
+      Navigator.of(context).pop();
+
+      if (esPropietario) {
+        // Es propietario: ir a vista de propietario
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (_) => ProductoPropietario(
+              id: widget.product.id!,
+              nombre: widget.product.nomprod,
+              descripcion: widget.product.descripcionProd,
+              precio: widget.product.precio,
+              imagen: widget.product.fotoProd,
+              stock: widget.product.stock,
+              categoria: widget.product.tipoCategoria,
+            ),
+          ),
+        );
+      } else {
+        // No es propietario: ir a detalle normal
         Navigator.push(
           context,
           MaterialPageRoute(
@@ -175,7 +226,37 @@ class _ProductListTileState extends State<ProductListTile> {
             ),
           ),
         );
-      },
+      }
+    } catch (e) {
+      // Cerrar indicador de carga si hay error
+      Navigator.of(context).pop();
+      
+      print('❌ Error al verificar propietario: $e');
+      
+      // En caso de error, ir a detalle normal
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (_) => DetalleProducto(
+            id: widget.product.id!,
+            nombre: widget.product.nomprod,
+            descripcion: widget.product.descripcionProd,
+            precio: widget.product.precio,
+            imagen: widget.product.fotoProd,
+            stock: widget.product.stock,
+            categoria: widget.product.tipoCategoria,
+          ),
+        ),
+      );
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final size = MediaQuery.of(context).size;
+
+    return GestureDetector(
+      onTap: _navegarADetalleProducto,
       child: Container(
         height: size.height,
         padding: const EdgeInsets.all(30),
@@ -188,7 +269,7 @@ class _ProductListTileState extends State<ProductListTile> {
                 (widget.product.fotoProd).isNotEmpty
                     ? Image.network(
                         widget.product.fotoProd,
-                        height: 450,
+                        height: 250,
                         fit: BoxFit.contain,
                         errorBuilder: (context, error, stackTrace) {
                           print(
@@ -223,9 +304,9 @@ class _ProductListTileState extends State<ProductListTile> {
                     child: Container(
                       decoration: BoxDecoration(
                         shape: BoxShape.circle,
-                        color: isFavorite ? Color(0xffae92f2) : Colors.white,
+                        color: isFavorite ? Colors.red : Colors.white,
                         border: Border.all(
-                          color: isFavorite ? Color(0xffae92f2) : Colors.black,
+                          color: isFavorite ? Colors.red : Colors.black,
                           width: 1.5,
                         ),
                       ),
@@ -256,13 +337,13 @@ class _ProductListTileState extends State<ProductListTile> {
             const SizedBox(height: 20),
             Text(
               widget.product.nomprod,
-              style: const TextStyle(fontSize: 28, fontWeight: FontWeight.bold, color: Colors.white),
+              style: const TextStyle(fontSize: 28, fontWeight: FontWeight.bold),
               textAlign: TextAlign.center,
             ),
             const SizedBox(height: 10),
             Text(
               "\$${widget.product.precio}",
-              style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold, color: Colors.white),
+              style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
             ),
           ],
         ),

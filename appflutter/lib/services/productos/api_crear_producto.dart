@@ -19,7 +19,7 @@ class APICrearProducto {
     String? nombreImagen,
   }) async {
     try {
-      var url = Uri.http(Config.apiURL, Config.productoCrearProductoAPI);
+      var url = Uri.parse(Config.buildUrl(Config.productoCrearProductoAPI));
 
       print('🌐 Creando producto en: $url');
 

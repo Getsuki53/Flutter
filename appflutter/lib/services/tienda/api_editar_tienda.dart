@@ -13,7 +13,7 @@ class APIEditarTienda {
     String? descripcionTienda,
     String? imagenPath, // Ruta local del archivo de imagen
   }) async {
-    var url = Uri.parse(Config.buildUrl("${Config.tiendaAPI}/ModificarTienda/$idTienda/")); // ✅ Cambiar Uri.http por Uri.parse
+    var url = Uri.parse(Config.buildUrl("${Config.tiendaAPI}/ModificarTienda/$idTienda/"));
 
     var request = http.MultipartRequest("PUT", url);
 

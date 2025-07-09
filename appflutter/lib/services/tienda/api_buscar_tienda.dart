@@ -12,7 +12,7 @@ class APIBuscarTienda {
       "Content-Type": "application/json",
     };
 
-    var url = Uri.http(Config.apiURL, "${Config.tiendaAPI}/buscar/?nombre=$busquedaNom/");
+    var url = Uri.parse(Config.buildUrl("${Config.tiendaAPI}/buscar/?nombre=$busquedaNom/"));
 
     var response = await client.get(url, headers: headers);
 

@@ -9,10 +9,10 @@ class APINuevoSeguimiento {
   static Future<String?> nuevoSeguimiento(int usuario, int tienda) async {
     Map<String, String> headers = {"Content-Type": "application/json"};
 
-    var url = Uri.http(
-      Config.apiURL,
+    var url = Uri.parse(
+      Config.buildUrl(
       "${Config.seguimientoAgregarSeguimientoTiendaAPI}/",
-    );
+    ));
 
     var body = jsonEncode({"usuario_id": usuario, "tienda_id": tienda});
 

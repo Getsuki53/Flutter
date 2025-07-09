@@ -297,24 +297,33 @@ class _DetalleProductoState extends State<DetalleProducto> {
                 padding: const EdgeInsets.symmetric(horizontal: 0, vertical: 0),
                 margin: const EdgeInsets.only(bottom: 24),
                 decoration: BoxDecoration(
-                  gradient: const LinearGradient(
-                    colors: [Color(0xffe8d0f8), Color(0xffae92f2), Color(0xff9dd5f3)],
-                    begin: Alignment.centerLeft,
-                    end: Alignment.centerRight,
-                  ),
+                  gradient: cantidad <= widget.stock 
+                    ? const LinearGradient(
+                        colors: [Color(0xffe8d0f8), Color(0xffae92f2), Color(0xff9dd5f3)],
+                        begin: Alignment.centerLeft,
+                        end: Alignment.centerRight,
+                      )
+                    : const LinearGradient(
+                        colors: [Colors.grey, Colors.grey],
+                        begin: Alignment.centerLeft,
+                        end: Alignment.centerRight,
+                      ),
                   borderRadius: BorderRadius.circular(8),
                 ),
                 child: Material(
                   color: Colors.transparent,
                   child: InkWell(
                     borderRadius: BorderRadius.circular(8),
-                    onTap: () {
+                    onTap: cantidad <= widget.stock ? () {
                       agregarAlCarrito();
-                    },
-                    child: const Center(
+                    } : null,
+                    child: Center(
                       child: Text(
-                        'Agregar al carrito',
-                        style: TextStyle(color: Colors.white, fontSize: 18),
+                        cantidad <= widget.stock ? 'Agregar al carrito' : 'Stock insuficiente',
+                        style: TextStyle(
+                          color: cantidad <= widget.stock ? Colors.white : Colors.white70, 
+                          fontSize: 18
+                        ),
                       ),
                     ),
                   ),

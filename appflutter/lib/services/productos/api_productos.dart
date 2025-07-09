@@ -12,7 +12,7 @@ class APIProductos {
       "Content-Type": "application/json",
     };
 
-    var url = Uri.http(Config.apiURL, "${Config.productoAPI}");
+    var url = Uri.parse(Config.buildUrl("${Config.productoAPI}"));
 
     var response = await client.get(url, headers: headers);
 

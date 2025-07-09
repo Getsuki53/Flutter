@@ -12,12 +12,9 @@ class APIObtenerTiendaPorPropietario {
       "Content-Type": "application/json",
     };
 
-    // Construir la URL correcta con propietario_id como query parameter
-    var url = Uri.http(
-      Config.apiURL,
-      "${Config.tiendaAPI}/ObtenerTiendaPorPropietario/",
-      {"propietario_id": usuario.toString()},
-    );
+    var url = Uri.parse(Config.buildUrl("${Config.tiendaAPI}/ObtenerTiendaPorPropietario/?propietario_id=$usuario"));
+
+    print('🔍 URL tienda por propietario: $url'); // Debug
 
     var response = await client.get(url, headers: headers);
 

@@ -7,11 +7,7 @@ class APIVerificarSeguimiento {
   static var client = http.Client();
 
   static Future<bool> verificarSeguimiento(int usuario, int tienda) async {
-    var url = Uri.http(
-      Config.apiURL,
-      "${Config.seguimientoVerificarSeguimientoAPI}/",
-      {'usuario_id': usuario.toString(), 'tienda_id': tienda.toString()},
-    );
+    var url = Uri.parse(Config.buildUrl("${Config.seguimientoVerificarSeguimientoAPI}/?usuario_id=$usuario&tienda_id=$tienda"));
 
     print("🔍 DEBUG Verificar Seguimiento - URL: $url");
 

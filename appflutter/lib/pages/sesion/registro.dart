@@ -20,6 +20,7 @@ class _SigninPageState extends State<SigninPage> {
   final TextEditingController apellidoController = TextEditingController();
   final TextEditingController emailController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
+  final TextEditingController rPasswordController = TextEditingController();
   final _formKey = GlobalKey<FormState>(); // Add form key for validation
   bool _isLoading = false;
   
@@ -141,6 +142,12 @@ class _SigninPageState extends State<SigninPage> {
     
     if (passwordController.text.isEmpty) {
       showSnackbar("La contraseña es requerida");
+      showSnackbar("R : ${rPasswordController.text}");
+      return;
+    }
+
+    if (rPasswordController.text != passwordController.text) {
+      showSnackbar("Las contraseñas no coinciden");
       return;
     }
     
@@ -153,15 +160,15 @@ class _SigninPageState extends State<SigninPage> {
       _isLoading = true;
     });
 
-    print("🚀 Iniciando registro...");
-    print("📧 Email: ${emailController.text.trim()}");
-    print("👤 Nombre: ${nameController.text.trim()}");
-    print("👤 Apellido: ${apellidoController.text.trim()}");
-    print("🔒 Contraseña length: ${passwordController.text.length}");
-    print("🖼️ Tiene imagen: ${_tieneImagen()}");
+    print("Iniciando registro...");
+    print("Email: ${emailController.text.trim()}");
+    print("Nombre: ${nameController.text.trim()}");
+    print("Apellido: ${apellidoController.text.trim()}");
+    print("Contraseña length: ${passwordController.text.length}");
+    print("Tiene imagen: ${_tieneImagen()}");
 
     try {
-      showSnackbar("📤 Enviando datos de registro...");
+      showSnackbar("Enviando datos de registro...");
       
       final mensaje = await APIRegistro.registro(
           emailController.text.trim(),
@@ -175,11 +182,11 @@ class _SigninPageState extends State<SigninPage> {
 
       if (mensaje == null) {
         // null significa éxito
-        print("✅ Registro exitoso!");
-        showSnackbar("✅ Usuario creado correctamente");
+        print("Registro exitoso!");
+        showSnackbar("Usuario creado correctamente");
         
         // Hacer login automático después del registro exitoso
-        showSnackbar("🔐 Iniciando sesión automáticamente...");
+        showSnackbar("Iniciando sesión...");
         
         try {
           final respuestaLogin = await APIIngreso.ingresoUsuario(
@@ -188,8 +195,7 @@ class _SigninPageState extends State<SigninPage> {
           );
 
           if (respuestaLogin != null) {
-            print("✅ Login automático exitoso!");
-            showSnackbar("✅ ¡Bienvenido! Entrando a la aplicación...");
+            showSnackbar("¡Bienvenido!");
             
             // Esperar un poco antes de navegar para que el usuario vea el mensaje
             await Future.delayed(const Duration(seconds: 1));
@@ -204,8 +210,8 @@ class _SigninPageState extends State<SigninPage> {
             }
           } else {
             // Si falla el login automático, ir a la página de login
-            print("❌ Login automático falló, redirigiendo al login");
-            showSnackbar("✅ Usuario creado. Por favor, inicia sesión");
+            print("Login automático falló, redirigiendo al login");
+            showSnackbar("Usuario creado. Por favor, inicia sesión");
             
             await Future.delayed(const Duration(seconds: 1));
             
@@ -218,8 +224,8 @@ class _SigninPageState extends State<SigninPage> {
           }
         } catch (e) {
           // Si hay error en el login automático, ir a la página de login
-          print("❌ Error en login automático: $e");
-          showSnackbar("✅ Usuario creado. Por favor, inicia sesión");
+          print("Error en login automático: $e");
+          showSnackbar("Usuario creado. Por favor, inicia sesión");
           
           await Future.delayed(const Duration(seconds: 1));
           
@@ -423,6 +429,35 @@ class _SigninPageState extends State<SigninPage> {
                     decoration: const InputDecoration(
                       border: OutlineInputBorder(),
                       labelText: 'Contraseña *',
+                      labelStyle: TextStyle(color: Colors.white),
+                      prefixIcon: Icon(Icons.lock, color: Colors.white),
+                      enabledBorder: OutlineInputBorder(
+                        borderSide: BorderSide(color: Colors.white, width: 1.0),
+                      ),
+                      focusedBorder: OutlineInputBorder(
+                        borderSide: BorderSide(color: Color(0xffae92f2), width: 1.5),
+                      ),
+                      errorBorder: OutlineInputBorder(
+                        borderSide: BorderSide(color: Colors.red, width: 1.0),
+                      ),
+                      focusedErrorBorder: OutlineInputBorder(
+                        borderSide: BorderSide(color: Colors.red, width: 1.5),
+                      ),
+                      errorStyle: TextStyle(color: Colors.red),
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 10),
+                Container(
+                  padding: const EdgeInsets.all(10),
+                  child: TextFormField( // Changed to TextFormField
+                    cursorColor: Colors.white,
+                    style: const TextStyle(color: Colors.white),
+                    controller: rPasswordController,
+                    obscureText: true,
+                    decoration: const InputDecoration(
+                      border: OutlineInputBorder(),
+                      labelText: 'Repetir Contraseña *',
                       labelStyle: TextStyle(color: Colors.white),
                       prefixIcon: Icon(Icons.lock, color: Colors.white),
                       enabledBorder: OutlineInputBorder(

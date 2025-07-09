@@ -14,7 +14,7 @@ class APIIngreso {
   ) async {
     Map<String, String> headers = {"Content-Type": "application/json"};
 
-    var url = Uri.parse(Config.buildUrl(Config.loginAPI));
+    var url = Uri.parse(Config.buildUrl(Config.loginAPI)); // ✅ Ya corregido
 
     var body = jsonEncode({"correo": correo, "contrasena": contrasena});
 
@@ -42,11 +42,7 @@ class APIIngreso {
       };
     } else {
       // Intentar autenticación de administrador
-      var adminUrl = Uri.parse(
-        Config.buildUrl(
-          "${Config.administradorAPI}/AutenticacionarAdministrador/",
-        ),
-      );
+      var adminUrl = Uri.parse(Config.buildUrl("${Config.administradorAPI}/AutenticacionarAdministrador/")); // ✅ Ya corregido
 
       var adminResponse = await client.post(
         adminUrl,

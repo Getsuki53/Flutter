@@ -1,4 +1,3 @@
-
 class Producto {
   final int? id;
   final String nomprod;
@@ -16,7 +15,7 @@ class Producto {
     required this.nomprod,
     required this.descripcionProd,
     required this.stock,
-    required this.fotoProd,
+    this.fotoProd = '',
     required this.precio,
     required this.tipoCategoria,
     this.estado,
@@ -30,13 +29,12 @@ class Producto {
       nomprod: json['Nomprod'] as String,
       descripcionProd: json['DescripcionProd'] as String,
       stock: json['Stock'] as int,
-      fotoProd: json['FotoProd'] as String,
+      fotoProd: json['FotoProd'] as String? ?? '',
       precio: _parsePrecio(json['Precio']),
       tipoCategoria: json['tipoCategoria'] as String,
       estado: json['Estado'] as bool?,
-      fechaPub: json['FechaPub'] != null
-          ? DateTime.parse(json['FechaPub'])
-          : null,
+      fechaPub:
+          json['FechaPub'] != null ? DateTime.parse(json['FechaPub']) : null,
       idTienda: json['tienda'] is int ? json['tienda'] : null,
     );
   }

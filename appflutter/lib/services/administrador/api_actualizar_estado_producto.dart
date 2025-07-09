@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'package:flutter/foundation.dart';
 import 'package:http/http.dart' as http;
 import '../../config.dart';
 
@@ -7,23 +8,35 @@ class APIActualizarEstadoProducto {
   static var client = http.Client();
 
   static Future<String?> actualizarEstadoProducto(int producto) async {
-    Map<String, String> headers = {
-      "Content-Type": "application/json",
-    };
+    Map<String, String> headers = {"Content-Type": "application/json"};
 
-    var url = Uri.parse(Config.buildUrl("${Config.productoadminAPI}ActualizarEstadoProducto/")); // ✅ Cambiar Uri.http por Uri.parse
+    // El endpoint requiere el pk en la URL, no en el body
+    var url = Uri.parse(
+      Config.buildUrl(
+        "${Config.productoadminAPI}$producto/ActualizarEstadoProducto/",
+      ),
+    );
 
-    var body = jsonEncode({
-      "pk": producto,
-    });
+    debugPrint("🔍 DEBUG Actualizar Estado - URL: $url");
 
-    var response = await client.patch(url, headers: headers, body: body);
+    try {
+      var response = await client.patch(url, headers: headers);
 
-    if (response.statusCode == 200) {
-      var data = jsonDecode(response.body);
-      return data['message'] as String?;
-    } else {
-      print("Error al cambiar estado del producto: ${response.body}");
+      debugPrint("🔍 DEBUG Actualizar Estado - Status: ${response.statusCode}");
+      debugPrint("🔍 DEBUG Actualizar Estado - Response: ${response.body}");
+
+      if (response.statusCode == 200) {
+        var data = jsonDecode(response.body);
+        return data['message'] as String?;
+      } else {
+        debugPrint(
+          "🚨 ERROR Actualizar Estado - Status: ${response.statusCode}",
+        );
+        debugPrint("🚨 ERROR Actualizar Estado - Body: ${response.body}");
+        return null;
+      }
+    } catch (e) {
+      debugPrint("🚨 ERROR Actualizar Estado - Exception: $e");
       return null;
     }
   }

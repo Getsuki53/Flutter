@@ -44,6 +44,9 @@ class Config {
   static const tiendaObtenerTiendaPorPropietarioAPI =
       "api/tienda/ObtenerTiendaPorPropietario";
 
+  static const tiendaVerificarPropietarioProdAPI =
+      "api/tienda/VerificarPropietarioPorProducto";
+
   // Endpoints específicos de SEGUIMIENTO TIENDA
   static const seguimientoObtenerListaTiendasSeguidasPorUsuarioAPI =
       "api/seguimientotienda/ObtenerListaTiendasSeguidasPorUsuario";
@@ -78,6 +81,13 @@ class Config {
   // Endpoints específicos de Carrito
   static const ObtenerProductoCarritoAPI =
       "api/producto/ObtenerProductosCarrito";
+
+  static const ActualizarCantidadCarritoAPI =
+      "api/carrito/ActualizarCantidadCarrito/";
+  static const EliminarProductoCarritoAPI =
+      "api/carrito/EliminarProductodelCarrito/";
+
+  //
 
   // Endpoints específicos de USUARIO Y REGISTRO
   static const registroUsuarioAPI = "api/RegistroUsuario";

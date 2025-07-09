@@ -2,18 +2,38 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:appflutter/models/producto_modelo.dart';
 import 'package:appflutter/pages/Producto/detalle_producto.dart';
+import 'package:appflutter/pages/Producto/producto_propietario.dart';
 import 'package:appflutter/services/productos/api_productos.dart';
 import 'package:appflutter/services/deseados/api_agregar_producto_deseado.dart';
 import 'package:appflutter/services/deseados/api_eliminar_producto_deseado.dart';
 import 'package:appflutter/services/deseados/api_verificar_producto_deseado.dart';
+import 'package:appflutter/services/tienda/api_verificar_propietario_producto.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'barra_superior.dart';
 
-class HomeView extends ConsumerWidget {
+class HomeView extends ConsumerStatefulWidget {
   const HomeView({super.key});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    return const Scaffold(
+  ConsumerState<HomeView> createState() => _HomeViewState();
+}
+
+class _HomeViewState extends ConsumerState<HomeView> {
+  final searchController = TextEditingController();
+
+  @override
+  void dispose() {
+    searchController.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: CustomAppBar(
+         controller: searchController,
+        //onCartPressed: _onCartPressed,
+      ),
       body: ProductList(),
       backgroundColor: Colors.white,
     );
@@ -153,12 +173,63 @@ class _ProductListTileState extends State<ProductListTile> {
     }
   }
 
-  @override
-  Widget build(BuildContext context) {
-    final size = MediaQuery.of(context).size;
+  Future<void> _navegarADetalleProducto() async {
+    if (usuarioId == null || widget.product.id == null) {
+      // Si no hay usuario logueado, ir a detalle normal
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (_) => DetalleProducto(
+            id: widget.product.id!,
+            nombre: widget.product.nomprod,
+            descripcion: widget.product.descripcionProd,
+            precio: widget.product.precio,
+            imagen: widget.product.fotoProd,
+            stock: widget.product.stock,
+            categoria: widget.product.tipoCategoria,
+          ),
+        ),
+      );
+      return;
+    }
 
-    return GestureDetector(
-      onTap: () {
+    // Mostrar indicador de carga
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (context) => const Center(
+        child: CircularProgressIndicator(),
+      ),
+    );
+
+    try {
+      // Verificar si el usuario es propietario del producto
+      bool esPropietario = await APIVerificarPropietarioProducto.verificarPropietario(
+        widget.product.id!,
+        usuarioId!,
+      );
+
+      // Cerrar indicador de carga
+      Navigator.of(context).pop();
+
+      if (esPropietario) {
+        // Es propietario: ir a vista de propietario
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (_) => ProductoPropietario(
+              id: widget.product.id!,
+              nombre: widget.product.nomprod,
+              descripcion: widget.product.descripcionProd,
+              precio: widget.product.precio,
+              imagen: widget.product.fotoProd,
+              stock: widget.product.stock,
+              categoria: widget.product.tipoCategoria,
+            ),
+          ),
+        );
+      } else {
+        // No es propietario: ir a detalle normal
         Navigator.push(
           context,
           MaterialPageRoute(
@@ -173,7 +244,37 @@ class _ProductListTileState extends State<ProductListTile> {
             ),
           ),
         );
-      },
+      }
+    } catch (e) {
+      // Cerrar indicador de carga si hay error
+      Navigator.of(context).pop();
+      
+      print('❌ Error al verificar propietario: $e');
+      
+      // En caso de error, ir a detalle normal
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (_) => DetalleProducto(
+            id: widget.product.id!,
+            nombre: widget.product.nomprod,
+            descripcion: widget.product.descripcionProd,
+            precio: widget.product.precio,
+            imagen: widget.product.fotoProd,
+            stock: widget.product.stock,
+            categoria: widget.product.tipoCategoria,
+          ),
+        ),
+      );
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final size = MediaQuery.of(context).size;
+
+    return GestureDetector(
+      onTap: _navegarADetalleProducto,
       child: Container(
         height: size.height,
         padding: const EdgeInsets.all(30),
@@ -189,10 +290,6 @@ class _ProductListTileState extends State<ProductListTile> {
                         height: 250,
                         fit: BoxFit.contain,
                         errorBuilder: (context, error, stackTrace) {
-                          print(
-                            '🚨 ERROR home - No se pudo cargar imagen: ${widget.product.fotoProd}',
-                          );
-                          print('🚨 ERROR home - Error: $error');
                           return Container(
                             height: 250,
                             color: Colors.grey[300],

@@ -75,7 +75,12 @@ class _MiPerfilState extends State<MiPerfil> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Mi Perfil')),
+      backgroundColor: Color(0xff1f1e2a),
+      appBar: AppBar(title: const Text('Mi Perfil',
+        style: TextStyle(color: Colors.white),
+      ),
+      backgroundColor: const Color(0xff383758),),
+      
       body:
           usuarioId == null
               ? Center(child: Text("UsuarioID = $usuarioId"))
@@ -86,12 +91,64 @@ class _MiPerfilState extends State<MiPerfil> {
                     return const Center(child: CircularProgressIndicator());
                   }
                   if (snapshot.hasError) {
-                    return Center(child: Text("Error: ${snapshot.error}"));
+                    // Redirigir al login después de un breve retraso (por si el usuario fue eliminado)
+                    Future.delayed(const Duration(seconds: 1), () {
+                      if (mounted) {
+                        Navigator.pushAndRemoveUntil(
+                          context,
+                          MaterialPageRoute(builder: (_) => const LoginPage()),
+                          (Route<dynamic> route) => false,
+                        );
+                      }
+                    });
+                    return Center(
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          const Icon(Icons.error, color: Colors.red, size: 50),
+                          const SizedBox(height: 16),
+                          Text(
+                            "Error al cargar perfil",
+                            style: const TextStyle(color: Colors.white, fontSize: 18),
+                          ),
+                          const SizedBox(height: 8),
+                          Text(
+                            "Redirigiendo al login...",
+                            style: const TextStyle(color: Colors.grey, fontSize: 14),
+                          ),
+                        ],
+                      ),
+                    );
                   }
                   final usuario = snapshot.data;
                   if (usuario == null) {
+                    // También redirigir si no se puede cargar el perfil
+                    Future.delayed(const Duration(seconds: 2), () {
+                      if (mounted) {
+                        Navigator.pushAndRemoveUntil(
+                          context,
+                          MaterialPageRoute(builder: (_) => const LoginPage()),
+                          (Route<dynamic> route) => false,
+                        );
+                      }
+                    });
                     return const Center(
-                      child: Text("No se pudo cargar el perfil"),
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Icon(Icons.person_off, color: Colors.orange, size: 50),
+                          SizedBox(height: 16),
+                          Text(
+                            "No se pudo cargar el perfil",
+                            style: TextStyle(color: Colors.white, fontSize: 18),
+                          ),
+                          SizedBox(height: 8),
+                          Text(
+                            "Redirigiendo al login...",
+                            style: TextStyle(color: Colors.grey, fontSize: 14),
+                          ),
+                        ],
+                      ),
                     );
                   }
                   return Padding(
@@ -131,54 +188,146 @@ class _MiPerfilState extends State<MiPerfil> {
                                   style: const TextStyle(
                                     fontSize: 20,
                                     fontWeight: FontWeight.bold,
+                                    color: Colors.white,
                                   ),
                                 ),
-                                Text(usuario.correo ?? ''),
+                                Text(usuario.correo ?? '',
+                                  style: TextStyle(color: Colors.white),),
                               ],
                             ),
                           ],
                         ),
+                        
                         const SizedBox(height: 24),
-                        ElevatedButton(
-                          onPressed: usuarioId == null ? null : _navegarAMiTienda,
-                          child: const Text('Mi Tienda'),
-                        ),
-                        const SizedBox(height: 24),
-                        ElevatedButton(
-                          onPressed: () {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (_) => const FollowedPage(),
+                        // Botón "Mi Tienda"
+                        Container(
+                          height: 50,
+                          width: double.infinity,
+                          padding: const EdgeInsets.symmetric(horizontal: 0, vertical: 0),
+                          margin: const EdgeInsets.only(bottom: 24),
+                          decoration: BoxDecoration(
+                            gradient: const LinearGradient(
+                              colors: [Color(0xffe8d0f8), Color(0xffae92f2), Color(0xff9dd5f3)],
+                              begin: Alignment.centerLeft,
+                              end: Alignment.centerRight,
+                            ),
+                            borderRadius: BorderRadius.circular(8),
+                          ),
+                          child: Material(
+                            color: Colors.transparent,
+                            child: InkWell(
+                              borderRadius: BorderRadius.circular(8),
+                              onTap: usuarioId == null ? null : _navegarAMiTienda,
+                              child: const Center(
+                                child: Text(
+                                  'Mi Tienda',
+                                  style: TextStyle(color: Colors.white, fontSize: 18),
+                                ),
                               ),
-                            );
-                          },
-                          child: const Text('Tiendas Seguidas'),
+                            ),
+                          ),
                         ),
-                        const SizedBox(height: 24),
-                        ElevatedButton(
-                          onPressed:
-                              usuarioId == null
+                        // Botón "Tiendas Seguidas"
+                        Container(
+                          height: 50,
+                          width: double.infinity,
+                          padding: const EdgeInsets.symmetric(horizontal: 0, vertical: 0),
+                          margin: const EdgeInsets.only(bottom: 24),
+                          decoration: BoxDecoration(
+                            gradient: const LinearGradient(
+                              colors: [Color(0xffe8d0f8), Color(0xffae92f2), Color(0xff9dd5f3)],
+                              begin: Alignment.centerLeft,
+                              end: Alignment.centerRight,
+                            ),
+                            borderRadius: BorderRadius.circular(8),
+                          ),
+                          child: Material(
+                            color: Colors.transparent,
+                            child: InkWell(
+                              borderRadius: BorderRadius.circular(8),
+                              onTap: () {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (_) => const FollowedPage(),
+                                  ),
+                                );
+                              },
+                              child: const Center(
+                                child: Text(
+                                  'Tiendas Seguidas',
+                                  style: TextStyle(color: Colors.white, fontSize: 18),
+                                ),
+                              ),
+                            ),
+                          ),
+                        ),
+                        // Botón "Lista de deseos"
+                        Container(
+                          height: 50,
+                          width: double.infinity,
+                          padding: const EdgeInsets.symmetric(horizontal: 0, vertical: 0),
+                          margin: const EdgeInsets.only(bottom: 24),
+                          decoration: BoxDecoration(
+                            gradient: const LinearGradient(
+                              colors: [Color(0xffe8d0f8), Color(0xffae92f2), Color(0xff9dd5f3)],
+                              begin: Alignment.centerLeft,
+                              end: Alignment.centerRight,
+                            ),
+                            borderRadius: BorderRadius.circular(8),
+                          ),
+                          child: Material(
+                            color: Colors.transparent,
+                            child: InkWell(
+                              borderRadius: BorderRadius.circular(8),
+                              onTap: usuarioId == null
                                   ? null
                                   : () {
-                                    Navigator.push(
-                                      context,
-                                      MaterialPageRoute(
-                                        builder:
-                                            (_) => WishedPage(
-                                              usuario_id: usuarioId!,
-                                            ),
-                                      ),
-                                    );
-                                  },
-                          child: const Text('Lista de deseos'),
+                                      Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                          builder: (_) => WishedPage(usuario_id: usuarioId!),
+                                        ),
+                                      );
+                                    },
+                              child: const Center(
+                                child: Text(
+                                  'Lista de deseos',
+                                  style: TextStyle(color: Colors.white, fontSize: 18),
+                                ),
+                              ),
+                            ),
+                          ),
                         ),
-                        const SizedBox(height: 24),
-                        ElevatedButton(
-                          onPressed: () {
-                            cerrarSesion(context);
-                          },
-                          child: const Text('Cerrar sesión'),
+                        // Botón "Cerrar sesión"
+                        Container(
+                          height: 50,
+                          width: double.infinity,
+                          padding: const EdgeInsets.symmetric(horizontal: 0, vertical: 0),
+                          margin: const EdgeInsets.only(bottom: 24),
+                          decoration: BoxDecoration(
+                            gradient: const LinearGradient(
+                              colors: [Color(0xffe8d0f8), Color(0xffae92f2), Color(0xff9dd5f3)],
+                              begin: Alignment.centerLeft,
+                              end: Alignment.centerRight,
+                            ),
+                            borderRadius: BorderRadius.circular(8),
+                          ),
+                          child: Material(
+                            color: Colors.transparent,
+                            child: InkWell(
+                              borderRadius: BorderRadius.circular(8),
+                              onTap: () {
+                                cerrarSesion(context);
+                              },
+                              child: const Center(
+                                child: Text(
+                                  'Cerrar sesión',
+                                  style: TextStyle(color: Colors.white, fontSize: 18),
+                                ),
+                              ),
+                            ),
+                          ),
                         ),
                       ],
                     ),

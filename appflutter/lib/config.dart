@@ -45,13 +45,15 @@ class Config {
 
   // Endpoints específicos de SEGUIMIENTO TIENDA
   static const seguimientoObtenerListaTiendasSeguidasPorUsuarioAPI =
-      "api/SeguimientoTienda/ObtenerListaTiendasSeguidasPorUsuario";
+      "api/seguimientotienda/ObtenerListaTiendasSeguidasPorUsuario";
   static const seguimientoObtenerListaUsuarioQueSiguenTiendaAPI =
-      "api/SeguimientoTienda/ObtenerListaUsuarioQueSiguenTienda";
+      "api/seguimientotienda/ObtenerListaUsuarioQueSiguenTienda";
+  static const seguimientoVerificarSeguimientoAPI =
+      "api/seguimientotienda/VerificarSeguimiento";
   static const seguimientoAgregarSeguimientoTiendaAPI =
-      "api/SeguimientoTienda/AgregarSeguimientoTienda";
+      "api/seguimientotienda/AgregarSeguimientoTienda";
   static const seguimientoDejarDeSeguirTiendaAPI =
-      "api/SeguimientoTienda/DejarDeSeguirTienda";
+      "api/seguimientotienda/DejarDeSeguirTienda";
 
   // Endpoints específicos de PRODUCTO
   static const productoObtenerProductosPorTiendaAPI =

@@ -62,9 +62,11 @@ class _SigninPageState extends State<SigninPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: const Color(0xff1f1e2a),
       appBar: AppBar(
-        title: const Text('Registro'),
-        backgroundColor: Colors.cyan,
+        title: const Text('Registro',
+        style: TextStyle(color: Colors.white),),
+        backgroundColor: Color(0xffae92f2),
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
@@ -75,9 +77,9 @@ class _SigninPageState extends State<SigninPage> {
               Container(
                 alignment: Alignment.center,
                 child: Image.asset(
-                  'lib/imagenes/logo.png',
-                  width: 120,
-                  height: 70,
+                  'assets/images/LogoHG.png',
+                  width: 140,
+                  height: 140,
                   errorBuilder: (context, error, stackTrace) {
                     return const Icon(
                       Icons.image,
@@ -95,7 +97,7 @@ class _SigninPageState extends State<SigninPage> {
                   style: TextStyle(
                     fontSize: 24,
                     fontWeight: FontWeight.bold,
-                    color: Colors.cyan,
+                    color: Colors.white,
                   ),
                 ),
               ),
@@ -103,33 +105,57 @@ class _SigninPageState extends State<SigninPage> {
               Container(
                 padding: const EdgeInsets.all(10),
                 child: TextField(
+                  cursorColor: Colors.white,
                   controller: nameController,
                   decoration: const InputDecoration(
                     border: OutlineInputBorder(),
                     labelText: 'Nombre *',
-                    prefixIcon: Icon(Icons.person),
+                    labelStyle: TextStyle(color: Colors.white),
+                    prefixIcon: Icon(Icons.person, color: Colors.white,),
+                    enabledBorder: OutlineInputBorder(
+                      borderSide: BorderSide(color: Colors.white, width: 1.0),
+                    ),
+                    focusedBorder: OutlineInputBorder(
+                      borderSide: BorderSide(color: Color(0xffae92f2), width: 1.5),
+                    ),
                   ),
                 ),
               ),
               Container(
                 padding: const EdgeInsets.all(10),
                 child: TextField(
+                  cursorColor: Colors.white,
                   controller: apellidoController,
                   decoration: const InputDecoration(
                     border: OutlineInputBorder(),
                     labelText: 'Apellido (opcional)',
-                    prefixIcon: Icon(Icons.person_outline),
+                    labelStyle: TextStyle(color: Colors.white),
+                    prefixIcon: Icon(Icons.person_outline, color: Colors.white),
+                    enabledBorder: OutlineInputBorder(
+                      borderSide: BorderSide(color: Colors.white, width: 1.0),
+                    ),
+                    focusedBorder: OutlineInputBorder(
+                      borderSide: BorderSide(color: Color(0xffae92f2), width: 1.5),
+                    ),
                   ),
                 ),
               ),
               Container(
                 padding: const EdgeInsets.all(10),
                 child: TextField(
+                  cursorColor: Colors.white,
                   controller: emailController,
                   decoration: const InputDecoration(
                     border: OutlineInputBorder(),
                     labelText: 'Correo electrónico *',
-                    prefixIcon: Icon(Icons.email),
+                    labelStyle: TextStyle(color: Colors.white),
+                    prefixIcon: Icon(Icons.email, color: Colors.white),
+                    enabledBorder: OutlineInputBorder(
+                      borderSide: BorderSide(color: Colors.white, width: 1.0),
+                    ),
+                    focusedBorder: OutlineInputBorder(
+                      borderSide: BorderSide(color: Color(0xffae92f2), width: 1.5),
+                    ),
                   ),
                   keyboardType: TextInputType.emailAddress,
                 ),
@@ -137,41 +163,58 @@ class _SigninPageState extends State<SigninPage> {
               Container(
                 padding: const EdgeInsets.all(10),
                 child: TextField(
+                  cursorColor: Colors.white,
                   controller: passwordController,
                   obscureText: true,
                   decoration: const InputDecoration(
                     border: OutlineInputBorder(),
                     labelText: 'Contraseña *',
-                    prefixIcon: Icon(Icons.lock),
-                  ),
-                ),
-              ),
-              const SizedBox(height: 20),
-              Container(
-                height: 50,
-                width: double.infinity,
-                padding: const EdgeInsets.symmetric(horizontal: 10),
-                child: ElevatedButton(
-                  onPressed: _isLoading ? null : registerWithBackend,
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.cyan,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(8),
+                    labelStyle: TextStyle(color: Colors.white),
+                    prefixIcon: Icon(Icons.lock, color: Colors.white),
+                    enabledBorder: OutlineInputBorder(
+                      borderSide: BorderSide(color: Colors.white, width: 1.0),
+                    ),
+                    focusedBorder: OutlineInputBorder(
+                      borderSide: BorderSide(color: Color(0xffae92f2), width: 1.5),
                     ),
                   ),
-                  child: _isLoading
-                      ? const CircularProgressIndicator(color: Colors.white)
-                      : const Text(
-                          'Registrarse',
-                          style: TextStyle(color: Colors.white, fontSize: 18),
-                        ),
                 ),
               ),
-              const SizedBox(height: 20),
+              const SizedBox(height: 10),
+              Container(
+                height: 50,
+                padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
+                decoration: BoxDecoration(
+                  gradient: const LinearGradient(
+                    colors: [Color(0xffe8d0f8), Color(0xffae92f2), Color(0xff9dd5f3)], // Gradiente cyan
+                    begin: Alignment.centerLeft,
+                    end: Alignment.centerRight,
+                  ),
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                child: Material(
+                  color: Colors.transparent,
+                  child: InkWell(
+                    borderRadius: BorderRadius.circular(8),
+                    onTap: _isLoading ? null : registerWithBackend,
+                    child: Center(
+                      child: _isLoading
+                          ? const CircularProgressIndicator(color: Colors.white)
+                          : const Text(
+                              'Registrarse',
+                              style: TextStyle(color: Colors.white, fontSize: 18),
+                            ),
+                    ),
+                  ),
+                ),
+              ),
+              const SizedBox(height: 10),
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  const Text('¿Ya tienes cuenta?'),
+                  const Text('¿Ya tienes cuenta?',
+                    style: TextStyle(color: Colors.white, fontSize: 16),
+                  ),
                   TextButton(
                     onPressed: () {
                       Navigator.pushReplacement(
@@ -182,8 +225,9 @@ class _SigninPageState extends State<SigninPage> {
                     child: const Text(
                       'Iniciar Sesión',
                       style: TextStyle(
-                        color: Colors.cyan,
+                        color: Color(0xff9dd5f3),
                         fontWeight: FontWeight.bold,
+                        fontSize: 16,
                       ),
                     ),
                   ),

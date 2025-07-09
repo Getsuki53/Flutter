@@ -2,9 +2,11 @@ import 'package:appflutter/pages/Sesion/login.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../Tienda/MiTienda.dart';
+import '../Tienda/CrearTienda.dart';
 import '../Seguidos/Seguidos.dart';
 import '../Deseados/Deseados.dart';
 import 'package:appflutter/services/usuario/api_perfil.dart';
+import 'package:appflutter/services/tienda/api_tienda_por_propietario.dart';
 import 'package:appflutter/models/usuario_modelo.dart';
 import 'package:appflutter/config.dart';
 
@@ -40,6 +42,34 @@ class _MiPerfilState extends State<MiPerfil> {
     setState(() {
       usuarioId = prefs.getInt('usuario_id');
     });
+  }
+
+  Future<void> _navegarAMiTienda() async {
+    if (usuarioId == null) return;
+
+    try {
+      // Consultar al backend si el usuario tiene una tienda
+      final tienda = await APIObtenerTiendaPorPropietario.obtenerTiendaPorPropietario(usuarioId!);
+      
+      if (tienda != null && tienda.id != null) {
+        // El usuario tiene una tienda, navegar a MiTienda
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (_) => const MiTienda()),
+        );
+      } else {
+        // El usuario no tiene tienda, navegar a CrearTienda
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (_) => const CrearTienda()),
+        );
+      }
+    } catch (e) {
+      // En caso de error, mostrar un mensaje
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Error al verificar tienda: $e')),
+      );
+    }
   }
 
   @override
@@ -110,14 +140,7 @@ class _MiPerfilState extends State<MiPerfil> {
                         ),
                         const SizedBox(height: 24),
                         ElevatedButton(
-                          onPressed: () {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (_) => const MiTienda(),
-                              ),
-                            );
-                          },
+                          onPressed: usuarioId == null ? null : _navegarAMiTienda,
                           child: const Text('Mi Tienda'),
                         ),
                         const SizedBox(height: 24),

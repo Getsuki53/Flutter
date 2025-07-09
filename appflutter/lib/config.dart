@@ -56,6 +56,7 @@ class Config {
   // Endpoints específicos de PRODUCTO
   static const productoObtenerProductosPorTiendaAPI =
       "api/producto/obtenerproductosportienda";
+  static const productoCrearProductoAPI = "api/producto/";
   static const productoadminObtenerProductoMainAPI =
       "api/productoadmin/obtenerproductomain";
   static const productoadminEliminarProductoAPI =

@@ -12,7 +12,7 @@ class APIObtenerUsuarios {
       "Content-Type": "application/json",
     };
 
-    var url = Uri.http(Config.apiURL, "${Config.usuarioAPI}");
+    var url = Uri.parse(Config.buildUrl("${Config.usuarioAPI}"));
 
     var response = await client.get(url, headers: headers);
 

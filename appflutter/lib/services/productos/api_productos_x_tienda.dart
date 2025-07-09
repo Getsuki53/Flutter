@@ -12,10 +12,7 @@ class APIObtenerListaProductosPorTienda {
       "Content-Type": "application/json",
     };
 
-    var url = Uri.http(
-      Config.apiURL, "${Config.productoAPI}/ObtenerProductosPorTienda",
-      {"tienda_id": tienda.toString()},
-    );
+    var url = Uri.parse(Config.buildUrl("${Config.productoAPI}/ObtenerProductosPorTienda/?tienda_id=$tienda"));
 
     var response = await client.get(url, headers: headers);
 

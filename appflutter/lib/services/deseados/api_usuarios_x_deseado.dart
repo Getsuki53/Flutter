@@ -12,10 +12,10 @@ class APIObtenerListaUsuariosQueDeseanProducto {
   ) async {
     Map<String, String> headers = {"Content-Type": "application/json"};
 
-    var url = Uri.http(
-      Config.apiURL,
+    var url = Uri.parse(
+      Config.buildUrl(
       "${Config.productodeseadoAPI}/ObtenerListaUsuariosQueDeseanProducto/?producto_id=$producto",
-    );
+    ));
 
     print("🔍 DEBUG Usuarios Deseado - URL: $url");
 

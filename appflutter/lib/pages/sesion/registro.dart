@@ -1,10 +1,12 @@
 import 'package:appflutter/services/usuario/api_registro.dart';
+import 'package:appflutter/services/usuario/api_ingreso.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'dart:io';
 import 'dart:typed_data';
 import 'package:flutter/foundation.dart' show kIsWeb;
 import 'login.dart';
+import '../inicio/main_scaffold.dart';
 
 class SigninPage extends StatefulWidget {
   const SigninPage({super.key});
@@ -123,27 +125,27 @@ class _SigninPageState extends State<SigninPage> {
     
     // Validate form fields
     if (nameController.text.trim().isEmpty) {
-      showSnackbar("❌ El nombre es requerido");
+      showSnackbar("El nombre es requerido");
       return;
     }
     
     if (emailController.text.trim().isEmpty) {
-      showSnackbar("❌ El correo electrónico es requerido");
+      showSnackbar("El correo electrónico es requerido");
       return;
     }
     
     if (!_isValidEmail(emailController.text.trim())) {
-      showSnackbar("❌ Ingrese un correo electrónico válido");
+      showSnackbar("Ingrese un correo electrónico válido");
       return;
     }
     
     if (passwordController.text.isEmpty) {
-      showSnackbar("❌ La contraseña es requerida");
+      showSnackbar("La contraseña es requerida");
       return;
     }
     
     if (passwordController.text.length < 6) {
-      showSnackbar("❌ La contraseña debe tener al menos 6 caracteres");
+      showSnackbar("La contraseña debe tener al menos 6 caracteres");
       return;
     }
 
@@ -171,26 +173,71 @@ class _SigninPageState extends State<SigninPage> {
           nombreImagen: _nombreImagen,
       );
 
-      if (mensaje != null) {
+      if (mensaje == null) {
+        // null significa éxito
         print("✅ Registro exitoso!");
-        showSnackbar("✅ $mensaje");
+        showSnackbar("✅ Usuario creado correctamente");
         
-        // Wait a bit before navigating
-        await Future.delayed(const Duration(seconds: 1));
+        // Hacer login automático después del registro exitoso
+        showSnackbar("🔐 Iniciando sesión automáticamente...");
         
-        if (mounted) {
-          Navigator.pushReplacement(
-            context,
-            MaterialPageRoute(builder: (_) => const LoginPage()),
+        try {
+          final respuestaLogin = await APIIngreso.ingresoUsuario(
+            emailController.text.trim(),
+            passwordController.text,
           );
+
+          if (respuestaLogin != null) {
+            print("✅ Login automático exitoso!");
+            showSnackbar("✅ ¡Bienvenido! Entrando a la aplicación...");
+            
+            // Esperar un poco antes de navegar para que el usuario vea el mensaje
+            await Future.delayed(const Duration(seconds: 1));
+            
+            if (mounted) {
+              // Navegar directamente a la aplicación principal
+              Navigator.pushAndRemoveUntil(
+                context,
+                MaterialPageRoute(builder: (_) => const MainScaffold()),
+                (route) => false,
+              );
+            }
+          } else {
+            // Si falla el login automático, ir a la página de login
+            print("❌ Login automático falló, redirigiendo al login");
+            showSnackbar("✅ Usuario creado. Por favor, inicia sesión");
+            
+            await Future.delayed(const Duration(seconds: 1));
+            
+            if (mounted) {
+              Navigator.pushReplacement(
+                context,
+                MaterialPageRoute(builder: (_) => const LoginPage()),
+              );
+            }
+          }
+        } catch (e) {
+          // Si hay error en el login automático, ir a la página de login
+          print("❌ Error en login automático: $e");
+          showSnackbar("✅ Usuario creado. Por favor, inicia sesión");
+          
+          await Future.delayed(const Duration(seconds: 1));
+          
+          if (mounted) {
+            Navigator.pushReplacement(
+              context,
+              MaterialPageRoute(builder: (_) => const LoginPage()),
+            );
+          }
         }
       } else {
-        print("❌ Registro fallido - mensaje null");
-        showSnackbar('❌ Error en el registro. Verifique sus datos e intente nuevamente.');
+        // String contiene el mensaje de error
+        print("Registro fallido: $mensaje");
+        showSnackbar('$mensaje');
       }
     } catch (e) {
-      print("❌ Excepción durante registro: $e");
-      showSnackbar("❌ Error de conexión: $e");
+      print("Excepción durante registro: $e");
+      showSnackbar("Error de conexión: $e");
     } finally {
       if (mounted) {
         setState(() {

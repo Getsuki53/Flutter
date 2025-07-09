@@ -91,12 +91,64 @@ class _MiPerfilState extends State<MiPerfil> {
                     return const Center(child: CircularProgressIndicator());
                   }
                   if (snapshot.hasError) {
-                    return Center(child: Text("Error: ${snapshot.error}"));
+                    // Redirigir al login después de un breve retraso (por si el usuario fue eliminado)
+                    Future.delayed(const Duration(seconds: 1), () {
+                      if (mounted) {
+                        Navigator.pushAndRemoveUntil(
+                          context,
+                          MaterialPageRoute(builder: (_) => const LoginPage()),
+                          (Route<dynamic> route) => false,
+                        );
+                      }
+                    });
+                    return Center(
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          const Icon(Icons.error, color: Colors.red, size: 50),
+                          const SizedBox(height: 16),
+                          Text(
+                            "Error al cargar perfil",
+                            style: const TextStyle(color: Colors.white, fontSize: 18),
+                          ),
+                          const SizedBox(height: 8),
+                          Text(
+                            "Redirigiendo al login...",
+                            style: const TextStyle(color: Colors.grey, fontSize: 14),
+                          ),
+                        ],
+                      ),
+                    );
                   }
                   final usuario = snapshot.data;
                   if (usuario == null) {
+                    // También redirigir si no se puede cargar el perfil
+                    Future.delayed(const Duration(seconds: 2), () {
+                      if (mounted) {
+                        Navigator.pushAndRemoveUntil(
+                          context,
+                          MaterialPageRoute(builder: (_) => const LoginPage()),
+                          (Route<dynamic> route) => false,
+                        );
+                      }
+                    });
                     return const Center(
-                      child: Text("No se pudo cargar el perfil"),
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Icon(Icons.person_off, color: Colors.orange, size: 50),
+                          SizedBox(height: 16),
+                          Text(
+                            "No se pudo cargar el perfil",
+                            style: TextStyle(color: Colors.white, fontSize: 18),
+                          ),
+                          SizedBox(height: 8),
+                          Text(
+                            "Redirigiendo al login...",
+                            style: TextStyle(color: Colors.grey, fontSize: 14),
+                          ),
+                        ],
+                      ),
                     );
                   }
                   return Padding(

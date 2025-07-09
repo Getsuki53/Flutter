@@ -189,7 +189,7 @@ class _LoginPageState extends State<LoginPage> {
                               color: Colors.white,
                             )
                             : const Text(
-                              'Acceder como Usuario',
+                              'Acceder',
                               style: TextStyle(
                                 color: Colors.white,
                                 fontSize: 18,

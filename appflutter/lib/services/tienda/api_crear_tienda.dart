@@ -12,7 +12,7 @@ class APICrearTienda {
     required String descripcionTienda,
     required String? imagenPath, // Ruta local del archivo de imagen
   }) async {
-    var url = Uri.parse(Config.buildUrl("${Config.tiendaAPI}/CrearTienda/")); // ✅ Cambiar Uri.http por Uri.parse
+    var url = Uri.parse(Config.buildUrl(Config.tiendaCrearTiendaAPI)); // Usar el endpoint del config
 
     var request = http.MultipartRequest("POST", url);
 

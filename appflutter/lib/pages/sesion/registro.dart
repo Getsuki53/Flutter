@@ -260,7 +260,7 @@ class _SigninPageState extends State<SigninPage> {
       appBar: AppBar(
         title: const Text('Registro',
         style: TextStyle(color: Colors.white),),
-        backgroundColor: Color(0xffae92f2),
+        backgroundColor: const Color(0xff383758),
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),

@@ -114,7 +114,7 @@ class _WishedPageState extends State<WishedPage> {
                     const SizedBox(height: 16),
                     ElevatedButton(
                       onPressed: _cargarDeseados,
-                      child: const Text("Recargar"),
+                      child: const Text("Recargar", style: TextStyle(color: Colors.black),),
                     ),
                   ],
                 ),
@@ -130,7 +130,7 @@ class _WishedPageState extends State<WishedPage> {
                       margin: const EdgeInsets.symmetric(vertical: 6),
                       padding: const EdgeInsets.all(12),
                       decoration: BoxDecoration(
-                        color: const Color.fromARGB(255, 241, 249, 255),
+                        color: const Color(0xfffcf6ff),
                         borderRadius: BorderRadius.circular(8),
                       ),
                       child: Row(
@@ -189,7 +189,7 @@ class _WishedPageState extends State<WishedPage> {
                                     "\$${producto.precio}",
                                     style: const TextStyle(
                                       fontSize: 14,
-                                      color: Colors.green,
+                                      color: Colors.black,
                                     ),
                                   ),
                                 ],
@@ -203,9 +203,9 @@ class _WishedPageState extends State<WishedPage> {
                                 _quitarDeDeseados(producto, index);
                               },
                               style: OutlinedButton.styleFrom(
-                                backgroundColor: Colors.red,
+                                backgroundColor: Color(0xffae92f2),
                                 foregroundColor: Colors.white,
-                                side: const BorderSide(color: Colors.red),
+                                side: const BorderSide(color: Color(0xffae92f2)),
                                 alignment: Alignment.center,
                                 padding: const EdgeInsets.symmetric(
                                   vertical: 12,

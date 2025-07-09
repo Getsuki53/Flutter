@@ -193,8 +193,10 @@ class _CrearTiendaState extends State<CrearTienda> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Color(0xff1f1e2a),
       appBar: AppBar(
-        title: const Text('Crear Tienda'),
+        backgroundColor: const Color(0xff383758),
+        title: const Text('Crear Tienda', style: TextStyle(color: Colors.white),),
       ),
       body: Padding(
         padding: const EdgeInsets.all(16),
@@ -204,13 +206,13 @@ class _CrearTiendaState extends State<CrearTienda> {
             children: [
               const Text(
                 '¡Crea tu tienda!',
-                style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+                style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold, color: Colors.white),
                 textAlign: TextAlign.center,
               ),
               const SizedBox(height: 8),
               const Text(
                 'Completa la información para crear tu tienda',
-                style: TextStyle(fontSize: 16, color: Colors.grey),
+                style: TextStyle(fontSize: 16, color: Colors.white),
                 textAlign: TextAlign.center,
               ),
               const SizedBox(height: 24),
@@ -230,7 +232,7 @@ class _CrearTiendaState extends State<CrearTienda> {
                       icon: const Icon(Icons.store, color: Colors.blue),
                       label: Text(
                         _tieneImagen() ? 'Cambiar logo' : 'Agregar logo de tienda (opcional)',
-                        style: const TextStyle(color: Colors.blue),
+                        style: const TextStyle(color: Color(0xff9dd5f3),),
                       ),
                     ),
                   ],
@@ -240,11 +242,23 @@ class _CrearTiendaState extends State<CrearTienda> {
 
               // Nombre de la tienda
               TextFormField(
+                cursorColor: Colors.white,
                 controller: _nombreTiendaController,
+                style: TextStyle(color: Colors.white),
                 decoration: const InputDecoration(
                   labelText: 'Nombre de la tienda',
+                  labelStyle: TextStyle(color: Colors.white),
                   border: OutlineInputBorder(),
-                  prefixIcon: Icon(Icons.store),
+                  prefixIcon: Icon(Icons.store, color: Colors.white,),
+                  enabledBorder: OutlineInputBorder(
+                    borderSide: BorderSide(color: Colors.white, width: 1.0),
+                  ),
+                  focusedBorder: OutlineInputBorder(
+                    borderSide: BorderSide(
+                      color: Color(0xffae92f2),
+                      width: 1.5,
+                    ),
+                  ),
                 ),
                 validator: (value) {
                   if (value == null || value.trim().isEmpty) {
@@ -260,12 +274,24 @@ class _CrearTiendaState extends State<CrearTienda> {
 
               // Descripción
               TextFormField(
+                cursorColor: Colors.white,
                 controller: _descripcionController,
+                style: TextStyle(color: Colors.white),
                 maxLines: 4,
                 decoration: const InputDecoration(
                   labelText: 'Descripción de la tienda',
+                  labelStyle: TextStyle(color: Colors.white),
                   border: OutlineInputBorder(),
-                  prefixIcon: Icon(Icons.description),
+                  prefixIcon: Icon(Icons.description, color: Colors.white,),
+                  enabledBorder: OutlineInputBorder(
+                    borderSide: BorderSide(color: Colors.white, width: 1.0),
+                  ),
+                  focusedBorder: OutlineInputBorder(
+                    borderSide: BorderSide(
+                      color: Color(0xffae92f2),
+                      width: 1.5,
+                    ),
+                  ),
                   alignLabelWithHint: true,
                 ),
                 validator: (value) {
@@ -284,6 +310,7 @@ class _CrearTiendaState extends State<CrearTienda> {
               ElevatedButton(
                 onPressed: _isLoading ? null : _crearTienda,
                 style: ElevatedButton.styleFrom(
+                  backgroundColor: const Color(0xff383758),
                   padding: const EdgeInsets.symmetric(vertical: 16),
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(8),
@@ -300,13 +327,14 @@ class _CrearTiendaState extends State<CrearTienda> {
                       )
                     : const Text(
                         'Crear Tienda',
-                        style: TextStyle(fontSize: 18),
+                        style: TextStyle(fontSize: 18, color: Colors.white),
                       ),
               ),
               const SizedBox(height: 16),
 
               // Información adicional
               const Card(
+                color: Color(0xff383758),
                 child: Padding(
                   padding: EdgeInsets.all(16),
                   child: Column(
@@ -314,21 +342,25 @@ class _CrearTiendaState extends State<CrearTienda> {
                     children: [
                       Row(
                         children: [
-                          Icon(Icons.info, color: Colors.blue),
+                          Icon(Icons.info, color: Color(0xff9dd5f3),),
                           SizedBox(width: 8),
                           Text(
                             'Información importante',
                             style: TextStyle(
                               fontSize: 16,
                               fontWeight: FontWeight.bold,
+                              color: Colors.white,
                             ),
                           ),
                         ],
                       ),
                       SizedBox(height: 8),
-                      Text('• Tu tienda será revisada antes de aparecer públicamente'),
-                      Text('• Podrás agregar productos una vez aprobada la tienda'),
-                      Text('• El logo ayuda a que los clientes reconozcan tu marca'),
+                      Text('• Tu tienda será revisada antes de aparecer públicamente',
+                        style: TextStyle(color: Colors.white,),),
+                      Text('• Podrás agregar productos una vez aprobada la tienda',
+                        style: TextStyle(color: Colors.white,),),
+                      Text('• El logo ayuda a que los clientes reconozcan tu marca',
+                        style: TextStyle(color: Colors.white,),),
                     ],
                   ),
                 ),
